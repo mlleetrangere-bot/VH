@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Villa Helena – Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b1520;
+  --bg2:#101d2c;
+  --bg3:#152438;
+  --border:rgba(255,255,255,0.07);
+  --gold:#c9a84c;--gold2:#e8c860;
+  --sea:#2a6b7c;--sea2:#4a9baf;
+  --cream:#faf7f2;
+  --muted:rgba(255,255,255,0.4);
+  --text:rgba(255,255,255,0.85);
+  --red:#e05555;--green:#3ecf8e;--orange:#f0a050;
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);font-weight:300;min-height:100vh}
+
+/* ── LOGIN ── */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-box{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:20px;padding:3rem;width:min(400px,90vw);
+  text-align:center;
+}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-style:italic;margin-bottom:0.3rem}
+.login-sub{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:2.5rem}
+.login-input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:0.9rem 1.2rem;
+  font-family:'Jost',sans-serif;font-size:1rem;font-weight:300;
+  color:var(--text);outline:none;transition:border-color 0.2s;
+  text-align:center;letter-spacing:0.1em;margin-bottom:1rem;
+}
+.login-input:focus{border-color:var(--gold)}
+.login-btn{
+  width:100%;background:var(--gold);color:#fff;border:none;cursor:pointer;
+  font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;
+  padding:0.95rem;border-radius:10px;transition:background 0.2s;
+}
+.login-btn:hover{background:#b8922e}
+.login-err{color:var(--red);font-size:0.8rem;margin-top:0.8rem;display:none}
+.login-err.visible{display:block}
+
+/* ── LAYOUT ── */
+#app{display:none}
+#app.visible{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:2rem 0;position:fixed;top:0;bottom:0;left:0;z-index:100;
+}
+.sidebar-logo{padding:0 1.5rem 2rem;border-bottom:1px solid var(--border)}
+.sidebar-logo-text{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);font-style:italic}
+.sidebar-logo-sub{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:0.2rem}
+.sidebar-nav{padding:1.5rem 0;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:0.8rem;
+  padding:0.75rem 1.5rem;cursor:pointer;
+  font-size:0.78rem;letter-spacing:0.05em;color:var(--muted);
+  transition:all 0.2s;border-left:3px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,168,76,0.06)}
+.nav-icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{padding:1.5rem;border-top:1px solid var(--border)}
+.logout-btn{width:100%;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.6rem;border-radius:8px;cursor:pointer;transition:all 0.2s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;padding:2rem;min-height:100vh}
+.page{display:none}
+.page.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--cream)}
+.page-title em{font-style:italic;color:var(--gold)}
+.today-badge{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:100px;padding:0.4rem 1rem;
+  font-size:0.72rem;color:var(--muted);letter-spacing:0.05em;
+}
+
+/* ── CARDS ── */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.5rem}
+.stat-card-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+.stat-card-value{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;color:var(--cream)}
+.stat-card-sub{font-size:0.72rem;color:var(--muted);margin-top:0.2rem}
+.stat-card.gold .stat-card-value{color:var(--gold)}
+.stat-card.green .stat-card-value{color:var(--green)}
+.stat-card.red .stat-card-value{color:var(--red)}
+
+/* ── DAILY PANEL ── */
+.daily-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem}
+.daily-col{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem}
+.daily-col-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem}
+.daily-col-title.arrivals{color:var(--green)}
+.daily-col-title.departures{color:var(--orange)}
+.daily-item{
+  background:var(--bg3);border-radius:8px;padding:0.9rem 1rem;
+  margin-bottom:0.6rem;border-left:3px solid;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.daily-item.arr{border-color:var(--green)}
+.daily-item.dep{border-color:var(--orange)}
+.daily-name{font-size:0.85rem;color:var(--cream);font-weight:400}
+.daily-room{font-size:0.7rem;color:var(--muted);margin-top:0.15rem}
+.daily-nights{font-size:0.7rem;color:var(--muted)}
+.daily-empty{font-size:0.8rem;color:var(--muted);font-style:italic;padding:0.5rem 0}
+
+/* ── TIMELINE CALENDAR ── */
+.timeline-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2rem}
+.timeline-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.timeline-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--cream);font-style:italic}
+.tl-nav{display:flex;gap:0.5rem}
+.tl-btn{background:none;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.tl-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tl-month-label{font-size:0.8rem;color:var(--text);align-self:center;margin:0 0.5rem}
+
+.timeline-table{width:100%;overflow-x:auto}
+.tl-table{min-width:900px;width:100%;border-collapse:collapse}
+.tl-room-col{width:110px;background:var(--bg3);padding:0.7rem 1rem;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:sticky;left:0;z-index:2}
+.tl-day-header{padding:0.4rem 0;text-align:center;font-size:0.62rem;color:var(--muted);border-bottom:1px solid var(--border);border-right:1px solid rgba(255,255,255,0.03);min-width:28px}
+.tl-day-header.today{color:var(--gold);font-weight:600}
+.tl-day-header.weekend{color:rgba(255,255,255,0.55)}
+.tl-cell{
+  height:42px;border-right:1px solid rgba(255,255,255,0.03);
+  border-bottom:1px solid var(--border);
+  position:relative;cursor:pointer;transition:background 0.15s;
+  min-width:28px;
+}
+.tl-cell:hover{background:rgba(255,255,255,0.04)}
+.tl-cell.free{}
+.tl-cell.booked{background:rgba(42,107,124,0.25)}
+.tl-cell.booked-start{background:rgba(42,107,124,0.35);border-left:3px solid var(--sea2)}
+.tl-cell.booked-end{background:rgba(42,107,124,0.15)}
+.tl-cell.manual{background:rgba(192,57,43,0.2)}
+.tl-cell.manual-start{background:rgba(192,57,43,0.3);border-left:3px solid var(--red)}
+.tl-cell.today-col{background:rgba(201,168,76,0.06)}
+.tl-cell.booked.today-col,.tl-cell.booked-start.today-col{background:rgba(42,107,124,0.4)}
+.tl-label{
+  position:absolute;top:50%;transform:translateY(-50%);
+  left:4px;right:2px;
+  font-size:0.6rem;color:rgba(255,255,255,0.8);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  pointer-events:none;
+}
+.tl-room-name{background:var(--bg3);padding:0.7rem 1rem;font-size:0.75rem;color:var(--cream);border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:sticky;left:0;z-index:2;font-weight:400}
+.tl-room-type{font-size:0.58rem;color:var(--muted);display:block}
+
+/* Legend */
+.tl-legend{display:flex;gap:1.2rem;padding:0.8rem 1.5rem;border-top:1px solid var(--border);flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--muted)}
+.leg-box{width:14px;height:14px;border-radius:3px}
+.lb-free{background:var(--bg3);border:1px solid var(--border)}
+.lb-booked{background:rgba(42,107,124,0.35);border-left:3px solid var(--sea2)}
+.lb-manual{background:rgba(192,57,43,0.3);border-left:3px solid var(--red)}
+.lb-today{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3)}
+
+/* ── MANUAL OVERRIDE ── */
+.override-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem}
+.override-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--cream);font-style:italic;margin-bottom:1.2rem}
+.override-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;align-items:end}
+.of-group{display:flex;flex-direction:column;gap:0.3rem}
+.of-label{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.of-input,.of-select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.65rem 0.9rem;font-family:'Jost',sans-serif;font-size:0.84rem;font-weight:300;color:var(--text);outline:none;transition:border-color 0.2s;width:100%}
+.of-input:focus,.of-select:focus{border-color:var(--gold)}
+.of-select option{background:var(--bg3)}
+.add-override-btn{background:var(--sea);color:#fff;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.7rem 1.2rem;border-radius:8px;transition:background 0.2s;white-space:nowrap}
+.add-override-btn:hover{background:var(--sea2)}
+.add-override-btn.del{background:rgba(192,57,43,0.2);color:var(--red);border:1px solid rgba(192,57,43,0.3)}
+.add-override-btn.del:hover{background:rgba(192,57,43,0.35)}
+
+/* Overrides list */
+.overrides-list{margin-top:1.2rem;display:flex;flex-direction:column;gap:0.5rem}
+.override-item{
+  background:var(--bg3);border-radius:8px;padding:0.8rem 1rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-left:3px solid var(--red);font-size:0.8rem;
+}
+.ov-info{flex:1}
+.ov-room{font-weight:500;color:var(--cream)}
+.ov-dates{color:var(--muted);font-size:0.72rem;margin-top:0.1rem}
+.ov-note{color:var(--orange);font-size:0.72rem;font-style:italic}
+.ov-del{background:none;border:1px solid rgba(192,57,43,0.3);color:var(--red);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.25rem 0.65rem;border-radius:100px;cursor:pointer;transition:all 0.15s;font-family:'Jost',sans-serif}
+.ov-del:hover{background:rgba(192,57,43,0.15)}
+
+/* ── BOOKINGS TABLE ── */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem}
+.table-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);font-style:italic}
+.table-actions{display:flex;gap:0.6rem;flex-wrap:wrap}
+.tbl-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 0.9rem;border-radius:6px;cursor:pointer;transition:all 0.2s}
+.tbl-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tbl-btn.active-filter{border-color:var(--sea2);color:var(--sea2)}
+.bookings-table{width:100%;border-collapse:collapse;font-size:0.78rem;overflow-x:auto;display:block}
+.bookings-table th{text-align:left;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:0.65rem 1rem;border-bottom:1px solid var(--border);font-weight:400;white-space:nowrap}
+.bookings-table td{padding:0.8rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text);vertical-align:middle;white-space:nowrap}
+.bookings-table tr:hover td{background:rgba(255,255,255,0.02)}
+.sbadge{display:inline-block;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:100px}
+.sp{background:rgba(201,168,76,0.15);color:var(--gold2)}
+.sc{background:rgba(62,207,142,0.12);color:var(--green)}
+.sx{background:rgba(224,85,85,0.12);color:var(--red)}
+.act-btn{background:none;border:1px solid currentColor;border-radius:100px;font-size:0.6rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.6rem;cursor:pointer;font-family:'Jost',sans-serif;transition:all 0.15s;margin-right:0.3rem}
+.ab-confirm{color:var(--green)}.ab-confirm:hover{background:rgba(62,207,142,0.1)}
+.ab-cancel{color:var(--red)}.ab-cancel:hover{background:rgba(224,85,85,0.1)}
+.empty-row td{text-align:center;color:var(--muted);font-style:italic;padding:2.5rem}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-bg.visible{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2rem;width:min(480px,90vw);max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--cream);font-style:italic;margin-bottom:1.5rem}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+.modal-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.82rem}
+.modal-row:last-child{border-bottom:none}
+.modal-key{color:var(--muted)}
+.modal-val{color:var(--cream);font-weight:400;text-align:right}
+.modal-close{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.7rem;border-radius:8px;cursor:pointer;margin-top:1.2rem;transition:all 0.2s}
+.modal-close:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── EXPORT ── */
+.export-btn{background:var(--gold);color:#fff;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.5rem 1.1rem;border-radius:6px;transition:background 0.2s}
+.export-btn:hover{background:#b8922e}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:1rem}
+  .main{margin-left:0}
+  #app.visible{flex-direction:column}
+  .daily-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     LOGIN
+══════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Villa Helena</div>
+    <div class="login-sub">Admin Panel · Vlasnik</div>
+    <input class="login-input" type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Prijava</button>
+    <div class="login-err" id="loginErr">Pogrešna lozinka. Pokušajte ponovo.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     APP
+══════════════════════════════════ -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">Villa Helena</div>
+      <div class="sidebar-logo-sub">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span> Danas</div>
+      <div class="nav-item" onclick="showPage('calendar')"><span class="nav-icon">📅</span> Kalendar</div>
+      <div class="nav-item" onclick="showPage('bookings')"><span class="nav-icon">📋</span> Rezervacije</div>
+      <div class="nav-item" onclick="showPage('override')"><span class="nav-icon">✏️</span> Ručni unos</div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">Odjava</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── PAGE: DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Dobro jutro, <em>Helena</em> 👋</div>
+        </div>
+        <div class="today-badge" id="todayBadge"></div>
+      </div>
+
+      <!-- Stats -->
+      <div class="cards-row" id="statsCards"></div>
+
+      <!-- Daily Panel -->
+      <div class="daily-grid">
+        <div class="daily-col">
+          <div class="daily-col-title arrivals">✈️ Dolasci danas</div>
+          <div id="arrivalsToday"></div>
+        </div>
+        <div class="daily-col">
+          <div class="daily-col-title departures">🧳 Odlasci danas</div>
+          <div id="departuresToday"></div>
+        </div>
+      </div>
+
+      <!-- Room status today -->
+      <div class="table-wrap" style="margin-bottom:2rem">
+        <div class="table-header">
+          <span class="table-title">Status soba danas</span>
+        </div>
+        <table class="bookings-table" style="display:table;width:100%">
+          <thead><tr>
+            <th>Soba</th><th>Status</th><th>Gost</th><th>Dolazak</th><th>Odlazak</th><th>Gosti</th><th>Noći ostalo</th>
+          </tr></thead>
+          <tbody id="roomStatusToday"></tbody>
+        </table>
+      </div>
+
+      <!-- Upcoming 7 days -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Sljedećih 7 dana</span>
+        </div>
+        <table class="bookings-table" style="display:table;width:100%">
+          <thead><tr><th>Datum</th><th>Soba</th><th>Gost</th><th>Vrsta</th></tr></thead>
+          <tbody id="upcomingEvents"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── PAGE: CALENDAR ── -->
+    <div class="page" id="page-calendar">
+      <div class="topbar">
+        <div class="page-title">Kalendar <em>dostupnosti</em></div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="tl-btn" onclick="calOffset--;renderTimeline()">&#8592;</button>
+          <span class="tl-month-label" id="tlMonthLabel"></span>
+          <button class="tl-btn" onclick="calOffset++;renderTimeline()">&#8594;</button>
+        </div>
+      </div>
+      <div class="timeline-wrap">
+        <div class="timeline-table" id="timelineTable"></div>
+        <div class="tl-legend">
+          <div class="leg"><div class="leg-box lb-free"></div> Slobodno</div>
+          <div class="leg"><div class="leg-box lb-booked"></div> Rezervirano (gost)</div>
+          <div class="leg"><div class="leg-box lb-manual"></div> Blokirano (ručno)</div>
+          <div class="leg"><div class="leg-box lb-today"></div> Danas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: BOOKINGS ── -->
+    <div class="page" id="page-bookings">
+      <div class="topbar">
+        <div class="page-title">Sve <em>rezervacije</em></div>
+        <button class="export-btn" onclick="exportCSV()">↙ Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title" id="bookingsCount"></span>
+          <div class="table-actions">
+            <button class="tbl-btn active-filter" onclick="setFilter('all',this)">Sve</button>
+            <button class="tbl-btn" onclick="setFilter('pending',this)">Na čekanju</button>
+            <button class="tbl-btn" onclick="setFilter('confirmed',this)">Potvrđene</button>
+            <button class="tbl-btn" onclick="setFilter('cancelled',this)">Otkazane</button>
+          </div>
+        </div>
+        <table class="bookings-table">
+          <thead><tr>
+            <th>ID</th><th>Soba</th><th>Dolazak</th><th>Odlazak</th>
+            <th>Noći</th><th>EUR</th><th>Ime</th><th>Prezime</th>
+            <th>Email</th><th>Telefon</th><th>Gosti</th><th>Država</th>
+            <th>Napomena</th><th>Status</th><th>Akcije</th>
+          </tr></thead>
+          <tbody id="bookingsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── PAGE: OVERRIDE ── -->
+    <div class="page" id="page-override">
+      <div class="topbar">
+        <div class="page-title">Ručni <em>unos</em></div>
+      </div>
+
+      <!-- TAB SWITCHER -->
+      <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+        <button class="tbl-btn active-filter" id="tabBlock" onclick="switchTab('block')">🔒 Blokiraj sobu</button>
+        <button class="tbl-btn" id="tabFree" onclick="switchTab('free')">🔓 Oslobodi sobu</button>
+        <button class="tbl-btn" id="tabManual2" onclick="switchTab('manual')">➕ Ručna rezervacija</button>
+      </div>
+
+      <!-- TAB: BLOCK -->
+      <div id="tabContentBlock">
+        <div class="override-wrap">
+          <div class="override-title">🔒 Blokiraj period</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.2rem">Označi sobu kao zauzetu bez rezervacije (renovacija, osobna potreba, održavanje...).</p>
+          <div class="override-form">
+            <div class="of-group">
+              <label class="of-label">Soba</label>
+              <select class="of-select" id="ovRoom">
+                <option value="C2">Apartman C2</option>
+                <option value="B2">Apartman B2</option>
+                <option value="C1">Soba C1</option>
+                <option value="A1">Soba A1</option>
+              </select>
+            </div>
+            <div class="of-group">
+              <label class="of-label">Datum od</label>
+              <input type="date" class="of-input" id="ovFrom"/>
+            </div>
+            <div class="of-group">
+              <label class="of-label">Datum do</label>
+              <input type="date" class="of-input" id="ovTo"/>
+            </div>
+            <div class="of-group">
+              <label class="of-label">Razlog (opcijalno)</label>
+              <input type="text" class="of-input" id="ovNote" placeholder="npr. Renovacija, Osobna potreba"/>
+            </div>
+            <div class="of-group">
+              <button class="add-override-btn" onclick="addOverride()">+ Blokiraj</button>
+            </div>
+          </div>
+          <div class="notice" id="ovNotice" style="margin-top:1rem;border-radius:8px;padding:0.8rem 1rem;font-size:0.8rem;display:none"></div>
+        </div>
+        <div class="override-wrap">
+          <div class="override-title">Aktivne blokade</div>
+          <div class="overrides-list" id="overridesList"></div>
+      </div>
+
+      </div><!-- /tabContentBlock -->
+
+      <!-- TAB: FREE -->
+      <div id="tabContentFree" style="display:none">
+        <div class="override-wrap">
+          <div class="override-title">🔓 Oslobodi sobu</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem">Ukloni blokadu ili otkaži rezervaciju da soba postane slobodna u kalendaru.</p>
+
+          <div style="margin-bottom:2rem">
+            <div style="font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">Ukloni ručnu blokadu</div>
+            <div class="overrides-list" id="overridesListFree"></div>
+          </div>
+
+          <div>
+            <div style="font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">Otkaži rezervaciju gosta</div>
+            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem">Filtriraj po sobi ili datumu pa odaberi rezervaciju za otkazivanje.</p>
+            <div class="override-form" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:1.2rem">
+              <div class="of-group">
+                <label class="of-label">Soba</label>
+                <select class="of-select" id="freeRoom" onchange="renderFreeBookings()">
+                  <option value="">— Sve sobe —</option>
+                  <option value="C2">Apartman C2</option>
+                  <option value="B2">Apartman B2</option>
+                  <option value="C1">Soba C1</option>
+                  <option value="A1">Soba A1</option>
+                </select>
+              </div>
+              <div class="of-group">
+                <label class="of-label">Prikaži od datuma</label>
+                <input type="date" class="of-input" id="freeFromDate" onchange="renderFreeBookings()"/>
+              </div>
+            </div>
+            <div id="freeBookingsList"></div>
+          </div>
+        </div>
+      </div><!-- /tabContentFree -->
+
+      <!-- TAB: MANUAL -->
+      <div id="tabContentManual" style="display:none">
+        <div class="override-wrap">
+          <div class="override-title">➕ Ručno dodaj rezervaciju</div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.2rem">Za rezervacije primljene telefonom ili osobno.</p>
+          <div class="override-form" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+            <div class="of-group">
+              <label class="of-label">Soba</label>
+              <select class="of-select" id="mbRoom">
+                <option value="C2">Apt C2 – 130€</option>
+                <option value="B2">Apt B2 – 150€</option>
+                <option value="C1">Soba C1 – 90€</option>
+                <option value="A1">Soba A1 – 90€</option>
+              </select>
+            </div>
+            <div class="of-group"><label class="of-label">Ime</label><input type="text" class="of-input" id="mbFN"/></div>
+            <div class="of-group"><label class="of-label">Prezime</label><input type="text" class="of-input" id="mbLN"/></div>
+            <div class="of-group"><label class="of-label">Telefon</label><input type="tel" class="of-input" id="mbPH"/></div>
+            <div class="of-group"><label class="of-label">Email</label><input type="email" class="of-input" id="mbEM"/></div>
+            <div class="of-group"><label class="of-label">Dolazak</label><input type="date" class="of-input" id="mbFrom"/></div>
+            <div class="of-group"><label class="of-label">Odlazak</label><input type="date" class="of-input" id="mbTo"/></div>
+            <div class="of-group"><label class="of-label">Gosti</label>
+              <select class="of-select" id="mbGuests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select>
+            </div>
+            <div class="of-group"><label class="of-label">Napomena</label><input type="text" class="of-input" id="mbNote"/></div>
+            <div class="of-group">
+              <button class="add-override-btn" onclick="addManualBooking()">+ Dodaj rezervaciju</button>
+            </div>
+          </div>
+          <div class="notice" id="mbNotice" style="margin-top:1rem;border-radius:8px;padding:0.8rem 1rem;font-size:0.8rem;display:none"></div>
+        </div>
+      </div><!-- /tabContentManual -->
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Detalji rezervacije</div>
+    <div id="modalBody"></div>
+    <button class="modal-close" onclick="closeModal()">Zatvori</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+//  AUTH
+// ══════════════════════════════════
+const PASS = 'Nena1975';
+
+function doLogin(){
+  const v = document.getElementById('loginPass').value;
+  if(v === PASS){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    initApp();
+  } else {
+    document.getElementById('loginErr').classList.add('visible');
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+  }
+}
+
+function logout(){
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginErr').classList.remove('visible');
+}
+
+// ══════════════════════════════════
+//  DATA
+// ══════════════════════════════════
+const ROOMS = [
+  {id:'C2', name:'Apartman C2', type:'Apartman', capacity:4, price:130},
+  {id:'B2', name:'Apartman B2', type:'Apartman', capacity:5, price:150},
+  {id:'C1', name:'Soba C1',     type:'Soba',     capacity:2, price:90},
+  {id:'A1', name:'Soba A1',     type:'Soba',     capacity:2, price:90},
+];
+
+function getBookings(){ try{ return JSON.parse(localStorage.getItem('vh_bookings')||'[]'); }catch(e){ return []; } }
+function saveBookings(b){ localStorage.setItem('vh_bookings', JSON.stringify(b)); }
+function getOverrides(){ try{ return JSON.parse(localStorage.getItem('vh_overrides')||'[]'); }catch(e){ return []; } }
+function saveOverrides(o){ localStorage.setItem('vh_overrides', JSON.stringify(o)); }
+
+// ══════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => { if(n.textContent.trim().toLowerCase().includes(id==='dashboard'?'danas':id==='calendar'?'kalend':id==='bookings'?'rezerv':'ručni')) n.classList.add('active'); });
+  if(id==='dashboard') renderDashboard();
+  if(id==='calendar') renderTimeline();
+  if(id==='bookings') renderBookings();
+  if(id==='override') renderOverrides();
+}
+
+// ══════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════
+const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const fmtD = d => new Date(d).toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const fmtShort = d => new Date(d).toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit'});
+const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/86400000);
+const MONTHS = ['Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj','Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'];
+
+function isActiveBooking(b){ return b.status !== 'cancelled'; }
+function bookingCoversDate(b, date){
+  const s = new Date(b.checkin); s.setHours(0,0,0,0);
+  const e = new Date(b.checkout); e.setHours(0,0,0,0);
+  return date >= s && date < e;
+}
+function overrideCoversDate(o, date){
+  const s = new Date(o.from); s.setHours(0,0,0,0);
+  const e = new Date(o.to); e.setHours(0,0,0,0);
+  return date >= s && date <= e;
+}
+function getRoomBookingForDate(roomId, date){
+  return getBookings().find(b => b.roomId===roomId && isActiveBooking(b) && bookingCoversDate(b,date));
+}
+function getRoomOverrideForDate(roomId, date){
+  return getOverrides().find(o => o.roomId===roomId && overrideCoversDate(o,date));
+}
+
+// ══════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════
+function renderDashboard(){
+  const now = today();
+  const todayStr = now.toISOString().split('T')[0];
+
+  // Badge
+  document.getElementById('todayBadge').textContent = now.toLocaleDateString('hr-HR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  // Stats
+  const bks = getBookings().filter(isActiveBooking);
+  const confirmed = bks.filter(b=>b.status==='confirmed').length;
+  const pending = bks.filter(b=>b.status==='pending').length;
+  const occupiedToday = ROOMS.filter(r => getRoomBookingForDate(r.id,now) || getRoomOverrideForDate(r.id,now)).length;
+  const revenueMonth = bks.filter(b=>{
+    const m = new Date(b.checkin).getMonth(); const y = new Date(b.checkin).getFullYear();
+    return m===now.getMonth()&&y===now.getFullYear();
+  }).reduce((s,b)=>s+b.total,0);
+
+  document.getElementById('statsCards').innerHTML = `
+    <div class="stat-card"><div class="stat-card-label">Sobe zauzete danas</div><div class="stat-card-value">${occupiedToday}/${ROOMS.length}</div><div class="stat-card-sub">od ukupno ${ROOMS.length} soba</div></div>
+    <div class="stat-card green"><div class="stat-card-label">Potvrđene rezervacije</div><div class="stat-card-value">${confirmed}</div><div class="stat-card-sub">aktivne</div></div>
+    <div class="stat-card gold"><div class="stat-card-label">Na čekanju</div><div class="stat-card-value">${pending}</div><div class="stat-card-sub">čekaju potvrdu</div></div>
+    <div class="stat-card"><div class="stat-card-label">Prihod ovaj mjesec</div><div class="stat-card-value">${revenueMonth}</div><div class="stat-card-sub">EUR (potvrđene+na čekanju)</div></div>
+  `;
+
+  // Arrivals & departures today
+  const arrivals = bks.filter(b => b.checkin === todayStr);
+  const departures = bks.filter(b => b.checkout === todayStr);
+
+  const arrEl = document.getElementById('arrivalsToday');
+  arrEl.innerHTML = arrivals.length ? arrivals.map(b=>`
+    <div class="daily-item arr">
+      <div><div class="daily-name">${b.firstName} ${b.lastName}</div><div class="daily-room">${b.roomName} · ${b.guests} gost${b.guests>1?'a':''}</div></div>
+      <div class="daily-nights">${b.nights} noći<br><span style="color:var(--gold);font-weight:500">${b.total}€</span></div>
+    </div>`).join('') : '<div class="daily-empty">Nema dolazaka danas.</div>';
+
+  const depEl = document.getElementById('departuresToday');
+  depEl.innerHTML = departures.length ? departures.map(b=>`
+    <div class="daily-item dep">
+      <div><div class="daily-name">${b.firstName} ${b.lastName}</div><div class="daily-room">${b.roomName} · ${b.guests} gost${b.guests>1?'a':''}</div></div>
+      <div class="daily-nights">odlazak</div>
+    </div>`).join('') : '<div class="daily-empty">Nema odlazaka danas.</div>';
+
+  // Room status today
+  const tbody = document.getElementById('roomStatusToday');
+  tbody.innerHTML = ROOMS.map(r => {
+    const bk = getRoomBookingForDate(r.id, now);
+    const ov = getRoomOverrideForDate(r.id, now);
+    if(bk){
+      const remaining = daysBetween(todayStr, bk.checkout);
+      return `<tr>
+        <td><strong>${r.name}</strong></td>
+        <td><span class="sbadge sc">Zauzeto</span></td>
+        <td>${bk.firstName} ${bk.lastName}</td>
+        <td>${fmtD(bk.checkin)}</td><td>${fmtD(bk.checkout)}</td>
+        <td>${bk.guests}</td><td>${remaining} noći</td>
+      </tr>`;
+    } else if(ov){
+      return `<tr>
+        <td><strong>${r.name}</strong></td>
+        <td><span class="sbadge sx">Blokirano</span></td>
+        <td colspan="4" style="color:var(--muted);font-style:italic">${ov.note||'Ručna blokada'} · do ${fmtD(ov.to)}</td>
+        <td>—</td>
+      </tr>`;
+    } else {
+      return `<tr>
+        <td><strong>${r.name}</strong></td>
+        <td><span class="sbadge" style="background:rgba(62,207,142,0.1);color:var(--green)">Slobodno</span></td>
+        <td colspan="5" style="color:var(--muted)">—</td>
+      </tr>`;
+    }
+  }).join('');
+
+  // Upcoming 7 days
+  const upcoming = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(now); d.setDate(d.getDate()+i);
+    const dStr = d.toISOString().split('T')[0];
+    ROOMS.forEach(r => {
+      const bk = getBookings().find(b=>b.roomId===r.id&&isActiveBooking(b)&&(b.checkin===dStr||b.checkout===dStr));
+      const ov = getOverrides().find(o=>o.roomId===r.id&&(o.from===dStr||o.to===dStr));
+      if(bk && bk.checkin===dStr) upcoming.push({date:dStr,room:r.name,guest:`${bk.firstName} ${bk.lastName}`,type:'Dolazak',color:'var(--green)'});
+      if(bk && bk.checkout===dStr) upcoming.push({date:dStr,room:r.name,guest:`${bk.firstName} ${bk.lastName}`,type:'Odlazak',color:'var(--orange)'});
+      if(ov && ov.from===dStr) upcoming.push({date:dStr,room:r.name,guest:ov.note||'Blokada',type:'Blokada počinje',color:'var(--red)'});
+    });
+  }
+  const upEl = document.getElementById('upcomingEvents');
+  upEl.innerHTML = upcoming.length ? upcoming.map(e=>`<tr>
+    <td>${fmtD(e.date)}</td><td>${e.room}</td><td>${e.guest}</td>
+    <td><span style="color:${e.color};font-size:0.75rem">${e.type}</span></td>
+  </tr>`).join('') : '<tr class="empty-row"><td colspan="4">Nema nadolazećih događaja.</td></tr>';
+}
+
+// ══════════════════════════════════
+//  TIMELINE CALENDAR
+// ══════════════════════════════════
+let calOffset = 0;
+
+function renderTimeline(){
+  const now = today();
+  const base = new Date(now.getFullYear(), now.getMonth()+calOffset, 1);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  document.getElementById('tlMonthLabel').textContent = `${MONTHS[month]} ${year}`;
+
+  const bks = getBookings().filter(isActiveBooking);
+  const ovs = getOverrides();
+
+  // Build header
+  let headerCells = '<th class="tl-room-col">Soba</th>';
+  for(let d=1;d<=daysInMonth;d++){
+    const date = new Date(year,month,d);
+    const dow = date.getDay();
+    const isToday = date.toISOString().split('T')[0] === now.toISOString().split('T')[0];
+    const cls = isToday ? 'today' : (dow===0||dow===6?'weekend':'');
+    headerCells += `<th class="tl-day-header ${cls}">${d}<br><span style="font-size:0.5rem">${'NPUTOIČSP'[dow]}</span></th>`;
+  }
+
+  // Build rows
+  let rows = '';
+  ROOMS.forEach(r => {
+    rows += `<tr><td class="tl-room-name">${r.id}<span class="tl-room-type">${r.type}</span></td>`;
+    for(let d=1;d<=daysInMonth;d++){
+      const date = new Date(year,month,d); date.setHours(0,0,0,0);
+      const dateStr = date.toISOString().split('T')[0];
+      const isToday = dateStr === now.toISOString().split('T')[0];
+
+      // Check bookings
+      const bk = bks.find(b => b.roomId===r.id && bookingCoversDate(b,date));
+      const ov = ovs.find(o => o.roomId===r.id && overrideCoversDate(o,date));
+
+      let cls = isToday ? 'today-col' : '';
+      let label = '';
+
+      if(bk){
+        const isStart = bk.checkin === dateStr;
+        const isEnd = new Date(bk.checkout).toISOString().split('T')[0] === dateStr;
+        cls += isStart ? ' booked-start' : ' booked';
+        if(isStart) label = `${bk.firstName} ${bk.lastName}`;
+        rows += `<td class="tl-cell ${cls}" title="${bk.firstName} ${bk.lastName} | ${fmtD(bk.checkin)}–${fmtD(bk.checkout)} | ${bk.nights} noći" onclick="showBookingModal('${bk.id}')"><div class="tl-label">${label}</div></td>`;
+      } else if(ov){
+        const isStart = ov.from === dateStr;
+        cls += isStart ? ' manual-start' : ' manual';
+        if(isStart) label = ov.note||'Blokirano';
+        rows += `<td class="tl-cell ${cls}" title="Ručna blokada: ${ov.note||''} | ${fmtD(ov.from)}–${fmtD(ov.to)}"><div class="tl-label">${label}</div></td>`;
+      } else {
+        rows += `<td class="tl-cell ${cls}" title="${dateStr} – slobodno"></td>`;
+      }
+    }
+    rows += '</tr>';
+  });
+
+  document.getElementById('timelineTable').innerHTML = `
+    <div style="overflow-x:auto">
+      <table class="tl-table">
+        <thead><tr>${headerCells}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ══════════════════════════════════
+//  BOOKINGS TABLE
+// ══════════════════════════════════
+let currentFilter = 'all';
+
+function setFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  renderBookings();
+}
+
+function renderBookings(){
+  let bks = getBookings();
+  if(currentFilter !== 'all') bks = bks.filter(b=>b.status===currentFilter);
+  bks = bks.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  document.getElementById('bookingsCount').textContent = `${bks.length} rezervacija`;
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
+  const sc={pending:'sp',confirmed:'sc',cancelled:'sx'};
+
+  document.getElementById('bookingsBody').innerHTML = bks.length ? bks.map(b=>`<tr style="cursor:pointer" onclick="showBookingModal('${b.id}')">
+    <td style="font-size:0.65rem;opacity:0.5">${b.id}</td>
+    <td><strong>${b.roomName}</strong></td>
+    <td>${fmtD(b.checkin)}</td><td>${fmtD(b.checkout)}</td>
+    <td>${b.nights}</td><td><strong>${b.total}</strong></td>
+    <td>${b.firstName}</td><td>${b.lastName}</td>
+    <td>${b.email}</td><td>${b.phone}</td>
+    <td>${b.guests}</td><td>${b.country||'—'}</td>
+    <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${b.note||'—'}</td>
+    <td><span class="sbadge ${sc[b.status]}">${sl[b.status]}</span></td>
+    <td onclick="event.stopPropagation()">
+      ${b.status!=='confirmed'?`<button class="act-btn ab-confirm" onclick="chStatus('${b.id}','confirmed')">✓</button>`:''}
+      ${b.status!=='cancelled'?`<button class="act-btn ab-cancel" onclick="chStatus('${b.id}','cancelled')">✗</button>`:''}
+    </td>
+  </tr>`).join('') : '<tr class="empty-row"><td colspan="15">Nema rezervacija.</td></tr>';
+}
+
+function chStatus(id,status){
+  const b=getBookings();const i=b.findIndex(x=>x.id===id);
+  if(i>-1){b[i].status=status;saveBookings(b);}
+  renderBookings();
+  renderTimeline();
+}
+
+// ══════════════════════════════════
+//  MODAL
+// ══════════════════════════════════
+function showBookingModal(id){
+  const b = getBookings().find(x=>x.id===id);
+  if(!b) return;
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
+  const sc={pending:'gold2',confirmed:'green',cancelled:'red'};
+  document.getElementById('modalTitle').textContent = `${b.roomName} · ${b.firstName} ${b.lastName}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-row"><span class="modal-key">Status</span><span class="modal-val" style="color:var(--${sc[b.status]})">${sl[b.status]}</span></div>
+    <div class="modal-row"><span class="modal-key">Soba</span><span class="modal-val">${b.roomName}</span></div>
+    <div class="modal-row"><span class="modal-key">Dolazak</span><span class="modal-val">${fmtD(b.checkin)}</span></div>
+    <div class="modal-row"><span class="modal-key">Odlazak</span><span class="modal-val">${fmtD(b.checkout)}</span></div>
+    <div class="modal-row"><span class="modal-key">Noći</span><span class="modal-val">${b.nights}</span></div>
+    <div class="modal-row"><span class="modal-key">Ukupno</span><span class="modal-val" style="color:var(--gold)">${b.total} EUR</span></div>
+    <div class="modal-row"><span class="modal-key">Ime i prezime</span><span class="modal-val">${b.firstName} ${b.lastName}</span></div>
+    <div class="modal-row"><span class="modal-key">Email</span><span class="modal-val">${b.email}</span></div>
+    <div class="modal-row"><span class="modal-key">Telefon</span><span class="modal-val">${b.phone}</span></div>
+    <div class="modal-row"><span class="modal-key">Gosti</span><span class="modal-val">${b.guests}</span></div>
+    <div class="modal-row"><span class="modal-key">Država</span><span class="modal-val">${b.country||'—'}</span></div>
+    <div class="modal-row"><span class="modal-key">Napomena</span><span class="modal-val">${b.note||'—'}</span></div>
+    <div class="modal-row"><span class="modal-key">ID</span><span class="modal-val" style="font-size:0.7rem;opacity:0.5">${b.id}</span></div>
+    <div style="display:flex;gap:0.6rem;margin-top:1.2rem">
+      ${b.status!=='confirmed'?`<button class="act-btn ab-confirm" style="flex:1;padding:0.6rem" onclick="chStatus('${b.id}','confirmed');closeModal()">✓ Potvrdi</button>`:''}
+      ${b.status!=='cancelled'?`<button class="act-btn ab-cancel" style="flex:1;padding:0.6rem" onclick="chStatus('${b.id}','cancelled');closeModal()">✗ Otkaži</button>`:''}
+    </div>`;
+  document.getElementById('modalBg').classList.add('visible');
+}
+function closeModal(){ document.getElementById('modalBg').classList.remove('visible'); }
+
+// ══════════════════════════════════
+//  OVERRIDES
+// ══════════════════════════════════
+function addOverride(){
+  const roomId = document.getElementById('ovRoom').value;
+  const from   = document.getElementById('ovFrom').value;
+  const to     = document.getElementById('ovTo').value;
+  const note   = document.getElementById('ovNote').value.trim();
+  const notice = document.getElementById('ovNotice');
+
+  if(!from||!to){ showNotice(notice,'Odaberite datume.','error'); return; }
+  if(from>to){ showNotice(notice,'Datum "od" mora biti prije datuma "do".','error'); return; }
+
+  const ovs = getOverrides();
+  ovs.push({id:'OV-'+Date.now(), roomId, from, to, note, createdAt:new Date().toISOString()});
+  saveOverrides(ovs);
+  showNotice(notice,'Blokada dodana!','success');
+  document.getElementById('ovFrom').value='';
+  document.getElementById('ovTo').value='';
+  document.getElementById('ovNote').value='';
+  renderOverrides();
+}
+
+function deleteOverride(id){
+  const ovs = getOverrides().filter(o=>o.id!==id);
+  saveOverrides(ovs);
+  renderOverrides();
+}
+
+// ══════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════
+function switchTab(tab){
+  ['block','free','manual'].forEach(t=>{
+    const content = document.getElementById('tabContent'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(content) content.style.display = t===tab ? 'block' : 'none';
+  });
+  document.getElementById('tabBlock').classList.toggle('active-filter', tab==='block');
+  document.getElementById('tabFree').classList.toggle('active-filter', tab==='free');
+  document.getElementById('tabManual2').classList.toggle('active-filter', tab==='manual');
+  if(tab==='free'){ renderOverrides(); renderFreeBookings(); }
+  if(tab==='block') renderOverrides();
+}
+
+function renderOverrides(){
+  const ovs = getOverrides();
+
+  // Main list (block tab)
+  const list = document.getElementById('overridesList');
+  if(list){
+    list.innerHTML = ovs.length ? ovs.slice().reverse().map(o=>{
+      const room = ROOMS.find(r=>r.id===o.roomId);
+      return `<div class="override-item">
+        <div class="ov-info">
+          <div class="ov-room">${room?room.name:o.roomId}</div>
+          <div class="ov-dates">${fmtD(o.from)} – ${fmtD(o.to)} · ${daysBetween(o.from,o.to)+1} dana</div>
+          ${o.note?`<div class="ov-note">${o.note}</div>`:''}
+        </div>
+        <button class="ov-del" onclick="deleteOverride('${o.id}')">🔓 Oslobodi</button>
+      </div>`;
+    }).join('') : '<div style="color:var(--muted);font-size:0.8rem;font-style:italic;padding:0.5rem 0">Nema aktivnih blokada.</div>';
+  }
+
+  // Free tab list
+  const listFree = document.getElementById('overridesListFree');
+  if(listFree){
+    listFree.innerHTML = ovs.length ? ovs.slice().reverse().map(o=>{
+      const room = ROOMS.find(r=>r.id===o.roomId);
+      return `<div class="override-item">
+        <div class="ov-info">
+          <div class="ov-room">${room?room.name:o.roomId}</div>
+          <div class="ov-dates">${fmtD(o.from)} – ${fmtD(o.to)} · ${daysBetween(o.from,o.to)+1} dana</div>
+          ${o.note?`<div class="ov-note">${o.note}</div>`:''}
+        </div>
+        <button class="ov-del" style="background:rgba(62,207,142,0.1);color:var(--green);border-color:rgba(62,207,142,0.3)" onclick="deleteOverride('${o.id}');renderOverrides();renderFreeBookings()">🔓 Oslobodi</button>
+      </div>`;
+    }).join('') : '<div style="color:var(--muted);font-size:0.8rem;font-style:italic;padding:0.5rem 0">Nema aktivnih blokada.</div>';
+  }
+}
+
+function renderFreeBookings(){
+  const roomFilter = (document.getElementById('freeRoom')||{}).value || '';
+  const dateFilter = (document.getElementById('freeFromDate')||{}).value || '';
+  const list = document.getElementById('freeBookingsList');
+  if(!list) return;
+
+  let bks = getBookings().filter(b => b.status !== 'cancelled');
+  if(roomFilter) bks = bks.filter(b => b.roomId === roomFilter);
+  if(dateFilter) bks = bks.filter(b => b.checkout >= dateFilter);
+  bks = bks.sort((a,b)=>a.checkin.localeCompare(b.checkin));
+
+  if(!bks.length){
+    list.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;font-style:italic;padding:0.5rem 0">Nema aktivnih rezervacija za odabrane kriterije.</div>';
+    return;
+  }
+
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno'};
+  list.innerHTML = bks.map(b=>`
+    <div class="override-item" style="border-left-color:var(--sea2)">
+      <div class="ov-info">
+        <div class="ov-room">${b.roomName} · <span style="color:var(--text)">${b.firstName} ${b.lastName}</span></div>
+        <div class="ov-dates">${fmtD(b.checkin)} – ${fmtD(b.checkout)} · ${b.nights} noći · ${b.total} EUR</div>
+        <div class="ov-note">${sl[b.status]||b.status} · ${b.email} · ${b.phone}</div>
+      </div>
+      <button class="ov-del" style="background:rgba(224,85,85,0.1);color:var(--red);border-color:rgba(224,85,85,0.3);white-space:nowrap"
+        onclick="freeBooking('${b.id}')">✗ Otkaži</button>
+    </div>`).join('');
+}
+
+function freeBooking(id){
+  if(!confirm('Jeste li sigurni da želite otkazati ovu rezervaciju? Soba će postati slobodna.')) return;
+  const bks = getBookings();
+  const i = bks.findIndex(x=>x.id===id);
+  if(i>-1){ bks[i].status='cancelled'; saveBookings(bks); }
+  renderFreeBookings();
+  renderOverrides();
+  renderTimeline();
+  const notice = document.getElementById('ovNotice');
+  if(notice){ showNotice(notice,'Rezervacija otkazana. Soba je sada slobodna.','success'); }
+}
+
+// Manual booking
+function addManualBooking(){
+  const roomId = document.getElementById('mbRoom').value;
+  const fn = document.getElementById('mbFN').value.trim();
+  const ln = document.getElementById('mbLN').value.trim();
+  const ph = document.getElementById('mbPH').value.trim();
+  const em = document.getElementById('mbEM').value.trim();
+  const from = document.getElementById('mbFrom').value;
+  const to   = document.getElementById('mbTo').value;
+  const guests = document.getElementById('mbGuests').value;
+  const note = document.getElementById('mbNote').value.trim();
+  const notice = document.getElementById('mbNotice');
+
+  if(!fn||!ln||!from||!to){ showNotice(notice,'Ispunite ime, prezime i datume.','error'); return; }
+  if(from>=to){ showNotice(notice,'Datum odlaska mora biti nakon dolaska.','error'); return; }
+
+  const room = ROOMS.find(r=>r.id===roomId);
+  const nights = daysBetween(from,to);
+  const bk = {
+    id:'VH-M-'+Date.now(), roomId,
+    roomName:`${room.type} ${room.id}`,
+    checkin:from, checkout:to, nights,
+    total:nights*room.price,
+    firstName:fn, lastName:ln, email:em||'—', phone:ph||'—',
+    guests, country:'—', note:note||'Ručno dodano',
+    status:'confirmed', createdAt:new Date().toISOString()
+  };
+  const bks = getBookings(); bks.push(bk); saveBookings(bks);
+  showNotice(notice,`Rezervacija dodana! ${room.type} ${room.id} · ${fn} ${ln} · ${fmtD(from)}–${fmtD(to)}`,'success');
+  ['mbFN','mbLN','mbPH','mbEM','mbFrom','mbTo','mbNote'].forEach(id=>document.getElementById(id).value='');
+  renderBookings();
+}
+
+function showNotice(el,msg,type){
+  el.textContent=msg;
+  el.style.display='block';
+  el.style.background=type==='success'?'rgba(62,207,142,0.1)':'rgba(224,85,85,0.1)';
+  el.style.border=`1px solid ${type==='success'?'rgba(62,207,142,0.3)':'rgba(224,85,85,0.3)'}`;
+  el.style.color=type==='success'?'var(--green)':'var(--red)';
+  setTimeout(()=>el.style.display='none',3500);
+}
+
+// ══════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════
+function exportCSV(){
+  const bks = getBookings();
+  if(!bks.length){alert('Nema rezervacija.');return;}
+  const h=['ID','Soba','Dolazak','Odlazak','Noci','EUR','Ime','Prezime','Email','Telefon','Gosti','Drzava','Napomena','Status','Kreirano'];
+  const rows=bks.map(b=>[b.id,b.roomName,b.checkin,b.checkout,b.nights,b.total,b.firstName,b.lastName,b.email,b.phone,b.guests,b.country||'',b.note||'',b.status,b.createdAt].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv=[h.join(','),...rows].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`villa-helena-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════
+//  INIT
+// ══════════════════════════════════
+function initApp(){
+  renderDashboard();
+  const d = new Date().toISOString().split('T')[0];
+  document.getElementById('ovFrom').value = d;
+  document.getElementById('ovTo').value = d;
+  document.getElementById('mbFrom').value = d;
+  document.getElementById('freeFromDate').value = d;
+}
+
+// Nav click helper
+document.querySelectorAll('.nav-item').forEach((el,i)=>{
+  const pages=['dashboard','calendar','bookings','override'];
+  el.onclick=()=>showPage(pages[i]);
+});
+</script>
+</body>
+</html>

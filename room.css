@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1e28;--ink2:#1e3545;
+  --sea:#2a6b7c;--sea2:#4a9baf;--sea3:#1a4a57;
+  --cream:#faf7f2;--sand:#f0ebe0;
+  --gold:#c9a84c;--gold2:#e8c860;
+  --muted:#7a8a8e;--white:#fff;
+  --red:#c0392b;--green:#1a6b4a;
+  --radius:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);font-weight:300}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(15,30,40,0.97);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.85rem 2.5rem;
+  border-bottom:1px solid rgba(201,168,76,0.15);
+}
+.logo-text{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:400;color:#fff;letter-spacing:0.04em;text-decoration:none}
+.logo-text em{font-style:italic;color:rgba(255,255,255,0.6)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{text-decoration:none;color:rgba(255,255,255,0.6);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:var(--gold)}
+.lang-group{display:flex;gap:0.35rem}
+.lang-btn{background:none;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.1em;padding:0.22rem 0.65rem;border-radius:100px;cursor:pointer;transition:all 0.2s}
+.lang-btn.active,.lang-btn:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+.back-btn{display:flex;align-items:center;gap:0.5rem;color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s}
+.back-btn:hover{color:var(--gold)}
+
+/* ── ROOM HERO ── */
+.room-hero{
+  min-height:70vh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:7rem 0 0;
+  position:relative;overflow:hidden;background:var(--ink);
+}
+.room-hero-gallery{
+  display:grid;position:absolute;inset:0;
+  grid-template-columns:1.6fr 1fr;grid-template-rows:1fr 1fr;
+  gap:3px;opacity:0.55;
+}
+.photo-slot{
+  background:var(--ink2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0.6rem;color:rgba(255,255,255,0.2);font-size:0.75rem;
+  letter-spacing:0.08em;text-align:center;padding:1rem;
+  overflow:hidden;position:relative;
+}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.photo-slot .slot-icon{font-size:2rem;opacity:0.3}
+.photo-slot .slot-label{font-size:0.65rem;opacity:0.5}
+.photo-slot:first-child{grid-row:1/3}
+
+.room-hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(15,30,40,0.95) 0%,rgba(15,30,40,0.3) 60%,transparent 100%);
+}
+.room-hero-content{position:relative;z-index:2;padding:3rem 3rem 2.5rem}
+.room-hero-eyebrow{font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}
+.room-hero-name{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:300;color:#fff;line-height:1.05}
+.room-hero-name em{font-style:italic;color:rgba(255,255,255,0.6)}
+.room-hero-sub{color:rgba(255,255,255,0.55);font-size:0.9rem;margin-top:0.5rem;letter-spacing:0.04em}
+.room-hero-price{
+  display:inline-flex;align-items:baseline;gap:0.4rem;
+  background:var(--gold);color:#fff;
+  padding:0.6rem 1.4rem;border-radius:100px;
+  margin-top:1.2rem;
+}
+.price-big{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600}
+.price-sm{font-size:0.72rem;letter-spacing:0.05em}
+
+/* ── PHOTO UPLOAD GUIDE ── */
+.photo-guide{
+  background:var(--sand);border:1px dashed rgba(201,168,76,0.4);
+  border-radius:10px;padding:1.2rem 1.5rem;margin:1.5rem 0;
+  font-size:0.8rem;color:var(--muted);
+}
+.photo-guide strong{color:var(--ink2);display:block;margin-bottom:0.3rem}
+.photo-guide code{background:rgba(42,107,124,0.1);color:var(--sea);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.75rem}
+
+/* ── CONTENT ── */
+.room-content{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;display:grid;grid-template-columns:1.1fr 0.9fr;gap:4rem;align-items:start}
+@media(max-width:800px){.room-content{grid-template-columns:1fr;gap:2.5rem}}
+
+.sec-label{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:300;color:var(--ink2);margin-bottom:1rem}
+.sec-title em{font-style:italic}
+.room-desc{color:var(--muted);line-height:1.9;font-size:0.9rem;margin-bottom:2rem}
+
+/* ── FEATURES LIST ── */
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:2rem}
+.feat-item{display:flex;align-items:center;gap:0.7rem;background:#fff;border:1px solid rgba(201,168,76,0.12);border-radius:10px;padding:0.8rem 1rem}
+.feat-icon{font-size:1.2rem;flex-shrink:0}
+.feat-text{font-size:0.8rem;color:var(--ink2);line-height:1.3}
+
+/* ── EXTRA PHOTO ROW ── */
+.photo-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}
+.photo-row .photo-slot{height:160px;border-radius:10px;border:1px dashed rgba(201,168,76,0.2)}
+
+/* ── BOOKING PANEL ── */
+.booking-card{background:#fff;border-radius:var(--radius);border:1px solid rgba(201,168,76,0.2);padding:2rem;position:sticky;top:7rem}
+.bc-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--ink2);font-style:italic;margin-bottom:0.3rem}
+.bc-price{font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;padding-bottom:1.2rem;border-bottom:1px solid rgba(201,168,76,0.15)}
+.bc-price span{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--ink2)}
+
+/* Calendar */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.cal-nav{background:none;border:1px solid rgba(201,168,76,0.3);color:var(--ink2);width:30px;height:30px;border-radius:50%;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:0.85rem}
+.cal-nav:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+.cal-month-lbl{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--ink2);font-style:italic}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dn{text-align:center;font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:0.3rem 0}
+.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:0.72rem;border-radius:6px;cursor:pointer;transition:all 0.15s;position:relative;user-select:none}
+.cal-d:hover:not(.disabled):not(.empty){background:var(--sand)}
+.cal-d.empty{cursor:default}
+.cal-d.disabled{color:rgba(0,0,0,0.2);cursor:not-allowed}
+.cal-d.booked{background:rgba(192,57,43,0.07);color:rgba(192,57,43,0.45);cursor:not-allowed}
+.cal-d.booked::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--red);opacity:0.5}
+.cal-d.sel-start,.cal-d.sel-end{background:var(--sea);color:#fff;font-weight:500}
+.cal-d.in-range{background:rgba(42,107,124,0.12);color:var(--sea)}
+.cal-d.today{font-weight:500;color:var(--gold)}
+.cal-legend{display:flex;gap:0.8rem;margin-top:0.7rem;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:0.3rem;font-size:0.63rem;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+.dot-a{background:rgba(42,107,124,0.15);border:1px solid var(--sea2)}
+.dot-b{background:rgba(192,57,43,0.15);border:1px solid var(--red)}
+.dot-s{background:var(--sea)}
+
+/* Form */
+.date-sum{background:var(--sand);border-radius:8px;padding:0.9rem 1rem;margin:1rem 0;display:none}
+.date-sum.visible{display:block}
+.ds-row{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--ink2);margin-bottom:0.2rem}
+.ds-total{border-top:1px solid rgba(201,168,76,0.3);margin-top:0.4rem;padding-top:0.4rem;font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--ink2);display:flex;justify-content:space-between}
+.fg{display:flex;flex-direction:column;gap:0.28rem;margin-bottom:0.7rem}
+.fg label{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.fg input,.fg textarea,.fg select{background:var(--cream);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:0.65rem 0.85rem;font-family:'Jost',sans-serif;font-size:0.84rem;font-weight:300;color:var(--ink);outline:none;transition:border-color 0.2s;width:100%}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--sea)}
+.fg textarea{resize:vertical;min-height:65px}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem}
+.submit-btn{width:100%;background:var(--sea);color:#fff;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.73rem;letter-spacing:0.15em;text-transform:uppercase;padding:1rem;border-radius:10px;transition:all 0.25s;margin-top:0.4rem}
+.submit-btn:hover{background:var(--ink2)}
+.submit-btn:disabled{background:var(--muted);cursor:not-allowed}
+.notice{border-radius:8px;padding:0.85rem 1rem;font-size:0.78rem;margin-top:0.7rem;display:none;line-height:1.5}
+.notice.visible{display:block}
+.notice.success{background:rgba(26,107,74,0.1);border:1px solid rgba(26,107,74,0.3);color:var(--green)}
+.notice.warning{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#8a6820}
+.notice.error{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.25);color:var(--red)}
+
+/* ── OTHER ROOMS ── */
+.other-rooms{background:var(--sand);padding:4rem 2rem}
+.other-rooms .container{max-width:1100px;margin:0 auto}
+.other-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-top:1.8rem}
+.other-card{background:#fff;border-radius:12px;border:1px solid rgba(201,168,76,0.15);overflow:hidden;text-decoration:none;color:inherit;transition:all 0.2s;display:block}
+.other-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,107,124,0.12)}
+.oc-top{background:linear-gradient(135deg,var(--ink2),var(--sea));padding:1.2rem;position:relative}
+.oc-type{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem}
+.oc-name{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#fff}
+.oc-cap{position:absolute;top:0.8rem;right:0.8rem;background:rgba(255,255,255,0.15);color:#fff;font-size:0.58rem;padding:0.2rem 0.55rem;border-radius:100px}
+.oc-body{padding:1rem}
+.oc-price{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--ink2)}
+.oc-unit{font-size:0.68rem;color:var(--muted)}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);border-top:1px solid rgba(201,168,76,0.1);padding:2rem;text-align:center;color:rgba(255,255,255,0.35);font-size:0.75rem}
+footer strong{color:rgba(255,255,255,0.6)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .topbar{padding:0.85rem 1.2rem}
+  .nav-links{display:none}
+  .room-hero-content{padding:2rem 1.5rem 2rem}
+  .room-hero-gallery{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr}
+  .room-hero-gallery .photo-slot:first-child{grid-row:1/2;grid-column:1/3}
+  .features-grid{grid-template-columns:1fr}
+  .photo-row{grid-template-columns:1fr 1fr}
+  .form-row-2{grid-template-columns:1fr}
+}

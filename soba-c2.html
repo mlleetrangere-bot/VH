@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Apartman C2 – Villa Helena Vodice</title>
+<link rel="stylesheet" href="room.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topbar">
+  <a href="index.html" class="logo-text">Villa <em>Helena</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html#smjestaji" data-i18n="nav_rooms">Smještaji</a></li>
+    <li><a href="index.html#lokacija" data-i18n="nav_location">Lokacija</a></li>
+    <li><a href="index.html#rezervacija" data-i18n="nav_book">Rezervacija</a></li>
+    <li><a href="index.html#kontakt" data-i18n="nav_contact">Kontakt</a></li>
+  </ul>
+  <div class="lang-group">
+    <button class="lang-btn" onclick="setLang('hr')">HR</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('de')">DE</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="room-hero">
+  <div class="room-hero-gallery">
+    <!-- ZAMIJENI src="slike/c2-1.jpg" s pravom slikom -->
+    <div class="photo-slot">
+      <img src="slike/c2-1.jpg" alt="Apartman C2 – dnevni boravak" onerror="this.style.opacity=0"/>
+      <div class="slot-icon">🖼️</div>
+      <div class="slot-label">slike/c2-1.jpg<br>Glavna fotografija</div>
+    </div>
+    <div class="photo-slot">
+      <img src="slike/c2-2.jpg" alt="Apartman C2 – spavaća soba" onerror="this.style.opacity=0"/>
+      <div class="slot-icon">🛏️</div>
+      <div class="slot-label">slike/c2-2.jpg<br>Spavaća soba</div>
+    </div>
+    <div class="photo-slot">
+      <img src="slike/c2-3.jpg" alt="Apartman C2 – terasa" onerror="this.style.opacity=0"/>
+      <div class="slot-icon">🌅</div>
+      <div class="slot-label">slike/c2-3.jpg<br>Terasa / pogled</div>
+    </div>
+    <div class="photo-slot">
+      <img src="slike/c2-4.jpg" alt="Apartman C2 – kuhinja" onerror="this.style.opacity=0"/>
+      <div class="slot-icon">🍳</div>
+      <div class="slot-label">slike/c2-4.jpg<br>Kuhinja</div>
+    </div>
+  </div>
+  <div class="room-hero-overlay"></div>
+  <div class="room-hero-content">
+    <p class="room-hero-eyebrow">Villa Helena · <span data-i18n="apt">Apartman</span></p>
+    <h1 class="room-hero-name">C2 — <em id="heroViewLabel">Pogled na more</em></h1>
+    <p class="room-hero-sub" id="heroSub">Do 4 osobe · Opremljena kuhinja · Privatna terasa</p>
+    <div class="room-hero-price">
+      <span class="price-big">130</span>
+      <span class="price-sm">EUR / <span data-i18n="night">noć</span></span>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<div class="room-content">
+  <!-- LEFT: Description + features -->
+  <div>
+    <p class="sec-label" data-i18n="apt">Apartman</p>
+    <h2 class="sec-title" id="roomTitle">Apartman C2 — <em>Pogled na more</em></h2>
+    <p class="room-desc" id="roomDesc">
+      Prostrani apartman C2 smješten je na gornjem katu Ville Helene s predivnim pogledom na Jadransko more.
+      Savršen za parove ili obitelji s djecom do 4 osobe. Moderan interijer, privatna terasa i potpuno opremljena
+      kuhinja čine ovaj apartman idealnim mjestom za opušten dalmatinski odmor.
+    </p>
+
+    <!-- Features -->
+    <div class="features-grid" id="featuresGrid">
+      <div class="feat-item"><div class="feat-icon">🛏️</div><div class="feat-text" id="f1">1 spavaća soba + sofa na razvlačenje</div></div>
+      <div class="feat-item"><div class="feat-icon">🌊</div><div class="feat-text" id="f2">Terasa s pogledom na more</div></div>
+      <div class="feat-item"><div class="feat-icon">🍳</div><div class="feat-text" id="f3">Potpuno opremljena kuhinja</div></div>
+      <div class="feat-item"><div class="feat-icon">🚿</div><div class="feat-text" id="f4">Privatna kupaonica</div></div>
+      <div class="feat-item"><div class="feat-icon">❄️</div><div class="feat-text" id="f5">Klima uređaj</div></div>
+      <div class="feat-item"><div class="feat-icon">📶</div><div class="feat-text" id="f6">Besplatan Wi-Fi</div></div>
+      <div class="feat-item"><div class="feat-icon">🚗</div><div class="feat-text" id="f7">Privatni parking</div></div>
+      <div class="feat-item"><div class="feat-icon">🏊</div><div class="feat-text" id="f8">Pristup vanjskom bazenu</div></div>
+    </div>
+
+    <!-- Extra photos -->
+    <div class="photo-row">
+      <div class="photo-slot">
+        <img src="slike/c2-5.jpg" alt="" onerror="this.style.opacity=0"/>
+        <div class="slot-icon">📷</div><div class="slot-label">slike/c2-5.jpg</div>
+      </div>
+      <div class="photo-slot">
+        <img src="slike/c2-6.jpg" alt="" onerror="this.style.opacity=0"/>
+        <div class="slot-icon">📷</div><div class="slot-label">slike/c2-6.jpg</div>
+      </div>
+      <div class="photo-slot">
+        <img src="slike/c2-7.jpg" alt="" onerror="this.style.opacity=0"/>
+        <div class="slot-icon">📷</div><div class="slot-label">slike/c2-7.jpg</div>
+      </div>
+    </div>
+
+    <!-- Photo guide -->
+    <div class="photo-guide">
+      <strong data-i18n="photo_guide_title">Kako dodati fotografije:</strong>
+      <span data-i18n="photo_guide_body">Uploadajte slike na Avalon (cPanel → File Manager → slike/) i zamijenite putanje u kodu.</span><br/>
+      <code>slike/c2-1.jpg</code> → <code>slike/c2-2.jpg</code> → <code>slike/c2-7.jpg</code>
+    </div>
+  </div>
+
+  <!-- RIGHT: Booking card -->
+  <div>
+    <div class="booking-card">
+      <p class="bc-title" data-i18n="select_dates">Odaberite datume</p>
+      <p class="bc-price"><span>130</span> EUR / <span data-i18n="night">noć</span> · <span data-i18n="to">do</span> 4 <span data-i18n="persons">osobe</span></p>
+
+      <!-- Calendar -->
+      <div class="cal-header">
+        <button class="cal-nav" id="calPrev">&#8592;</button>
+        <span class="cal-month-lbl" id="calMonthLbl"></span>
+        <button class="cal-nav" id="calNext">&#8594;</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <div class="leg-item"><div class="leg-dot dot-a"></div><span data-i18n="leg_free">Slobodno</span></div>
+        <div class="leg-item"><div class="leg-dot dot-b"></div><span data-i18n="leg_booked">Rezervirano</span></div>
+        <div class="leg-item"><div class="leg-dot dot-s"></div><span data-i18n="leg_sel">Odabrano</span></div>
+      </div>
+      <div class="notice warning" id="calNotice"></div>
+
+      <!-- Summary -->
+      <div class="date-sum" id="dateSummary">
+        <div class="ds-row"><span data-i18n="checkin">Dolazak</span><span id="sCheckin">—</span></div>
+        <div class="ds-row"><span data-i18n="checkout">Odlazak</span><span id="sCheckout">—</span></div>
+        <div class="ds-row"><span data-i18n="nights">Noći</span><span id="sNights">—</span></div>
+        <div class="ds-total"><span data-i18n="total">Ukupno</span><span id="sTotal">—</span></div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-row-2">
+        <div class="fg"><label data-i18n="first_name">Ime</label><input type="text" id="fFN"/></div>
+        <div class="fg"><label data-i18n="last_name">Prezime</label><input type="text" id="fLN"/></div>
+      </div>
+      <div class="fg"><label>Email</label><input type="email" id="fEM"/></div>
+      <div class="fg"><label data-i18n="phone">Telefon</label><input type="tel" id="fPH"/></div>
+      <div class="form-row-2">
+        <div class="fg"><label data-i18n="guests">Gosti</label>
+          <select id="fGU"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+        </div>
+        <div class="fg"><label data-i18n="country">Država</label><input type="text" id="fCO"/></div>
+      </div>
+      <div class="fg"><label data-i18n="note">Napomena</label><textarea id="fNO"></textarea></div>
+      <button class="submit-btn" id="submitBtn" onclick="submitBooking()" data-i18n="send_request">Pošalji zahtjev</button>
+      <div class="notice success" id="successNotice"></div>
+      <div class="notice error" id="errorNotice"></div>
+    </div>
+  </div>
+</div>
+
+<!-- OTHER ROOMS -->
+<section class="other-rooms">
+  <div class="container">
+    <p class="sec-label" data-i18n="other_rooms">Ostali smještaji</p>
+    <div class="other-grid">
+      <a href="soba-b2.html" class="other-card">
+        <div class="oc-top"><div class="oc-cap">do 5 osoba</div><div class="oc-type">Apartman</div><div class="oc-name">B2</div></div>
+        <div class="oc-body"><span class="oc-price">150</span> <span class="oc-unit">EUR / noć</span></div>
+      </a>
+      <a href="soba-c1.html" class="other-card">
+        <div class="oc-top"><div class="oc-cap">2 osobe</div><div class="oc-type">Soba</div><div class="oc-name">C1</div></div>
+        <div class="oc-body"><span class="oc-price">90</span> <span class="oc-unit">EUR / noć</span></div>
+      </a>
+      <a href="soba-a1.html" class="other-card">
+        <div class="oc-top"><div class="oc-cap">2 osobe</div><div class="oc-type">Soba</div><div class="oc-name">A1</div></div>
+        <div class="oc-body"><span class="oc-price">90</span> <span class="oc-unit">EUR / noć</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Villa Helena</strong> · Vodice, Hrvatska · Dalmacija</p>
+  <p style="margin-top:0.4rem">+385 95 8600 340 · villahelena.cro@gmail.com</p>
+</footer>
+
+<script>
+const ROOM_ID = 'C2';
+const ROOM_NAME = 'Apartman C2';
+const ROOM_PRICE = 130;
+
+const CONTENT = {
+  hr:{
+    heroView:"Pogled na more", heroSub:"Do 4 osobe · Opremljena kuhinja · Privatna terasa",
+    title:"Apartman C2 — Pogled na more",
+    desc:"Prostrani apartman C2 smješten je na gornjem katu Ville Helene s predivnim pogledom na Jadransko more. Savršen za parove ili obitelji s djecom do 4 osobe. Moderan interijer, privatna terasa i potpuno opremljena kuhinja čine ovaj apartman idealnim mjestom za opušten dalmatinski odmor.",
+    f:["1 spavaća soba + sofa na razvlačenje","Terasa s pogledom na more","Potpuno opremljena kuhinja","Privatna kupaonica","Klima uređaj","Besplatan Wi-Fi","Privatni parking","Pristup vanjskom bazenu"]
+  },
+  en:{
+    heroView:"Sea view", heroSub:"Up to 4 persons · Equipped kitchen · Private terrace",
+    title:"Apartment C2 — Sea View",
+    desc:"Spacious apartment C2 on the upper floor of Villa Helena with a stunning view of the Adriatic Sea. Perfect for couples or families with children, accommodating up to 4 persons. A modern interior, private terrace and fully equipped kitchen make this apartment the ideal place for a relaxed Dalmatian holiday.",
+    f:["1 bedroom + sofa bed","Terrace with sea view","Fully equipped kitchen","Private bathroom","Air conditioning","Free Wi-Fi","Private parking","Access to outdoor pool"]
+  },
+  de:{
+    heroView:"Meerblick", heroSub:"Bis zu 4 Personen · Ausgestattete Küche · Private Terrasse",
+    title:"Apartment C2 — Meerblick",
+    desc:"Geräumiges Apartment C2 im Obergeschoss der Villa Helena mit herrlichem Blick auf die Adria. Ideal für Paare oder Familien mit Kindern bis zu 4 Personen. Modernes Interieur, private Terrasse und voll ausgestattete Küche machen dieses Apartment zum perfekten Ort für einen entspannten Dalmatienurlaub.",
+    f:["1 Schlafzimmer + Schlafsofa","Terrasse mit Meerblick","Voll ausgestattete Küche","Eigenes Bad","Klimaanlage","Kostenloses WLAN","Privatparkplatz","Zugang zum Außenpool"]
+  }
+};
+
+function renderContent(){
+  const c = CONTENT[lang] || CONTENT.hr;
+  document.getElementById('heroViewLabel').textContent = c.heroView;
+  document.getElementById('heroSub').textContent = c.heroSub;
+  document.getElementById('roomTitle').innerHTML = `Apartman C2 — <em>${c.heroView}</em>`;
+  document.getElementById('roomDesc').textContent = c.desc;
+  c.f.forEach((txt,i) => { const el = document.getElementById('f'+(i+1)); if(el) el.textContent = txt; });
+}
+</script>
+<script src="room.js"></script>
+<script>document.addEventListener('DOMContentLoaded', initPage);</script>
+</body>
+</html>
