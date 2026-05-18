@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# fetch_courses.py — preuzima sve golf terene u Europi
-
 import urllib.request
 import urllib.parse
 import json
@@ -8,12 +6,47 @@ import os
 import time
 
 API_KEY = os.environ.get('GOLF_API_KEY', '')
+print(f"API_KEY postavljen: {'DA' if API_KEY else 'NE'}")
+print(f"API_KEY duljina: {len(API_KEY)}")
+
 BASE_URL = 'https://api.golfcourseapi.com/v1/search?search_query='
 
-# Sve europske države + ključni gradovi
 QUERIES = [
-    # Njemačka — NRW fokus
-    'Düsseldorf', 'Neuss', 'Krefeld', 'Mönchengladbach', 'Köln',
+    'Düsseldorf', 'Neuss', 'Krefeld', 'Germany', 'golf Germany'
+]
+
+all_courses = {}
+
+for i, query in enumerate(QUERIES):
+    try:
+        url = BASE_URL + urllib.parse.quote(query)
+        print(f"\nPozivam: {url}")
+        req = urllib.request.Request(
+            url,
+            headers={'Authorization': f'Key {API_KEY}'}
+        )
+        with urllib.request.urlopen(req, timeout=15) as response:
+            raw = response.read()
+            print(f"Odgovor ({len(raw)} bajta): {raw[:200]}")
+            data = json.loads(raw)
+            courses = data.get('data', [])
+            for c in courses:
+                cid = str(c.get('id', ''))
+                if cid and cid not in all_courses:
+                    all_courses[cid] = c
+            print(f"Pronađeno: {len(courses)} terena, ukupno: {len(all_courses)}")
+    except Exception as e:
+        print(f"GREŠKA za '{query}': {type(e).__name__}: {e}")
+    time.sleep(1)
+
+result = list(all_courses.values())
+print(f"\nUkupno terena: {len(result)}")
+
+with open('courses.json', 'w', encoding='utf-8') as f:
+    json.dump(result, f, ensure_ascii=False, indent=2)
+
+print(f"Zapisano u courses.json")
+
     'Bonn', 'Dortmund', 'Essen', 'Bochum', 'Duisburg', 'Wuppertal',
     'Aachen', 'Münster', 'Bielefeld', 'Paderborn', 'Siegen',
     'München', 'Berlin', 'Hamburg', 'Frankfurt', 'Stuttgart',
