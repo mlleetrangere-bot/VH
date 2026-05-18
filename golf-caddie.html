@@ -1933,27 +1933,38 @@ const GOLF_API_KEY = '4DTM7WM5HDWDZ26B7VVYUSP75A';
 
 let apiSearchResults = [];
 
+// Lokalni podaci — učitani iz courses.json (GitHub Actions)
+let localCourses = null;
+
+async function loadLocalCourses() {
+  if (localCourses) return localCourses;
+  try {
+    const res = await fetch('courses.json', { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      localCourses = await res.json();
+      console.log(`Učitano ${localCourses.length} terena iz courses.json`);
+    }
+  } catch (e) {
+    localCourses = [];
+  }
+  return localCourses || [];
+}
+
 async function fetchApi(endpoint) {
-  // Koristi lokalni PHP proxy (golf-proxy.php na istom serveru)
-  // Nema CORS problema jer je na istoj domeni
-  const q = new URLSearchParams(endpoint.split('?')[1]).get('search_query') || '';
-  try {
-    const res = await fetch(`golf-proxy.php?q=${encodeURIComponent(q)}`, {
-      signal: AbortSignal.timeout(10000)
-    });
-    if (res.ok) return await res.json();
-  } catch (e) { /* proxy nije dostupan, probaj direktno */ }
+  const q = (new URLSearchParams(endpoint.split('?')[1]).get('search_query') || '').toLowerCase();
+  const courses = await loadLocalCourses();
 
-  // Fallback: direktno (može raditi ako API doda CORS u budućnosti)
-  try {
-    const res = await fetch(`${GOLF_API}${endpoint}`, {
-      headers: { 'Authorization': `Key ${GOLF_API_KEY}` },
-      signal: AbortSignal.timeout(8000)
-    });
-    if (res.ok) return await res.json();
-  } catch (e) { /* CORS blokiran */ }
+  if (courses.length === 0) throw new Error('courses.json nije pronađen');
 
-  throw new Error('Postavi golf-proxy.php na server');
+  // Lokalno pretraživanje
+  const results = courses.filter(c => {
+    const name = (c.club_name || '').toLowerCase();
+    const city = (c.location?.city || '').toLowerCase();
+    const country = (c.location?.country || '').toLowerCase();
+    return name.includes(q) || city.includes(q) || country.includes(q);
+  });
+
+  return { data: results };
 }
 
 async function searchCourse() {
