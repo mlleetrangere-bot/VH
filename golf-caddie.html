@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050c18">
+<title>Golf Caddie</title>
+<link rel="manifest" href="#" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050c18;
+  --bg2: #091422;
+  --surface: #0d1d33;
+  --surface2: #112540;
+  --surface3: #16304f;
+  --border: #1e3d5c;
+  --border2: #254d73;
+  --green: #3ddc84;
+  --green-dim: #2ab36a;
+  --green-glow: rgba(61,220,132,0.15);
+  --gold: #f5c842;
+  --gold-dim: #c9a030;
+  --red: #ff6b6b;
+  --blue: #4da6ff;
+  --text: #ddeeff;
+  --text2: #7a9bb8;
+  --text3: #3d5e7a;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+.app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ambient background */
+.app::before {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: -20%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(ellipse, rgba(61,220,132,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.app::after {
+  content: '';
+  position: fixed;
+  bottom: -20%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(77,166,255,0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SCREENS ── */
+.screen {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+.screen.active { display: flex; }
+
+/* ── SCROLLABLE CONTENT ── */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: calc(20px + var(--safe-bottom));
+}
+.scroll-content::-webkit-scrollbar { display: none; }
+
+/* ── HEADER ── */
+.header {
+  padding: calc(12px + var(--safe-top)) 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(5,12,24,0.95);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  z-index: 10;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--green);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.header-sub {
+  font-size: 11px;
+  color: var(--text2);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+}
+.btn-back {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btn-back:active { background: var(--surface2); transform: scale(0.93); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  display: flex;
+  border-top: 1px solid var(--border);
+  background: rgba(5,12,24,0.97);
+  backdrop-filter: blur(10px);
+  padding-bottom: var(--safe-bottom);
+  flex-shrink: 0;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  color: var(--text3);
+  gap: 3px;
+}
+.nav-item.active { color: var(--green); }
+.nav-item:active { transform: scale(0.93); }
+.nav-icon { font-size: 20px; line-height: 1; }
+.nav-label { font-size: 9px; font-family: var(--font-mono); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 0 16px 12px;
+  transition: border-color 0.2s;
+}
+.card:active { border-color: var(--border2); }
+.card.highlight { border-color: var(--green); background: rgba(61,220,132,0.04); }
+.card.gold { border-color: var(--gold-dim); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0 20px;
+}
+.btn:active { transform: scale(0.96); filter: brightness(0.9); }
+.btn-lg { height: 52px; font-size: 16px; border-radius: 14px; }
+.btn-md { height: 44px; font-size: 14px; }
+.btn-sm { height: 36px; font-size: 13px; border-radius: 10px; }
+.btn-primary { background: var(--green); color: var(--bg); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-gold { background: var(--gold); color: var(--bg); }
+.btn-red { background: rgba(255,107,107,0.15); color: var(--red); border: 1px solid rgba(255,107,107,0.3); }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-full { width: 100%; }
+
+/* ── INPUTS ── */
+.input-group { margin-bottom: 14px; }
+.input-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text2); font-family: var(--font-mono); margin-bottom: 6px; display: block; }
+.input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+.input:focus { border-color: var(--green); }
+.input::placeholder { color: var(--text3); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  padding: 16px 20px 8px;
+}
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* ── PILL ── */
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.pill-green { background: rgba(61,220,132,0.12); color: var(--green); border: 1px solid rgba(61,220,132,0.3); }
+.pill-gold { background: rgba(245,200,66,0.12); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
+.pill-red { background: rgba(255,107,107,0.12); color: var(--red); border: 1px solid rgba(255,107,107,0.3); }
+.pill-blue { background: rgba(77,166,255,0.12); color: var(--blue); border: 1px solid rgba(77,166,255,0.3); }
+.pill-muted { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text);
+  z-index: 9000;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.green { color: var(--green); border-color: rgba(61,220,132,0.4); }
+.toast.red { color: var(--red); border-color: rgba(255,107,107,0.4); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(5,12,24,0.88);
+  z-index: 5000;
+  display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px calc(20px + var(--safe-bottom));
+  width: 100%;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.1,0.64,1);
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-handle {
+  width: 40px; height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.modal h3 { font-family: var(--font-display); font-size: 26px; color: var(--text); letter-spacing: 1px; margin-bottom: 6px; }
+.modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; font-family: var(--font-mono); }
+
+/* ══════════════════════════════════════════════════════════════
+   SCREEN: HOME / DASHBOARD
+══════════════════════════════════════════════════════════════ */
+#screen-home .hero {
+  padding: 24px 20px 0;
+  position: relative;
+}
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 52px;
+  color: var(--green);
+  letter-spacing: 4px;
+  line-height: 0.9;
+  text-shadow: 0 0 40px rgba(61,220,132,0.2);
+}
+.hero-subtitle {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 6px;
+  font-family: var(--font-mono);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 1px;
+}
+.stat-label {
+  font-size: 10px;
+  color: var(--text2);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SCREEN: NOVA RUNDA
+══════════════════════════════════════════════════════════════ */
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.player-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.player-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  padding: 0;
+}
+.player-name-input::placeholder { color: var(--text3); }
+.player-remove {
+  background: none; border: none;
+  color: var(--text3); font-size: 18px;
+  cursor: pointer; padding: 4px;
+  transition: color 0.15s;
+}
+.player-remove:active { color: var(--red); }
+
+/* ══════════════════════════════════════════════════════════════
+   SCREEN: IGRA
+══════════════════════════════════════════════════════════════ */
+.hole-header {
+  padding: 12px 20px;
+  flex-shrink: 0;
+}
+.hole-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.hole-number {
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--green);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.hole-par-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.hole-par-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); letter-spacing: 2px; }
+.hole-par-val { font-family: var(--font-display); font-size: 36px; color: var(--gold); line-height: 1; }
+
+/* GPS distances */
+.dist-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.dist-block {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.dist-block.mid { border-color: var(--gold-dim); background: rgba(245,200,66,0.05); }
+.dist-block-label { font-size: 9px; color: var(--text2); font-family: var(--font-mono); letter-spacing: 2px; margin-bottom: 4px; }
+.dist-block-val { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; color: var(--text); line-height: 1; }
+.dist-block.mid .dist-block-val { color: var(--gold); }
+.dist-block-unit { font-size: 10px; color: var(--text3); font-family: var(--font-mono); }
+
+/* GPS status bar */
+.gps-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface2);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.gps-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+}
+.gps-dot.active { background: var(--green); animation: gpsPulse 1.5s infinite; }
+.gps-dot.error { background: var(--red); }
+@keyframes gpsPulse { 0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(61,220,132,0.4); } 50% { opacity:0.7; box-shadow:0 0 0 4px rgba(61,220,132,0); } }
+.gps-text { font-size: 10px; color: var(--text2); font-family: var(--font-mono); }
+
+/* Players scores */
+.players-scores {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 16px;
+}
+.players-scores::-webkit-scrollbar { display: none; }
+
+.player-score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.player-score-card.active-player { border-color: var(--green); }
+
+.psc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.psc-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.psc-diff {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.stroke-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.stroke-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.stroke-btn:active { transform: scale(0.88); }
+.stroke-btn.minus:active { background: rgba(255,107,107,0.2); border-color: var(--red); }
+.stroke-btn.plus:active { background: rgba(61,220,132,0.2); border-color: var(--green); }
+
+.stroke-display {
+  flex: 1;
+  text-align: center;
+}
+.stroke-num {
+  font-family: var(--font-display);
+  font-size: 52px;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 2px;
+}
+.stroke-sublabel {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+/* Hole nav */
+.hole-nav {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
+.hole-progress {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  overflow: hidden;
+}
+.hole-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.hole-dot.done { background: var(--green-dim); }
+.hole-dot.current { background: var(--green); width: 14px; border-radius: 3px; }
+
+/* ══════════════════════════════════════════════════════════════
+   SCREEN: SCORECARD
+══════════════════════════════════════════════════════════════ */
+.scorecard-table {
+  margin: 0 16px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.sc-row {
+  display: grid;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.sc-row:last-child { border-bottom: none; }
+.sc-row:active { background: var(--surface2); }
+.sc-row.header {
+  background: var(--surface2);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  color: var(--text2);
+  cursor: default;
+}
+.sc-row.current { background: rgba(61,220,132,0.05); }
+.sc-row.total-row { background: var(--surface2); font-weight: 600; cursor: default; }
+.sc-hole { font-family: var(--font-mono); }
+.sc-par { color: var(--text2); font-family: var(--font-mono); }
+.sc-diff { font-family: var(--font-mono); text-align: right; }
+.diff-under { color: var(--green); }
+.diff-over { color: var(--red); }
+.diff-even { color: var(--text2); }
+.diff-eagle { color: var(--gold); }
+
+/* ══════════════════════════════════════════════════════════════
+   SCREEN: STATISTIKE
+══════════════════════════════════════════════════════════════ */
+.stat-big {
+  text-align: center;
+  padding: 20px;
+}
+.stat-big-val {
+  font-family: var(--font-display);
+  font-size: 72px;
+  color: var(--green);
+  letter-spacing: 2px;
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(61,220,132,0.2);
+}
+.stat-big-label { font-size: 12px; color: var(--text2); font-family: var(--font-mono); letter-spacing: 2px; margin-top: 6px; }
+
+.bar-chart {
+  padding: 0 16px;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.bar-label { font-size: 11px; color: var(--text2); font-family: var(--font-mono); width: 60px; flex-shrink: 0; }
+.bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.34,1.2,0.64,1);
+}
+.bar-count { font-size: 11px; color: var(--text2); font-family: var(--font-mono); width: 24px; text-align: right; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   SCREEN: POVIJEST
+══════════════════════════════════════════════════════════════ */
+.round-card {
+  margin: 0 16px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.round-card:active { border-color: var(--border2); }
+.round-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.round-course { font-size: 15px; font-weight: 600; color: var(--text); }
+.round-date { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+.round-players {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.round-player-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface2);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.round-player-score {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* Animacije */
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.animate-in { animation: fadeInUp 0.3s ease both; }
+
+/* Number input no spinner */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ════════════════════════════════════════════════
+       SCREEN: HOME
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen active" id="screen-home">
+    <div class="scroll-content">
+      <div class="hero">
+        <div class="hero-eyebrow">Dobrodošli</div>
+        <div class="hero-title">GOLF<br>CADDIE</div>
+        <div class="hero-subtitle">Vaš digitalni caddie</div>
+      </div>
+
+      <div class="stat-grid" id="home-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-rounds">0</div>
+          <div class="stat-label">RUNDI</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-best">—</div>
+          <div class="stat-label">NAJBOLJI</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-avg">—</div>
+          <div class="stat-label">PROSJEK</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-holes">0</div>
+          <div class="stat-label">RUPA ODIGRANO</div>
+        </div>
+      </div>
+
+      <div style="padding: 0 16px 8px;">
+        <button class="btn btn-primary btn-lg btn-full" onclick="showScreen('new-round')">
+          ⛳ Nova runda
+        </button>
+      </div>
+
+      <div class="section-label">POSLJEDNJE RUNDE</div>
+      <div id="recent-rounds-home"></div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('home')">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Početna</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('history')">
+        <span class="nav-icon">📜</span>
+        <span class="nav-label">Povijest</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('stats')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Statistike</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       SCREEN: NOVA RUNDA
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-new-round">
+    <div class="header">
+      <button class="btn-back" onclick="showScreen('home')">←</button>
+      <div>
+        <div class="header-title">NOVA RUNDA</div>
+      </div>
+      <div style="width:38px"></div>
+    </div>
+
+    <div class="scroll-content" style="padding: 16px 16px 100px;">
+
+      <!-- Course Search -->
+      <div class="section-label" style="padding:0 0 8px;">🔍 PRETRAŽI TEREN</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <input class="input" id="course-search-input" type="text" placeholder="npr. Düsseldorf Golf..."
+          style="flex:1" onkeydown="if(event.key==='Enter')searchCourse()">
+        <button class="btn btn-primary btn-md" onclick="searchCourse()" style="padding:0 14px;flex-shrink:0;">
+          Traži
+        </button>
+      </div>
+      <div id="search-status" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;min-height:16px;"></div>
+      <div id="search-results" style="margin-bottom:14px;"></div>
+
+      <!-- Selected course badge -->
+      <div id="selected-course-badge" style="display:none;background:var(--green-glow);border:1px solid rgba(61,220,132,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--green);font-family:var(--font-mono);">
+        ✓ <span id="selected-course-badge-name"></span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label" style="padding:0 0 8px;">✏️ ILI UNESI RUČNO</div>
+
+      <div class="input-group">
+        <label class="input-label">Naziv terena</label>
+        <input class="input" id="course-name" type="text" placeholder="npr. Golf Club Düsseldorf" maxlength="40">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="input-group" style="margin:0">
+          <label class="input-label">Broj rupa</label>
+          <input class="input" id="num-holes" type="number" value="18" min="9" max="18">
+        </div>
+        <div class="input-group" style="margin:0">
+          <label class="input-label">Default par</label>
+          <input class="input" id="default-par" type="number" value="4" min="3" max="5">
+        </div>
+      </div>
+
+      <!-- Hendikep sistem -->
+      <div class="section-label" style="padding:0 0 8px;">⚙️ HENDIKEP SISTEM</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button id="hcp-btn-whs" class="btn btn-primary btn-sm" style="flex:1" onclick="setHcpSystem('WHS')">WHS</button>
+        <button id="hcp-btn-vorgabe" class="btn btn-secondary btn-sm" style="flex:1" onclick="setHcpSystem('Vorgabe')">Vorgabe</button>
+      </div>
+
+      <!-- Course Rating + Slope (WHS) -->
+      <div id="whs-fields">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+          <div class="input-group" style="margin:0">
+            <label class="input-label">Course Rating</label>
+            <input class="input" id="course-rating" type="number" value="72.0" step="0.1" min="60" max="82" placeholder="72.0">
+          </div>
+          <div class="input-group" style="margin:0">
+            <label class="input-label">Slope</label>
+            <input class="input" id="slope-rating" type="number" value="113" min="55" max="155" placeholder="113">
+          </div>
+          <div class="input-group" style="margin:0">
+            <label class="input-label">Par terena</label>
+            <input class="input" id="course-par-total" type="number" value="72" min="60" max="76" placeholder="72">
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:14px;padding:8px 10px;background:var(--surface2);border-radius:8px;line-height:1.7;">
+          WHS Playing HCP = (HCI × Slope/113) + (CR − Par)<br>
+          Slope 113 = standardni teren
+        </div>
+      </div>
+
+      <!-- Stroke Index po rupi -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span class="input-label" style="margin:0">STROKE INDEX (SI) PO RUPI</span>
+          <button class="btn btn-ghost btn-sm" onclick="toggleSiEditor()" style="font-size:11px;padding:0 10px;height:28px;" id="si-toggle-btn">Uredi ▼</button>
+        </div>
+        <div id="si-editor" style="display:none;">
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:8px;">SI 1 = najtežja rupa. Svaka rupa ima jedinstven SI 1-18.</div>
+          <div id="si-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;"></div>
+          <button class="btn btn-ghost btn-sm btn-full" onclick="resetSiDefault()" style="margin-top:8px;font-size:11px;">Resetiraj na default</button>
+        </div>
+        <div id="si-summary" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Default: SI 1-18 redom</div>
+      </div>
+
+      <div class="section-label" style="padding: 0 0 8px;">IGRAČI</div>
+      <div id="players-list"></div>
+
+      <button class="btn btn-ghost btn-md btn-full" onclick="addPlayer()" style="margin-bottom:20px;">
+        + Dodaj igrača
+      </button>
+
+      <button class="btn btn-primary btn-lg btn-full" onclick="startRound()">
+        ▶ Počni igru
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       SCREEN: IGRA
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-play">
+    <div class="hole-header">
+      <div class="hole-meta">
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);letter-spacing:2px;margin-bottom:2px;" id="play-course-name">TEREN</div>
+          <div class="hole-number" id="play-hole-num">1</div>
+        </div>
+        <div class="hole-par-badge">
+          <div class="hole-par-label">PAR</div>
+          <div class="hole-par-val" id="play-par">4</div>
+        </div>
+      </div>
+
+      <!-- GPS distances -->
+      <div class="gps-bar">
+        <div class="gps-dot" id="gps-dot"></div>
+        <span class="gps-text" id="gps-text">GPS: aktiviram...</span>
+      </div>
+
+      <div class="dist-panel">
+        <div class="dist-block">
+          <div class="dist-block-label">FRONT</div>
+          <div class="dist-block-val" id="dist-front">—</div>
+          <div class="dist-block-unit">m</div>
+        </div>
+        <div class="dist-block mid">
+          <div class="dist-block-label">MID</div>
+          <div class="dist-block-val" id="dist-mid">—</div>
+          <div class="dist-block-unit">m</div>
+        </div>
+        <div class="dist-block">
+          <div class="dist-block-label">BACK</div>
+          <div class="dist-block-val" id="dist-back">—</div>
+          <div class="dist-block-unit">m</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="players-scores" id="players-scores"></div>
+
+    <div class="hole-nav">
+      <button class="btn btn-secondary btn-sm" id="btn-prev-hole" onclick="prevHole()">◀</button>
+      <div class="hole-progress" id="hole-progress"></div>
+      <button class="btn btn-secondary btn-sm" onclick="showScreen('scorecard')">📋</button>
+      <button class="btn btn-primary btn-sm" id="btn-next-hole" onclick="nextHole()">▶</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       SCREEN: SCORECARD
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-scorecard">
+    <div class="header">
+      <button class="btn-back" onclick="showScreen('play')">←</button>
+      <div>
+        <div class="header-title">SCORECARD</div>
+        <div class="header-sub" id="sc-course-name">—</div>
+      </div>
+      <button class="btn btn-sm btn-primary" onclick="finishRound()">Završi</button>
+    </div>
+
+    <div class="scroll-content">
+      <div id="scorecard-players-tabs" style="display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;"></div>
+      <!-- View toggle: Bruto / Neto / Stableford -->
+      <div style="display:flex;gap:6px;padding:10px 16px 0;">
+        <button id="sc-view-bruto" class="btn btn-primary btn-sm" style="flex:1;font-size:12px;" onclick="setScorecardView('bruto')">Bruto</button>
+        <button id="sc-view-neto" class="btn btn-secondary btn-sm" style="flex:1;font-size:12px;" onclick="setScorecardView('neto')">Neto</button>
+        <button id="sc-view-stableford" class="btn btn-secondary btn-sm" style="flex:1;font-size:12px;" onclick="setScorecardView('stableford')">Stableford</button>
+      </div>
+      <!-- Playing handicap info -->
+      <div id="sc-ph-info" style="padding:8px 16px 0;font-size:11px;font-family:var(--font-mono);color:var(--text3);line-height:1.8;"></div>
+      <div style="height:8px;"></div>
+      <div class="scorecard-table" id="scorecard-table"></div>
+
+      <div style="padding:16px;">
+        <button class="btn btn-primary btn-lg btn-full" onclick="finishRound()">
+          🏁 Završi rundu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       SCREEN: POVIJEST
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-history">
+    <div class="header">
+      <div style="width:38px"></div>
+      <div class="header-title">POVIJEST</div>
+      <button class="btn btn-sm btn-red" onclick="clearHistory()">Briši sve</button>
+    </div>
+
+    <div class="scroll-content">
+      <div id="history-list" style="padding-top:12px;"></div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('home')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Početna</span>
+      </button>
+      <button class="nav-item active" onclick="showScreen('history')">
+        <span class="nav-icon">📜</span><span class="nav-label">Povijest</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('stats')">
+        <span class="nav-icon">📊</span><span class="nav-label">Statistike</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       SCREEN: STATISTIKE
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-stats">
+    <div class="header">
+      <div style="width:38px"></div>
+      <div class="header-title">STATISTIKE</div>
+      <div style="width:38px"></div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="stat-big">
+        <div class="stat-big-val" id="stats-hcp">—</div>
+        <div class="stat-big-label">PROSJ. RAZLIKA VS PAR</div>
+      </div>
+
+      <div class="stat-grid" style="padding:0 16px 16px;">
+        <div class="stat-card">
+          <div class="stat-value" id="stats-rounds">0</div>
+          <div class="stat-label">RUNDI</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stats-best">—</div>
+          <div class="stat-label">BEST DIFF</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stats-birdies">0</div>
+          <div class="stat-label">BIRDIES</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stats-eagles">0</div>
+          <div class="stat-label">EAGLES</div>
+        </div>
+      </div>
+
+      <div class="section-label">RASPORED REZULTATA PO RUPI</div>
+      <div class="bar-chart" id="stats-bars"></div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('home')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Početna</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('history')">
+        <span class="nav-icon">📜</span><span class="nav-label">Povijest</span>
+      </button>
+      <button class="nav-item active" onclick="showScreen('stats')">
+        <span class="nav-icon">📊</span><span class="nav-label">Statistike</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       MODAL: Detalji runde iz povijesti
+  ═══════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-round-detail">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h3 id="modal-round-title">Runda</h3>
+      <p id="modal-round-meta"></p>
+      <div id="modal-round-content"></div>
+      <div style="margin-top:16px;display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-md" style="flex:1" onclick="closeModal('modal-round-detail')">Zatvori</button>
+        <button class="btn btn-red btn-md" style="flex:1" id="modal-delete-btn">🗑 Obriši</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════
+
+const COLORS = ['#3ddc84','#f5c842','#4da6ff','#ff6b6b','#c084fc','#fb923c'];
+const AVATARS = ['🏌️','🏌️‍♀️','⛳','🎯','🏆','⭐'];
+
+let state = {
+  currentScreen: 'home',
+  players: [],        // { name, color, avatar }
+  courseName: '',
+  numHoles: 18,
+  defaultPar: 4,
+  currentHole: 0,
+  // strokes[playerIdx][holeIdx]
+  strokes: [],
+  // par[holeIdx]
+  par: [],
+  // GPS
+  gpsPos: null,
+  gpsWatchId: null,
+  gpsActive: false,
+  // Course GPS data (from course-manager if available)
+  courseGps: null,
+  // History
+  history: JSON.parse(localStorage.getItem('golfHistory') || '[]'),
+  selectedRoundIdx: null,
+  activeScorecardPlayer: 0,
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.currentScreen = name;
+
+  if (name === 'home') renderHome();
+  if (name === 'new-round') initNewRound();
+  if (name === 'play') renderPlay();
+  if (name === 'scorecard') renderScorecard();
+  if (name === 'history') renderHistory();
+  if (name === 'stats') renderStats();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════════════════════
+
+function renderHome() {
+  const h = state.history;
+  // Stats
+  const p1Rounds = h.filter(r => r.players.length > 0);
+  document.getElementById('stat-rounds').textContent = p1Rounds.length;
+
+  // Best score (diff vs par za prvog igrača)
+  const diffs = p1Rounds.map(r => r.players[0]?.totalDiff).filter(d => d != null);
+  document.getElementById('stat-best').textContent = diffs.length ? Math.min(...diffs) : '—';
+  document.getElementById('stat-avg').textContent = diffs.length ? Math.round(diffs.reduce((a,b)=>a+b,0)/diffs.length) : '—';
+  const totalHoles = p1Rounds.reduce((a,r) => a + r.numHoles, 0);
+  document.getElementById('stat-holes').textContent = totalHoles;
+
+  // Recent rounds
+  const el = document.getElementById('recent-rounds-home');
+  if (h.length === 0) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">Nema odigranih rundi.<br>Klikni Nova runda!</div>';
+    return;
+  }
+  el.innerHTML = h.slice(-3).reverse().map((r, i) => `
+    <div class="round-card animate-in" style="animation-delay:${i*0.07}s" onclick="openRoundDetail(${h.length-1-i})">
+      <div class="round-card-header">
+        <div class="round-course">${escHtml(r.courseName)}</div>
+        <div class="round-date">${fmtDate(r.date)}</div>
+      </div>
+      <div class="round-players">
+        ${r.players.map(p => `
+          <div class="round-player-chip">
+            <span>${p.avatar}</span>
+            <span>${escHtml(p.name)}</span>
+            <span class="round-player-score" style="color:${diffColor(p.totalDiff)}">${fmtDiff(p.totalDiff)}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// NOVA RUNDA
+// ═══════════════════════════════════════════════════════════════════
+
+function initNewRound() {
+  if (state.players.length === 0) {
+    state.players = [{ name: 'Igrač 1', color: COLORS[0], avatar: AVATARS[0], hcp: 36 }];
+  }
+  // Init SI if needed
+  const n = parseInt(document.getElementById('num-holes')?.value) || 18;
+  if (!state.si || state.si.length < n) {
+    state.si = Array.from({length:18}, (_,i)=>i+1);
+  }
+  renderPlayersList();
+  setHcpSystem(state.hcpSystem || 'WHS');
+  updateSiSummary();
+}
+
+function renderPlayersList() {
+  const el = document.getElementById('players-list');
+  el.innerHTML = state.players.map((p, i) => `
+    <div class="player-row animate-in" style="animation-delay:${i*0.05}s">
+      <div class="player-avatar" style="background:${p.color}22;border:1px solid ${p.color}44;">
+        ${p.avatar}
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <input class="player-name-input" placeholder="Ime igrača" value="${escHtml(p.name)}"
+          oninput="state.players[${i}].name=this.value">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">HCP:</span>
+          <input type="number" step="0.1" min="-10" max="54" value="${p.hcp ?? 36}"
+            style="width:60px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;color:var(--gold);font-family:var(--font-mono);font-size:13px;outline:none;"
+            oninput="state.players[${i}].hcp=parseFloat(this.value)||0">
+          <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);" id="ph-label-${i}"></span>
+        </div>
+      </div>
+      ${state.players.length > 1 ? `<button class="player-remove" onclick="removePlayer(${i})">×</button>` : ''}
+    </div>
+  `).join('');
+  updatePlayingHcpLabels();
+}
+
+function addPlayer() {
+  if (state.players.length >= 6) { showToast('Maksimalno 6 igrača', 'red'); return; }
+  const idx = state.players.length;
+  state.players.push({ name: `Igrač ${idx+1}`, color: COLORS[idx % COLORS.length], avatar: AVATARS[idx % AVATARS.length], hcp: 36 });
+  renderPlayersList();
+}
+
+function removePlayer(idx) {
+  state.players.splice(idx, 1);
+  renderPlayersList();
+}
+
+function startRound() {
+  const name = document.getElementById('course-name').value.trim();
+  if (!name) { showToast('Unesi naziv terena!', 'red'); return; }
+  const n = parseInt(document.getElementById('num-holes').value) || 18;
+  const par = parseInt(document.getElementById('default-par').value) || 4;
+
+  state.courseName = name;
+  state.numHoles = Math.min(18, Math.max(9, n));
+  state.defaultPar = Math.min(5, Math.max(3, par));
+  state.currentHole = 0;
+  state.par = Array(state.numHoles).fill(state.defaultPar);
+  state.strokes = state.players.map(() => Array(state.numHoles).fill(0));
+
+  startGPS();
+  showScreen('play');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GPS
+// ═══════════════════════════════════════════════════════════════════
+
+function startGPS() {
+  if (!navigator.geolocation) {
+    updateGpsStatus('error', 'GPS nije podržan');
+    return;
+  }
+  updateGpsStatus('searching', 'Tražim GPS...');
+  if (state.gpsWatchId) navigator.geolocation.clearWatch(state.gpsWatchId);
+  state.gpsWatchId = navigator.geolocation.watchPosition(
+    pos => {
+      state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      state.gpsActive = true;
+      updateGpsStatus('active', `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+      if (state.currentScreen === 'play') updateDistances();
+    },
+    err => {
+      state.gpsActive = false;
+      updateGpsStatus('error', 'GPS greška — distances nedostupne');
+    },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+  );
+}
+
+function updateGpsStatus(status, text) {
+  const dot = document.getElementById('gps-dot');
+  const txt = document.getElementById('gps-text');
+  if (!dot) return;
+  dot.className = 'gps-dot' + (status === 'active' ? ' active' : status === 'error' ? ' error' : '');
+  if (txt) txt.textContent = text;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+
+function updateDistances() {
+  const pos = state.gpsPos;
+  const f = document.getElementById('dist-front');
+  const m = document.getElementById('dist-mid');
+  const b = document.getElementById('dist-back');
+  if (!f) return;
+
+  if (!pos || !state.courseGps) {
+    f.textContent = '—'; m.textContent = '—'; b.textContent = '—';
+    return;
+  }
+  const hole = state.courseGps[state.currentHole];
+  if (!hole) { f.textContent = '—'; m.textContent = '—'; b.textContent = '—'; return; }
+  if (hole.front) f.textContent = haversine(pos.lat, pos.lon, hole.front.lat, hole.front.lon);
+  if (hole.mid)   m.textContent = haversine(pos.lat, pos.lon, hole.mid.lat, hole.mid.lon);
+  if (hole.back)  b.textContent = haversine(pos.lat, pos.lon, hole.back.lat, hole.back.lon);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PLAY
+// ═══════════════════════════════════════════════════════════════════
+
+function renderPlay() {
+  const h = state.currentHole;
+  document.getElementById('play-course-name').textContent = state.courseName.toUpperCase();
+  document.getElementById('play-hole-num').textContent = h + 1;
+  document.getElementById('play-par').textContent = state.par[h];
+
+  // Progress dots
+  const prog = document.getElementById('hole-progress');
+  prog.innerHTML = state.par.map((_, i) => {
+    const hasStrokes = state.strokes.some(ps => ps[i] > 0);
+    return `<div class="hole-dot ${i === h ? 'current' : hasStrokes ? 'done' : ''}"></div>`;
+  }).join('');
+
+  // Nav buttons
+  document.getElementById('btn-prev-hole').disabled = h === 0;
+  document.getElementById('btn-prev-hole').style.opacity = h === 0 ? '0.3' : '1';
+  document.getElementById('btn-next-hole').textContent = h === state.numHoles - 1 ? '✓' : '▶';
+
+  // Player score cards
+  renderPlayerScoreCards();
+  updateDistances();
+}
+
+function renderPlayerScoreCards() {
+  const h = state.currentHole;
+  const el = document.getElementById('players-scores');
+  el.innerHTML = state.players.map((p, pi) => {
+    const s = state.strokes[pi][h];
+    const par = state.par[h];
+    const diff = s > 0 ? s - par : null;
+    const totalS = state.strokes[pi].reduce((a,b)=>a+b,0);
+    const totalP = state.par.reduce((a,b)=>a+b,0);
+    const totalD = totalS - totalP;
+    const diffLabel = diff === null ? '' : diff === 0 ? 'PAR' : diff === -1 ? 'BIRDIE 🐦' : diff === -2 ? 'EAGLE 🦅' : diff <= -3 ? 'ALBATROS 🦅🦅' : diff === 1 ? 'BOGEY' : diff === 2 ? 'DBL BOGEY' : `+${diff}`;
+
+    return `
+    <div class="player-score-card animate-in" style="animation-delay:${pi*0.05}s">
+      <div class="psc-header">
+        <div class="psc-name">
+          <div class="player-avatar" style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:${p.color}22;border:1px solid ${p.color}44;">${p.avatar}</div>
+          <span style="color:var(--text)">${escHtml(p.name)}</span>
+        </div>
+        <div class="psc-diff" style="color:${diffColor(totalD)}">
+          Ukupno: ${totalS > 0 ? fmtDiff(totalD) : '—'}
+        </div>
+      </div>
+      <div class="stroke-control">
+        <button class="stroke-btn minus" ontouchstart="this.classList.add('pressing')" ontouchend="this.classList.remove('pressing')" onclick="changeStroke(${pi}, -1)">−</button>
+        <div class="stroke-display">
+          <div class="stroke-num">${s}</div>
+          <div class="stroke-sublabel" style="color:${diff===null?'var(--text3)':diffColor(diff)}">${diffLabel || '—'}</div>
+        </div>
+        <button class="stroke-btn plus" onclick="changeStroke(${pi}, 1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function changeStroke(playerIdx, delta) {
+  const h = state.currentHole;
+  state.strokes[playerIdx][h] = Math.max(0, state.strokes[playerIdx][h] + delta);
+  renderPlayerScoreCards();
+}
+
+function nextHole() {
+  if (state.currentHole < state.numHoles - 1) {
+    state.currentHole++;
+    renderPlay();
+  } else {
+    showScreen('scorecard');
+  }
+}
+
+function prevHole() {
+  if (state.currentHole > 0) {
+    state.currentHole--;
+    renderPlay();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCORECARD
+// ═══════════════════════════════════════════════════════════════════
+
+function renderScorecard() {
+  document.getElementById('sc-course-name').textContent = state.courseName;
+
+  // Player tabs
+  const tabs = document.getElementById('scorecard-players-tabs');
+  tabs.innerHTML = state.players.map((p, i) => `
+    <button onclick="selectScorecardPlayer(${i})" style="
+      padding:8px 16px;border-radius:20px;border:1px solid;cursor:pointer;
+      white-space:nowrap;font-family:var(--font-body);font-size:13px;font-weight:600;
+      transition:all 0.15s;
+      background:${i===state.activeScorecardPlayer?p.color+'22':'var(--surface2)'};
+      border-color:${i===state.activeScorecardPlayer?p.color:'var(--border)'};
+      color:${i===state.activeScorecardPlayer?p.color:'var(--text2)'};
+    ">${p.avatar} ${escHtml(p.name)}</button>
+  `).join('');
+
+  // Reset view buttons
+  setScorecardView(state.scorecardView || 'bruto');
+  renderPhInfo();
+  renderScorecardTable();
+}
+
+function selectScorecardPlayer(idx) {
+  state.activeScorecardPlayer = idx;
+  renderScorecard();
+}
+
+function renderScorecardTable() {
+  const pi = state.activeScorecardPlayer;
+  const p  = state.players[pi];
+  const strokes = state.strokes[pi];
+  const ph = state.roundPlayingHcps?.[p.name] ?? calcPlayingHcp(p.hcp ?? 36);
+  const view = state.scorecardView;
+
+  // Totali
+  const totalS  = strokes.reduce((a,b)=>a+b,0);
+  const totalP  = state.par.reduce((a,b)=>a+b,0);
+  const totalPts = state.par.reduce((a,_,i) => a + stablefordPoints(strokes[i], state.par[i], ph, state.si[i]||i+1), 0);
+  const totalNeto = state.par.reduce((a,_,i) => {
+    const s = strokes[i]; if (!s) return a;
+    return a + netoScore(s, ph, state.si[i]||i+1);
+  }, 0);
+  const totalNetoDiff = totalNeto - totalP;
+
+  renderPhInfo();
+
+  const cols = '28px 28px 28px 1fr 52px';
+  const hdr  = view === 'stableford' ? 'PTS' : view === 'neto' ? 'NETO' : 'UD.';
+
+  const table = document.getElementById('scorecard-table');
+  let html = `<div class="sc-row header" style="grid-template-columns:${cols}">
+    <span>#</span><span>PAR</span><span>SI</span><span></span><span style="text-align:right">${hdr}</span>
+  </div>`;
+
+  html += state.par.map((par, i) => {
+    const s   = strokes[i];
+    const si  = state.si[i] || i+1;
+    const ph_ = ph;
+    const pts = stablefordPoints(s, par, ph_, si);
+    const neto= s > 0 ? netoScore(s, ph_, si) : 0;
+    const netoDiff = s > 0 ? neto - par : null;
+
+    // Extra stroke indicator
+    const extra = ph_ > 0
+      ? Math.floor(ph_/18) + (si <= (ph_%18) ? 1 : 0)
+      : 0;
+    const extraDots = '•'.repeat(Math.min(extra, 3));
+
+    let displayVal, displayColor;
+    if (view === 'stableford') {
+      displayVal  = s > 0 ? pts : '—';
+      displayColor = pts >= 3 ? 'var(--green)' : pts === 2 ? 'var(--text2)' : pts === 1 ? 'var(--red)' : 'var(--text3)';
+    } else if (view === 'neto') {
+      displayVal  = s > 0 ? `${neto}` : '—';
+      displayColor = netoDiff === null ? 'var(--text3)' : diffColor(netoDiff);
+    } else {
+      displayVal  = s > 0 ? `${s}` : '—';
+      displayColor = s > 0 ? diffColor(s - par) : 'var(--text3)';
+    }
+
+    return `<div class="sc-row${i===state.currentHole?' current':''}" style="grid-template-columns:${cols}" onclick="goToHole(${i})">
+      <span class="sc-hole" style="color:${i===state.currentHole?'var(--gold)':'var(--text2)'}">${i+1}</span>
+      <span class="sc-par">${par}</span>
+      <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">${si}</span>
+      <span style="font-size:11px;color:var(--gold);font-family:var(--font-mono);">${extraDots}</span>
+      <span style="font-family:var(--font-mono);text-align:right;color:${displayColor};font-weight:600;">${displayVal}</span>
+    </div>`;
+  }).join('');
+
+  // Total row
+  let totalDisplay, totalColor;
+  if (view === 'stableford') {
+    totalDisplay = `${totalPts} pts`;
+    totalColor   = totalPts > 36 ? 'var(--green)' : totalPts < 36 ? 'var(--red)' : 'var(--text2)';
+  } else if (view === 'neto') {
+    totalDisplay = `${totalNeto} (${fmtDiff(totalNetoDiff)})`;
+    totalColor   = diffColor(totalNetoDiff);
+  } else {
+    const d = totalS - totalP;
+    totalDisplay = `${totalS} (${fmtDiff(d)})`;
+    totalColor   = diffColor(d);
+  }
+
+  html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default">
+    <span style="color:var(--green)">∑</span>
+    <span class="sc-par">${totalP}</span>
+    <span></span><span></span>
+    <span style="font-family:var(--font-mono);text-align:right;color:${totalColor};font-size:14px;">${totalDisplay}</span>
+  </div>`;
+
+  table.innerHTML = html;
+}
+
+function goToHole(idx) {
+  state.currentHole = idx;
+  showScreen('play');
+}
+
+function finishRound() {
+  // Spremi u povijest
+  const record = {
+    id: Date.now().toString(),
+    courseName: state.courseName,
+    numHoles: state.numHoles,
+    date: new Date().toISOString(),
+    par: [...state.par],
+    players: state.players.map((p, pi) => {
+      const totalS = state.strokes[pi].reduce((a,b)=>a+b,0);
+      const totalP = state.par.reduce((a,b)=>a+b,0);
+      return {
+        name: p.name,
+        color: p.color,
+        avatar: p.avatar,
+        strokes: [...state.strokes[pi]],
+        totalStrokes: totalS,
+        totalPar: totalP,
+        totalDiff: totalS - totalP,
+      };
+    })
+  };
+  state.history.push(record);
+  localStorage.setItem('golfHistory', JSON.stringify(state.history));
+
+  // Reset
+  if (state.gpsWatchId) navigator.geolocation.clearWatch(state.gpsWatchId);
+  state.players = [];
+  state.strokes = [];
+  state.par = [];
+
+  showToast('Runda završena! ✓', 'green');
+  showScreen('home');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// POVIJEST
+// ═══════════════════════════════════════════════════════════════════
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  if (state.history.length === 0) {
+    el.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;line-height:2;">Nema odigranih rundi.</div>';
+    return;
+  }
+  el.innerHTML = [...state.history].reverse().map((r, i) => {
+    const realIdx = state.history.length - 1 - i;
+    return `<div class="round-card animate-in" style="animation-delay:${Math.min(i,8)*0.04}s" onclick="openRoundDetail(${realIdx})">
+      <div class="round-card-header">
+        <div class="round-course">${escHtml(r.courseName)}</div>
+        <div class="round-date">${fmtDate(r.date)}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:8px;">${r.numHoles} rupa</div>
+      <div class="round-players">
+        ${r.players.map(p => `
+          <div class="round-player-chip">
+            <span>${p.avatar}</span>
+            <span>${escHtml(p.name)}</span>
+            <span class="round-player-score" style="color:${diffColor(p.totalDiff)}">${fmtDiff(p.totalDiff)}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openRoundDetail(idx) {
+  state.selectedRoundIdx = idx;
+  const r = state.history[idx];
+  document.getElementById('modal-round-title').textContent = r.courseName;
+  document.getElementById('modal-round-meta').textContent = `${fmtDate(r.date)} · ${r.numHoles} rupa`;
+  document.getElementById('modal-delete-btn').onclick = () => deleteRound(idx);
+
+  // Scorecard per player
+  const cols = r.players.length > 1 ? `32px 1fr ${r.players.map(()=>'38px').join(' ')} 44px` : '32px 1fr 44px 44px';
+  let html = `<div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">`;
+  html += `<div class="sc-row header" style="grid-template-columns:${cols}"><span>#</span><span>PAR</span>${r.players.length>1?r.players.map(p=>`<span style="color:${p.color}">${p.avatar}</span>`).join(''):'<span>UD.</span>'}<span style="text-align:right">+/−</span></div>`;
+
+  r.par.forEach((par, i) => {
+    const diffs = r.players.map(p => p.strokes[i] > 0 ? p.strokes[i] - par : null);
+    html += `<div class="sc-row" style="grid-template-columns:${cols};cursor:default">
+      <span class="sc-hole">${i+1}</span>
+      <span class="sc-par">${par}</span>
+      ${r.players.length>1 ? r.players.map(p=>`<span style="color:${p.strokes[i]>0?diffColor(p.strokes[i]-par):'var(--text3)'};font-family:var(--font-mono);font-size:13px;">${p.strokes[i]||'—'}</span>`).join('') : `<span style="font-family:var(--font-mono)">${r.players[0]?.strokes[i]||'—'}</span>`}
+      <span class="sc-diff ${diffClass(diffs[0])}">${fmtDiff(diffs[0])}</span>
+    </div>`;
+  });
+
+  html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default">
+    <span style="color:var(--green)">∑</span>
+    <span class="sc-par">${r.par.reduce((a,b)=>a+b,0)}</span>
+    ${r.players.length>1 ? r.players.map(p=>`<span style="font-family:var(--font-mono);color:var(--text)">${p.totalStrokes}</span>`).join('') : `<span style="font-family:var(--font-mono)">${r.players[0]?.totalStrokes}</span>`}
+    <span class="sc-diff ${diffClass(r.players[0]?.totalDiff)}" style="font-size:14px">${fmtDiff(r.players[0]?.totalDiff)}</span>
+  </div></div>`;
+
+  document.getElementById('modal-round-content').innerHTML = html;
+  openModal('modal-round-detail');
+}
+
+function deleteRound(idx) {
+  state.history.splice(idx, 1);
+  localStorage.setItem('golfHistory', JSON.stringify(state.history));
+  closeModal('modal-round-detail');
+  renderHistory();
+  showToast('Runda obrisana', 'red');
+}
+
+function clearHistory() {
+  if (!confirm('Obrisati cijelu povijest?')) return;
+  state.history = [];
+  localStorage.setItem('golfHistory', JSON.stringify([]));
+  renderHistory();
+  showToast('Povijest obrisana', 'red');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// STATISTIKE
+// ═══════════════════════════════════════════════════════════════════
+
+function renderStats() {
+  const h = state.history;
+  document.getElementById('stats-rounds').textContent = h.length;
+
+  // Sve rupe svih igrača
+  let allHoleDiffs = [];
+  let birdies = 0, eagles = 0;
+  let roundDiffs = [];
+
+  h.forEach(r => {
+    r.players.forEach(p => {
+      roundDiffs.push(p.totalDiff);
+      p.strokes.forEach((s, i) => {
+        if (s > 0) {
+          const d = s - r.par[i];
+          allHoleDiffs.push(d);
+          if (d === -1) birdies++;
+          if (d <= -2) eagles++;
+        }
+      });
+    });
+  });
+
+  const avgDiff = roundDiffs.length ? (roundDiffs.reduce((a,b)=>a+b,0)/roundDiffs.length).toFixed(1) : '—';
+  const bestDiff = roundDiffs.length ? Math.min(...roundDiffs) : null;
+
+  document.getElementById('stats-hcp').textContent = avgDiff;
+  document.getElementById('stats-best').textContent = bestDiff !== null ? fmtDiff(bestDiff) : '—';
+  document.getElementById('stats-birdies').textContent = birdies;
+  document.getElementById('stats-eagles').textContent = eagles;
+
+  // Bar chart — distribucija rezultata po rupi
+  const counts = {};
+  allHoleDiffs.forEach(d => {
+    const key = d <= -2 ? 'Eagle−' : d === -1 ? 'Birdie' : d === 0 ? 'Par' : d === 1 ? 'Bogey' : d === 2 ? 'Dbl' : 'Više';
+    counts[key] = (counts[key] || 0) + 1;
+  });
+
+  const categories = ['Eagle−','Birdie','Par','Bogey','Dbl','Više'];
+  const colors = ['var(--gold)','var(--green)','var(--blue)','var(--text2)','var(--red)','#ff4444'];
+  const max = Math.max(...Object.values(counts), 1);
+
+  document.getElementById('stats-bars').innerHTML = categories.map((cat, i) => {
+    const count = counts[cat] || 0;
+    const pct = Math.round(count / max * 100);
+    return `<div class="bar-row">
+      <span class="bar-label">${cat}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%;background:${colors[i]};"></div>
+      </div>
+      <span class="bar-count">${count}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════
+
+function diffColor(d) {
+  if (d === null || d === undefined) return 'var(--text3)';
+  if (d <= -2) return 'var(--gold)';
+  if (d === -1) return 'var(--green)';
+  if (d === 0) return 'var(--text2)';
+  if (d === 1) return 'var(--red)';
+  return '#ff4444';
+}
+
+function diffClass(d) {
+  if (d === null || d === undefined) return 'diff-even';
+  if (d <= -2) return 'diff-eagle';
+  if (d < 0) return 'diff-under';
+  if (d > 0) return 'diff-over';
+  return 'diff-even';
+}
+
+function fmtDiff(d) {
+  if (d === null || d === undefined) return '—';
+  if (d === 0) return 'E';
+  return d > 0 ? `+${d}` : `${d}`;
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('hr-HR', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 2600);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// HENDIKEP & STABLEFORD LOGIKA
+// ═══════════════════════════════════════════════════════════════════
+
+// Defaults
+state.hcpSystem    = 'WHS';      // 'WHS' | 'Vorgabe'
+state.courseRating = 72.0;
+state.slopeRating  = 113;
+state.coursePar    = 72;
+state.si           = Array.from({length:18}, (_,i) => i+1); // SI 1-18 default
+state.scorecardView = 'bruto';   // 'bruto' | 'neto' | 'stableford'
+
+// ── Sistem toggle ─────────────────────────────────────────────────
+function setHcpSystem(sys) {
+  state.hcpSystem = sys;
+  document.getElementById('hcp-btn-whs').className    = 'btn btn-sm ' + (sys==='WHS'     ? 'btn-primary' : 'btn-secondary');
+  document.getElementById('hcp-btn-vorgabe').className = 'btn btn-sm ' + (sys==='Vorgabe' ? 'btn-primary' : 'btn-secondary');
+  document.getElementById('whs-fields').style.display  = sys==='WHS' ? 'block' : 'none';
+  updatePlayingHcpLabels();
+}
+
+// ── Playing Handicap izračun ──────────────────────────────────────
+// WHS:     PH = round(HCI × Slope/113 + (CR − Par))
+// Vorgabe: PH = round(Vorgabe × Slope/113)  (simplified)
+function calcPlayingHcp(hci) {
+  const cr   = parseFloat(document.getElementById('course-rating')?.value) || state.courseRating;
+  const sl   = parseFloat(document.getElementById('slope-rating')?.value)  || state.slopeRating;
+  const cp   = parseFloat(document.getElementById('course-par-total')?.value) || state.coursePar;
+  const n    = parseFloat(document.getElementById('num-holes')?.value) || 18;
+  const factor = n === 9 ? 0.5 : 1.0;
+
+  if (state.hcpSystem === 'WHS') {
+    return Math.round(hci * (sl / 113) * factor + (cr - cp) * factor);
+  } else {
+    // Vorgabe: direktno × slope/113
+    return Math.round(hci * (sl / 113) * factor);
+  }
+}
+
+function updatePlayingHcpLabels() {
+  state.players.forEach((p, i) => {
+    const el = document.getElementById(`ph-label-${i}`);
+    if (!el) return;
+    const ph = calcPlayingHcp(p.hcp ?? 36);
+    el.textContent = `→ PH: ${ph}`;
+  });
+}
+
+// Ažuriraj PH kad se mijenjaju course rating/slope
+document.addEventListener('input', e => {
+  if (['course-rating','slope-rating','course-par-total','num-holes'].includes(e.target?.id)) {
+    updatePlayingHcpLabels();
+  }
+});
+
+// ── SI editor ────────────────────────────────────────────────────
+function toggleSiEditor() {
+  const ed = document.getElementById('si-editor');
+  const btn = document.getElementById('si-toggle-btn');
+  if (ed.style.display === 'none') {
+    ed.style.display = 'block';
+    btn.textContent = 'Zatvori ▲';
+    renderSiGrid();
+  } else {
+    ed.style.display = 'none';
+    btn.textContent = 'Uredi ▼';
+  }
+}
+
+function renderSiGrid() {
+  const n = parseInt(document.getElementById('num-holes')?.value) || 18;
+  const grid = document.getElementById('si-grid');
+  grid.innerHTML = Array.from({length:n}, (_,i) => `
+    <div style="text-align:center;">
+      <div style="font-size:9px;color:var(--text3);font-family:var(--font-mono);margin-bottom:3px;">H${i+1}</div>
+      <input type="number" min="1" max="${n}" value="${state.si[i]||i+1}"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 4px;color:var(--gold);font-family:var(--font-mono);font-size:13px;text-align:center;outline:none;"
+        oninput="state.si[${i}]=parseInt(this.value)||${i+1};updateSiSummary()">
+    </div>
+  `).join('');
+}
+
+function resetSiDefault() {
+  const n = parseInt(document.getElementById('num-holes')?.value) || 18;
+  state.si = Array.from({length:n}, (_,i) => i+1);
+  renderSiGrid();
+  updateSiSummary();
+  showToast('SI resetiran na default', '');
+}
+
+function updateSiSummary() {
+  const el = document.getElementById('si-summary');
+  if (el) el.textContent = 'SI: ' + state.si.slice(0,18).join(' · ');
+}
+
+// ── Stableford poeni za jednu rupu ────────────────────────────────
+// Neto rezultat = bruto − extra strokes na toj rupi
+// Extra strokes = koliko puta PH prelazi SI rupi
+// Stableford: neto vs par → bodovi
+// neto ≤ par-2: 4+, par-1: 3 (birdie), par: 2 (par), par+1: 1 (bogey), par+2+: 0
+function stablefordPoints(bruto, par, ph, si) {
+  if (bruto === 0) return 0; // nije odigrano
+  const extraStrokes = ph > 0
+    ? Math.floor(ph / 18) + (si <= (ph % 18) ? 1 : 0)
+    : (ph < 0 ? -(Math.floor((-ph)/18) + (si <= ((-ph)%18)?1:0)) : 0);
+  const neto = bruto - extraStrokes;
+  const diff = neto - par;
+  if (diff <= -2) return 4;
+  if (diff === -1) return 3;
+  if (diff === 0)  return 2;
+  if (diff === 1)  return 1;
+  return 0;
+}
+
+// Neto score za prikaz
+function netoScore(bruto, ph, si) {
+  if (bruto === 0) return 0;
+  const extra = ph > 0
+    ? Math.floor(ph/18) + (si <= (ph%18) ? 1 : 0)
+    : (ph < 0 ? -(Math.floor((-ph)/18) + (si<=(-ph%18)?1:0)) : 0);
+  return bruto - extra;
+}
+
+// ── Scorecard view ────────────────────────────────────────────────
+function setScorecardView(view) {
+  state.scorecardView = view;
+  ['bruto','neto','stableford'].forEach(v => {
+    const btn = document.getElementById(`sc-view-${v}`);
+    if (btn) btn.className = 'btn btn-sm ' + (v===view?'btn-primary':'btn-secondary');
+  });
+  renderScorecardTable();
+}
+
+// ── PH info panel u scorecardeu ───────────────────────────────────
+function renderPhInfo() {
+  const el = document.getElementById('sc-ph-info');
+  if (!el) return;
+  el.innerHTML = state.players.map(p => {
+    const ph = state.roundPlayingHcps?.[p.name] ?? calcPlayingHcp(p.hcp??36);
+    return `<span style="color:${p.color};margin-right:12px;">${p.avatar} ${escHtml(p.name)}: HCP ${p.hcp??36} → PH <b style="color:var(--gold)">${ph}</b></span>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PRETRAGA TERENA — golfcourseapi.com via CORS proxy
+// ═══════════════════════════════════════════════════════════════════
+
+const CORS_PROXY = 'https://corsproxy.io/?';
+const GOLF_API   = 'https://api.golfcourseapi.com/v1/';
+// Besplatni API ključ: https://golfcourseapi.com
+// Bez ključa prikazuju se demo tereni NRW regije
+const GOLF_API_KEY = '';
+
+let apiSearchResults = [];
+
+async function searchCourse() {
+  const q = document.getElementById('course-search-input').value.trim();
+  if (q.length < 2) { showToast('Unesi barem 2 znaka', 'red'); return; }
+  setSearchStatus('⏳ Tražim...', false);
+  document.getElementById('search-results').innerHTML = '';
+  try {
+    let courses = [];
+    if (GOLF_API_KEY) {
+      const url = CORS_PROXY + encodeURIComponent(`${GOLF_API}search?search_query=${encodeURIComponent(q)}`);
+      const res = await fetch(url, { headers: { 'Authorization': `Key ${GOLF_API_KEY}` } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      courses = (data.data || []).slice(0, 8);
+    } else {
+      courses = getDemoCourses(q);
+    }
+    if (courses.length === 0) { setSearchStatus('Nema rezultata. Pokušaj drugačiji naziv.', false); return; }
+    setSearchStatus(`${courses.length} terena pronađeno`, false);
+    apiSearchResults = courses;
+    renderSearchResults(courses);
+  } catch (e) {
+    const demo = getDemoCourses(q);
+    if (demo.length > 0) {
+      setSearchStatus('⚠️ Offline — prikazujem demo terene NRW', false);
+      apiSearchResults = demo;
+      renderSearchResults(demo);
+    } else {
+      setSearchStatus('❌ Greška pretrage. Provjeri internet.', true);
+    }
+  }
+}
+
+function getDemoCourses(q) {
+  const demos = [
+    { id:'d1', club_name:'Golf Club Düsseldorf', location:{city:'Düsseldorf',country:'Germany'}, tees:[{holes:[4,4,3,5,4,3,4,5,4,4,3,5,4,4,3,5,4,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+    { id:'d2', club_name:'Golfclub Neuss', location:{city:'Neuss',country:'Germany'}, tees:[{holes:[4,5,3,4,4,3,5,4,4,4,3,5,4,4,3,4,5,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+    { id:'d3', club_name:'GC Mönchengladbach', location:{city:'Mönchengladbach',country:'Germany'}, tees:[{holes:[4,3,5,4,4,4,3,5,4,4,4,3,5,4,3,4,5,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+    { id:'d4', club_name:'GC Krefeld', location:{city:'Krefeld',country:'Germany'}, tees:[{holes:[5,4,3,4,4,3,4,5,4,4,3,4,5,4,3,5,4,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+    { id:'d5', club_name:'Golfpark Bochum', location:{city:'Bochum',country:'Germany'}, tees:[{holes:[4,4,3,5,4,4,3,5,4,4,3,4,5,4,3,4,5,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+    { id:'d6', club_name:'GC Essen-Heidhausen', location:{city:'Essen',country:'Germany'}, tees:[{holes:[4,4,5,3,4,4,3,5,4,4,4,3,5,4,3,4,5,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+    { id:'d7', club_name:'Golfclub Dortmund', location:{city:'Dortmund',country:'Germany'}, tees:[{holes:[4,5,3,4,4,4,3,5,4,5,3,4,4,4,3,5,4,4].map((p,i)=>({hole_number:i+1,par:p}))}] },
+  ];
+  const ql = q.toLowerCase();
+  const filtered = demos.filter(d =>
+    d.club_name.toLowerCase().includes(ql) ||
+    (d.location?.city||'').toLowerCase().includes(ql)
+  );
+  return filtered.length > 0 ? filtered : (q.length <= 3 ? demos : []);
+}
+
+function renderSearchResults(courses) {
+  const el = document.getElementById('search-results');
+  el.innerHTML = courses.map((c, i) => {
+    const meta = [c.location?.city, c.location?.country].filter(Boolean).join(', ');
+    return `<div onclick="selectCourse(${i})" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:6px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s;">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);">${escHtml(c.club_name)}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:2px;">${escHtml(meta)}</div>
+      </div>
+      <span style="color:var(--green);font-size:20px;margin-left:8px;">+</span>
+    </div>`;
+  }).join('');
+}
+
+function selectCourse(idx) {
+  const c = apiSearchResults[idx];
+  if (!c) return;
+  document.getElementById('course-name').value = c.club_name;
+  const tee = c.tees?.[0];
+  if (tee?.holes?.length > 0) {
+    const numH = tee.holes.length;
+    document.getElementById('num-holes').value = numH;
+    state._importedPar = tee.holes.sort((a,b)=>a.hole_number-b.hole_number).map(h=>h.par||4);
+    showToast(`✓ ${c.club_name} — par uvezen`, 'green');
+  } else {
+    state._importedPar = null;
+    showToast('Teren odabran', '');
+  }
+  document.getElementById('selected-course-badge').style.display = 'block';
+  document.getElementById('selected-course-badge-name').textContent = c.club_name;
+  document.getElementById('search-results').innerHTML = '';
+  setSearchStatus('', false);
+  document.getElementById('course-search-input').value = '';
+}
+
+function setSearchStatus(msg, isError) {
+  const el = document.getElementById('search-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--red)' : 'var(--text3)';
+}
+
+// Patch startRound — koristi uvezene parove + sprema PH
+const _origStart = startRound;
+startRound = function() {
+  const name = document.getElementById('course-name').value.trim();
+  if (!name) { showToast('Unesi naziv terena!', 'red'); return; }
+  const n = parseInt(document.getElementById('num-holes').value) || 18;
+  const par = parseInt(document.getElementById('default-par').value) || 4;
+  state.courseName = name;
+  state.numHoles = Math.min(18, Math.max(9, n));
+  state.defaultPar = Math.min(5, Math.max(3, par));
+  state.currentHole = 0;
+  state.par = (state._importedPar && state._importedPar.length === state.numHoles)
+    ? [...state._importedPar]
+    : Array(state.numHoles).fill(state.defaultPar);
+  state._importedPar = null;
+
+  // Spremi course data za PH izračun
+  state.courseRating = parseFloat(document.getElementById('course-rating')?.value) || 72.0;
+  state.slopeRating  = parseFloat(document.getElementById('slope-rating')?.value)  || 113;
+  state.coursePar    = parseFloat(document.getElementById('course-par-total')?.value) || 72;
+  state.si           = state.si.slice(0, state.numHoles);
+
+  // Izračunaj i spremi Playing Handicap za sve igrače
+  state.roundPlayingHcps = {};
+  state.players.forEach(p => {
+    state.roundPlayingHcps[p.name] = calcPlayingHcp(p.hcp ?? 36);
+  });
+
+  state.strokes = state.players.map(() => Array(state.numHoles).fill(0));
+  startGPS();
+  showScreen('play');
+};
+
+// Reset search pri otvaranju
+const _origInit = initNewRound;
+initNewRound = function() {
+  _origInit();
+  const badge = document.getElementById('selected-course-badge');
+  if (badge) badge.style.display = 'none';
+  const sr = document.getElementById('search-results');
+  if (sr) sr.innerHTML = '';
+  setSearchStatus('', false);
+  const inp = document.getElementById('course-search-input');
+  if (inp) inp.value = '';
+  state._importedPar = null;
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+
+renderHome();
+</script>
+</body>
+</html>
