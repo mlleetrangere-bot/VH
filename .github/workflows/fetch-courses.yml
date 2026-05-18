@@ -1,0 +1,32 @@
+name: Fetch Golf Courses
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-courses:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch golf courses
+        env:
+          GOLF_API_KEY: ${{ secrets.GOLF_API_KEY }}
+        run: python3 fetch_courses.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add courses.json
+          git diff --staged --quiet || git commit -m "Update golf courses"
+          git push
