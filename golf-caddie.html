@@ -1963,21 +1963,61 @@ async function searchCourse() {
   document.getElementById('search-results').innerHTML = '';
   try {
     const data = await fetchApi(`search?search_query=${encodeURIComponent(q)}`);
-    const courses = (data.data || []).slice(0, 8);
-    if (courses.length === 0) { setSearchStatus('Nema rezultata. Pokušaj drugačiji naziv.', false); return; }
-    setSearchStatus(`${courses.length} terena pronađeno`, false);
-    apiSearchResults = courses;
-    renderSearchResults(courses);
+    console.log('API odgovor:', JSON.stringify(data));
+
+    // Proba raznih struktura odgovora
+    const courses = (
+      data.data ||
+      data.courses ||
+      data.results ||
+      data.clubs ||
+      (Array.isArray(data) ? data : null) ||
+      []
+    ).slice(0, 8);
+
+    // Normalizacija — API može vraćati club_name ili name
+    const normalized = courses.map(c => ({
+      ...c,
+      club_name: c.club_name || c.name || c.club || c.courseName || 'Nepoznat teren',
+      location: c.location || { city: c.city || '', country: c.country || '' },
+      tees: c.tees || (c.scorecard ? [{ holes: parseScorecardPar(c.scorecard) }] : [])
+    }));
+
+    if (normalized.length === 0) {
+      setSearchStatus(`Nema rezultata za "${q}". Provjeri konzolu za detalje.`, false);
+      // Prikaži sirovi odgovor za debug
+      document.getElementById('search-results').innerHTML =
+        `<div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);padding:8px;background:var(--surface2);border-radius:8px;word-break:break-all;">
+          API: ${JSON.stringify(data).substring(0, 300)}...
+        </div>`;
+      return;
+    }
+    setSearchStatus(`${normalized.length} terena pronađeno`, false);
+    apiSearchResults = normalized;
+    renderSearchResults(normalized);
   } catch (e) {
+    console.error('Greška:', e);
     const demo = getDemoCourses(q);
     if (demo.length > 0) {
-      setSearchStatus('⚠️ API nedostupan — demo tereni NRW', false);
+      setSearchStatus('⚠️ Proxy greška — demo tereni', false);
       apiSearchResults = demo;
       renderSearchResults(demo);
     } else {
       setSearchStatus(`❌ ${e.message}`, true);
     }
   }
+}
+
+function parseScorecardPar(scorecard) {
+  try {
+    const parsed = typeof scorecard === 'string' ? JSON.parse(scorecard) : scorecard;
+    if (Array.isArray(parsed) && parsed[0]) {
+      return Object.entries(parsed[0])
+        .filter(([k]) => !isNaN(k))
+        .map(([k, v]) => ({ hole_number: parseInt(k), par: parseInt(v) || 4 }));
+    }
+  } catch (e) {}
+  return [];
 }
 
 function getDemoCourses(q) {
