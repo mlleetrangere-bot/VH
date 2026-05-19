@@ -851,85 +851,94 @@ input[type=number] { -moz-appearance: textfield; }
 
     <div class="scroll-content" style="padding: 16px 16px 100px;">
 
-      <!-- Course Search -->
-      <div class="section-label" style="padding:0 0 8px;">🔍 PRETRAŽI TEREN</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input class="input" id="course-search-input" type="text" placeholder="npr. Düsseldorf Golf..."
-          style="flex:1" onkeydown="if(event.key==='Enter')searchCourse()">
-        <button class="btn btn-primary btn-md" onclick="searchCourse()" style="padding:0 14px;flex-shrink:0;">
-          Traži
-        </button>
-      </div>
-      <div id="search-status" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;min-height:16px;"></div>
-      <div id="search-results" style="margin-bottom:14px;"></div>
+      <!-- ── OFFLINE BAZA TERENA ── -->
+      <div class="section-label" style="padding:0 0 8px;">⛳ ODABERI TEREN</div>
 
-      <!-- Selected course badge -->
-      <div id="selected-course-badge" style="display:none;background:var(--green-glow);border:1px solid rgba(61,220,132,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--green);font-family:var(--font-mono);">
-        ✓ <span id="selected-course-badge-name"></span>
-      </div>
-
-      <div class="divider"></div>
-      <div class="section-label" style="padding:0 0 8px;">✏️ ILI UNESI RUČNO</div>
-
+      <!-- Padajući izbornik terena -->
       <div class="input-group">
-        <label class="input-label">Naziv terena</label>
-        <input class="input" id="course-name" type="text" placeholder="npr. Golf Club Düsseldorf" maxlength="40">
+        <label class="input-label">Teren (offline baza)</label>
+        <select class="input" id="course-select" onchange="onCourseSelect()" style="cursor:pointer;">
+          <option value="">— Odaberi teren —</option>
+        </select>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div class="input-group" style="margin:0">
-          <label class="input-label">Broj rupa</label>
-          <input class="input" id="num-holes" type="number" value="18" min="9" max="18">
+      <!-- Tee izbornik (pojavi se nakon odabira terena) -->
+      <div id="tee-section" style="display:none;">
+        <div class="input-group">
+          <label class="input-label">Tee / Boja</label>
+          <select class="input" id="tee-select" onchange="onTeeSelect()" style="cursor:pointer;">
+            <option value="">— Odaberi tee —</option>
+          </select>
         </div>
-        <div class="input-group" style="margin:0">
-          <label class="input-label">Default par</label>
-          <input class="input" id="default-par" type="number" value="4" min="3" max="5">
+
+        <!-- Info o odabranom teeu -->
+        <div id="tee-info" style="background:var(--surface2);border:2px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px;display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+            <div>
+              <div style="font-size:22px;font-weight:700;color:var(--gold);font-family:var(--font-mono);" id="tee-par">—</div>
+              <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);letter-spacing:1px;">PAR</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:700;color:var(--green);font-family:var(--font-mono);" id="tee-cr">—</div>
+              <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);letter-spacing:1px;">CR</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:700;color:var(--blue);font-family:var(--font-mono);" id="tee-slope">—</div>
+              <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);letter-spacing:1px;">SLOPE</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Hendikep sistem -->
+      <!-- Ručni unos ako nije u bazi -->
+      <div id="manual-section">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="flex:1;height:1px;background:var(--border2);"></div>
+          <span style="font-size:12px;color:var(--text3);font-family:var(--font-mono);">ili ručno</span>
+          <div style="flex:1;height:1px;background:var(--border2);"></div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Naziv terena</label>
+          <input class="input" id="course-name" type="text" placeholder="npr. Golf Club Düsseldorf" maxlength="40">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div class="input-group" style="margin:0">
+            <label class="input-label">Broj rupa</label>
+            <input class="input" id="num-holes" type="number" value="18" min="9" max="18">
+          </div>
+          <div class="input-group" style="margin:0">
+            <label class="input-label">Default par</label>
+            <input class="input" id="default-par" type="number" value="4" min="3" max="5">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HENDIKEP SISTEM ── -->
       <div class="section-label" style="padding:0 0 8px;">⚙️ HENDIKEP SISTEM</div>
       <div style="display:flex;gap:8px;margin-bottom:12px;">
         <button id="hcp-btn-whs" class="btn btn-primary btn-sm" style="flex:1" onclick="setHcpSystem('WHS')">WHS</button>
         <button id="hcp-btn-vorgabe" class="btn btn-secondary btn-sm" style="flex:1" onclick="setHcpSystem('Vorgabe')">Vorgabe</button>
       </div>
 
-      <!-- Course Rating + Slope (WHS) -->
+      <!-- CR/Slope ručno (kad nije iz baze) -->
       <div id="whs-fields">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
           <div class="input-group" style="margin:0">
             <label class="input-label">Course Rating</label>
-            <input class="input" id="course-rating" type="number" value="72.0" step="0.1" min="60" max="82" placeholder="72.0">
+            <input class="input" id="course-rating" type="number" value="72.0" step="0.1" min="60" max="82">
           </div>
           <div class="input-group" style="margin:0">
             <label class="input-label">Slope</label>
-            <input class="input" id="slope-rating" type="number" value="113" min="55" max="155" placeholder="113">
+            <input class="input" id="slope-rating" type="number" value="113" min="55" max="155">
           </div>
           <div class="input-group" style="margin:0">
             <label class="input-label">Par terena</label>
-            <input class="input" id="course-par-total" type="number" value="72" min="60" max="76" placeholder="72">
+            <input class="input" id="course-par-total" type="number" value="72" min="60" max="80">
           </div>
         </div>
-        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:14px;padding:8px 10px;background:var(--surface2);border-radius:8px;line-height:1.7;">
-          WHS Playing HCP = (HCI × Slope/113) + (CR − Par)<br>
-          Slope 113 = standardni teren
-        </div>
       </div>
 
-      <!-- Stroke Index po rupi -->
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <span class="input-label" style="margin:0">STROKE INDEX (SI) PO RUPI</span>
-          <button class="btn btn-ghost btn-sm" onclick="toggleSiEditor()" style="font-size:11px;padding:0 10px;height:28px;" id="si-toggle-btn">Uredi ▼</button>
-        </div>
-        <div id="si-editor" style="display:none;">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:8px;">SI 1 = najtežja rupa. Svaka rupa ima jedinstven SI 1-18.</div>
-          <div id="si-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;"></div>
-          <button class="btn btn-ghost btn-sm btn-full" onclick="resetSiDefault()" style="margin-top:8px;font-size:11px;">Resetiraj na default</button>
-        </div>
-        <div id="si-summary" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Default: SI 1-18 redom</div>
-      </div>
-
+      <!-- ── IGRAČI ── -->
       <div class="section-label" style="padding: 0 0 8px;">IGRAČI</div>
       <div id="players-list"></div>
 
@@ -1236,32 +1245,72 @@ function initNewRound() {
 
 function renderPlayersList() {
   const el = document.getElementById('players-list');
-  el.innerHTML = state.players.map((p, i) => `
-    <div class="player-row animate-in" style="animation-delay:${i*0.05}s">
-      <div class="player-avatar" style="background:${p.color}22;border:1px solid ${p.color}44;">
-        ${p.avatar}
-      </div>
-      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+  const selectedCourse = getSelectedCourseData();
+
+  el.innerHTML = state.players.map((p, i) => {
+    const ph = calcPlayingHcp(p.hcp ?? 36);
+    // Tee opcije za ovog igrača ovisno o spolu
+    const teeOptions = selectedCourse
+      ? selectedCourse.tees
+          .filter(t => !t.gender || t.gender === p.gender || t.gender === 'A')
+          .map(t => `<option value="${t.tee_name}" ${p.teeName===t.tee_name?'selected':''}>${t.tee_name} (Par ${t.par}, CR ${t.course_rating}, Slope ${t.slope_rating})</option>`)
+          .join('')
+      : '';
+
+    return `
+    <div class="player-row animate-in" style="animation-delay:${i*0.05}s;flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="player-avatar" style="background:${p.color}22;border:2px solid ${p.color}44;flex-shrink:0;">
+          ${p.avatar}
+        </div>
         <input class="player-name-input" placeholder="Ime igrača" value="${escHtml(p.name)}"
           oninput="state.players[${i}].name=this.value">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">HCP:</span>
+        ${state.players.length > 1 ? `<button class="player-remove" onclick="removePlayer(${i})">×</button>` : ''}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <!-- Spol -->
+        <div>
+          <div style="font-size:11px;color:var(--gold);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:4px;">SPOL</div>
+          <select style="width:100%;background:var(--surface3);border:2px solid var(--border2);border-radius:8px;padding:10px;color:var(--text);font-size:15px;outline:none;"
+            onchange="state.players[${i}].gender=this.value;state.players[${i}].teeName='';renderPlayersList();">
+            <option value="M" ${p.gender==='M'?'selected':''}>♂ Muški</option>
+            <option value="F" ${p.gender==='F'?'selected':''}>♀ Ženski</option>
+          </select>
+        </div>
+        <!-- HCP -->
+        <div>
+          <div style="font-size:11px;color:var(--gold);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:4px;">HCP INDEX</div>
           <input type="number" step="0.1" min="-10" max="54" value="${p.hcp ?? 36}"
-            style="width:60px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;color:var(--gold);font-family:var(--font-mono);font-size:13px;outline:none;"
-            oninput="state.players[${i}].hcp=parseFloat(this.value)||0">
-          <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);" id="ph-label-${i}"></span>
+            style="width:100%;background:var(--surface3);border:2px solid var(--border2);border-radius:8px;padding:10px;color:var(--text);font-size:15px;outline:none;"
+            oninput="state.players[${i}].hcp=parseFloat(this.value)||0;renderPlayersList();">
         </div>
       </div>
-      ${state.players.length > 1 ? `<button class="player-remove" onclick="removePlayer(${i})">×</button>` : ''}
-    </div>
-  `).join('');
-  updatePlayingHcpLabels();
+
+      ${selectedCourse && teeOptions ? `
+      <div>
+        <div style="font-size:11px;color:var(--gold);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:4px;">TEE</div>
+        <select style="width:100%;background:var(--surface3);border:2px solid var(--border2);border-radius:8px;padding:10px;color:var(--text);font-size:14px;outline:none;"
+          onchange="state.players[${i}].teeName=this.value;renderPlayersList();">
+          <option value="">— Odaberi tee —</option>
+          ${teeOptions}
+        </select>
+      </div>
+      ` : ''}
+
+      <!-- Playing Handicap prikaz -->
+      <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:13px;color:var(--text2);font-family:var(--font-mono);">Playing Handicap:</span>
+        <span style="font-size:20px;font-weight:700;color:var(--gold);font-family:var(--font-mono);" id="ph-val-${i}">${calcPlayingHcpForPlayer(p)}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function addPlayer() {
   if (state.players.length >= 6) { showToast('Maksimalno 6 igrača', 'red'); return; }
   const idx = state.players.length;
-  state.players.push({ name: `Igrač ${idx+1}`, color: COLORS[idx % COLORS.length], avatar: AVATARS[idx % AVATARS.length], hcp: 36 });
+  state.players.push({ name: `Igrač ${idx+1}`, color: COLORS[idx % COLORS.length], avatar: AVATARS[idx % AVATARS.length], hcp: 36, gender: 'M', teeName: '' });
   renderPlayersList();
 }
 
@@ -1271,25 +1320,74 @@ function removePlayer(idx) {
 }
 
 function startRound() {
-  const name = document.getElementById('course-name').value.trim();
-  if (!name) { showToast('Unesi naziv terena!', 'red'); return; }
-  const n = parseInt(document.getElementById('num-holes').value) || 18;
-  const par = parseInt(document.getElementById('default-par').value) || 4;
+  const course = getSelectedCourseData();
 
-  state.courseName = name;
-  state.numHoles = Math.min(18, Math.max(9, n));
-  state.defaultPar = Math.min(5, Math.max(3, par));
+  // Validacija
+  if (course) {
+    // Iz offline baze
+    if (!document.getElementById('tee-select')?.value && course.tees?.length > 0) {
+      showToast('Odaberi tee!', 'red'); return;
+    }
+    state.courseName = course.club_name;
+    state.numHoles = course.holes;
+
+    // Uzmi tee podatke od prvog igrača koji ima tee, ili defaultni tee
+    const firstTee = course.tees[state.selectedTeeIdx ?? 0];
+    state.par = firstTee.holes ? firstTee.holes.map(h => h.par) : Array(course.holes).fill(4);
+    state.si  = firstTee.holes ? firstTee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
+    state.courseRating = firstTee.course_rating;
+    state.slopeRating  = firstTee.slope_rating;
+    state.coursePar    = firstTee.par;
+  } else {
+    // Ručni unos
+    const name = document.getElementById('course-name').value.trim();
+    if (!name) { showToast('Unesi naziv terena!', 'red'); return; }
+    const n   = parseInt(document.getElementById('num-holes').value) || 18;
+    const par = parseInt(document.getElementById('default-par').value) || 4;
+    state.courseName   = name;
+    state.numHoles     = Math.min(18, Math.max(9, n));
+    state.defaultPar   = Math.min(5, Math.max(3, par));
+    state.par          = Array(state.numHoles).fill(state.defaultPar);
+    state.courseRating = parseFloat(document.getElementById('course-rating')?.value) || 72.0;
+    state.slopeRating  = parseFloat(document.getElementById('slope-rating')?.value)  || 113;
+    state.coursePar    = parseFloat(document.getElementById('course-par-total')?.value) || 72;
+    if (!state.si || state.si.length < state.numHoles) {
+      state.si = Array.from({length:state.numHoles},(_,i)=>i+1);
+    }
+  }
+
   state.currentHole = 0;
-  state.par = Array(state.numHoles).fill(state.defaultPar);
   state.strokes = state.players.map(() => Array(state.numHoles).fill(0));
+
+  // Izračunaj Playing Handicap za svakog igrača
+  state.roundPlayingHcps = {};
+  state.players.forEach(p => {
+    state.roundPlayingHcps[p.name] = calcPlayingHcpForPlayer(p);
+  });
 
   startGPS();
   showScreen('play');
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// GPS
-// ═══════════════════════════════════════════════════════════════════
+function initNewRound() {
+  if (state.players.length === 0) {
+    state.players = [{ name: 'Igrač 1', color: COLORS[0], avatar: AVATARS[0], hcp: 36, gender: 'M', teeName: '' }];
+  }
+  state.selectedCourseId = null;
+  state.selectedTeeIdx = null;
+
+  const manualSection = document.getElementById('manual-section');
+  if (manualSection) manualSection.style.display = 'block';
+  const teeSection = document.getElementById('tee-section');
+  if (teeSection) teeSection.style.display = 'none';
+  const whsFields = document.getElementById('whs-fields');
+  if (whsFields) whsFields.style.display = 'block';
+
+  if (!state.si) state.si = Array.from({length:18},(_,i)=>i+1);
+  populateCourseDropdown();
+  renderPlayersList();
+  setHcpSystem(state.hcpSystem || 'WHS');
+}
 
 function startGPS() {
   if (!navigator.geolocation) {
@@ -1782,6 +1880,145 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
+// OFFLINE BAZA TERENA — padajući izbornik
+// ═══════════════════════════════════════════════════════════════════
+
+state.offlineCourses = null;
+state.selectedCourseId = null;
+state.selectedTeeIdx = null;
+
+async function loadOfflineCourses() {
+  if (state.offlineCourses) return state.offlineCourses;
+  try {
+    const res = await fetch('courses.json', { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      state.offlineCourses = await res.json();
+    }
+  } catch (e) {}
+  return state.offlineCourses || [];
+}
+
+async function populateCourseDropdown() {
+  const courses = await loadOfflineCourses();
+  const sel = document.getElementById('course-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Odaberi teren —</option>';
+  courses.forEach((c, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = c.club_name;
+    sel.appendChild(opt);
+  });
+}
+
+function getSelectedCourseData() {
+  if (state.selectedCourseId === null || !state.offlineCourses) return null;
+  return state.offlineCourses[state.selectedCourseId] || null;
+}
+
+function onCourseSelect() {
+  const sel = document.getElementById('course-select');
+  const idx = sel.value;
+  state.selectedCourseId = idx !== '' ? parseInt(idx) : null;
+  state.selectedTeeIdx = null;
+
+  const course = getSelectedCourseData();
+  const teeSection = document.getElementById('tee-section');
+  const manualSection = document.getElementById('manual-section');
+  const teeInfo = document.getElementById('tee-info');
+  const teeSelect = document.getElementById('tee-select');
+
+  if (course) {
+    // Popuni naziv
+    document.getElementById('course-name').value = course.club_name;
+    document.getElementById('num-holes').value = course.holes;
+
+    // Sakrij ručni unos
+    if (manualSection) manualSection.style.display = 'none';
+
+    // Prikaži tee odabir
+    teeSection.style.display = 'block';
+    teeInfo.style.display = 'none';
+
+    // Popuni tee opcije
+    teeSelect.innerHTML = '<option value="">— Odaberi tee —</option>';
+    course.tees.forEach((t, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      const gender = t.gender === 'M' ? '♂' : t.gender === 'F' ? '♀' : '★';
+      opt.textContent = `${gender} ${t.tee_name} — Par ${t.par} | CR ${t.course_rating} | Slope ${t.slope_rating}`;
+      teeSelect.appendChild(opt);
+    });
+
+    // Reset igrač tee odabir
+    state.players.forEach(p => p.teeName = '');
+    renderPlayersList();
+  } else {
+    if (manualSection) manualSection.style.display = 'block';
+    teeSection.style.display = 'none';
+    teeInfo.style.display = 'none';
+    renderPlayersList();
+  }
+}
+
+function onTeeSelect() {
+  const sel = document.getElementById('tee-select');
+  const idx = sel.value;
+  state.selectedTeeIdx = idx !== '' ? parseInt(idx) : null;
+
+  const course = getSelectedCourseData();
+  if (!course || state.selectedTeeIdx === null) return;
+
+  const tee = course.tees[state.selectedTeeIdx];
+  const teeInfo = document.getElementById('tee-info');
+
+  // Popuni CR/Slope/Par poljai za PH izračun
+  document.getElementById('course-rating').value = tee.course_rating;
+  document.getElementById('slope-rating').value = tee.slope_rating;
+  document.getElementById('course-par-total').value = tee.par;
+  document.getElementById('num-holes').value = course.holes;
+  document.getElementById('default-par').value = Math.round(tee.par / course.holes);
+
+  // Spremi SI iz baze
+  state.si = tee.holes ? tee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
+
+  // Prikaži info karticu
+  document.getElementById('tee-par').textContent = tee.par;
+  document.getElementById('tee-cr').textContent = tee.course_rating;
+  document.getElementById('tee-slope').textContent = tee.slope_rating;
+  teeInfo.style.display = 'block';
+
+  // Sakrij WHS ručna polja (već popunjena iz baze)
+  const whsFields = document.getElementById('whs-fields');
+  if (whsFields) whsFields.style.display = 'none';
+
+  renderPlayersList();
+}
+
+function calcPlayingHcpForPlayer(p) {
+  // Ako igrač ima odabran tee, koristi njegove podatke
+  const course = getSelectedCourseData();
+  let cr = parseFloat(document.getElementById('course-rating')?.value) || state.courseRating || 72.0;
+  let sl = parseFloat(document.getElementById('slope-rating')?.value) || state.slopeRating || 113;
+  let cp = parseFloat(document.getElementById('course-par-total')?.value) || state.coursePar || 72;
+  let n  = parseInt(document.getElementById('num-holes')?.value) || 18;
+
+  if (course && p.teeName) {
+    const tee = course.tees.find(t => t.tee_name === p.teeName);
+    if (tee) { cr = tee.course_rating; sl = tee.slope_rating; cp = tee.par; n = course.holes; }
+  }
+
+  const factor = n === 9 ? 0.5 : 1.0;
+  const hci = p.hcp ?? 36;
+
+  if (state.hcpSystem === 'WHS') {
+    return Math.round(hci * (sl / 113) * factor + (cr - cp) * factor);
+  } else {
+    return Math.round(hci * (sl / 113) * factor);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // HENDIKEP & STABLEFORD LOGIKA
 // ═══════════════════════════════════════════════════════════════════
 
@@ -2090,53 +2327,6 @@ function setSearchStatus(msg, isError) {
   el.textContent = msg;
   el.style.color = isError ? 'var(--red)' : 'var(--text3)';
 }
-
-// Patch startRound — koristi uvezene parove + sprema PH
-const _origStart = startRound;
-startRound = function() {
-  const name = document.getElementById('course-name').value.trim();
-  if (!name) { showToast('Unesi naziv terena!', 'red'); return; }
-  const n = parseInt(document.getElementById('num-holes').value) || 18;
-  const par = parseInt(document.getElementById('default-par').value) || 4;
-  state.courseName = name;
-  state.numHoles = Math.min(18, Math.max(9, n));
-  state.defaultPar = Math.min(5, Math.max(3, par));
-  state.currentHole = 0;
-  state.par = (state._importedPar && state._importedPar.length === state.numHoles)
-    ? [...state._importedPar]
-    : Array(state.numHoles).fill(state.defaultPar);
-  state._importedPar = null;
-
-  // Spremi course data za PH izračun
-  state.courseRating = parseFloat(document.getElementById('course-rating')?.value) || 72.0;
-  state.slopeRating  = parseFloat(document.getElementById('slope-rating')?.value)  || 113;
-  state.coursePar    = parseFloat(document.getElementById('course-par-total')?.value) || 72;
-  state.si           = state.si.slice(0, state.numHoles);
-
-  // Izračunaj i spremi Playing Handicap za sve igrače
-  state.roundPlayingHcps = {};
-  state.players.forEach(p => {
-    state.roundPlayingHcps[p.name] = calcPlayingHcp(p.hcp ?? 36);
-  });
-
-  state.strokes = state.players.map(() => Array(state.numHoles).fill(0));
-  startGPS();
-  showScreen('play');
-};
-
-// Reset search pri otvaranju
-const _origInit = initNewRound;
-initNewRound = function() {
-  _origInit();
-  const badge = document.getElementById('selected-course-badge');
-  if (badge) badge.style.display = 'none';
-  const sr = document.getElementById('search-results');
-  if (sr) sr.innerHTML = '';
-  setSearchStatus('', false);
-  const inp = document.getElementById('course-search-input');
-  if (inp) inp.value = '';
-  state._importedPar = null;
-};
 
 // ═══════════════════════════════════════════════════════════════════
 // INIT
