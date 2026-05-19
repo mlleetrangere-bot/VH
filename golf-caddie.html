@@ -12,24 +12,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* ── VISOKI KONTRAST — slabovidni ── */
+  /* ── ČISTI CRNO-BIJELI KONTRAST — Xiaomi Poco F8 Ultra ── */
   --bg: #000000;
-  --bg2: #0a0a0a;
+  --bg2: #000000;
   --surface: #111111;
   --surface2: #1a1a1a;
   --surface3: #222222;
-  --border: #555555;
-  --border2: #888888;
-  --green: #00ff88;
-  --green-dim: #00cc66;
-  --green-glow: rgba(0,255,136,0.12);
-  --gold: #ffdd00;
-  --gold-dim: #ccaa00;
-  --red: #ff4444;
-  --blue: #44aaff;
+  --border: #444444;
+  --border2: #666666;
+  --green: #00ff00;
+  --green-dim: #00cc00;
+  --green-glow: rgba(0,255,0,0.1);
+  --gold: #ffff00;
+  --gold-dim: #cccc00;
+  --red: #ff3333;
+  --blue: #55aaff;
   --text: #ffffff;
-  --text2: #dddddd;
-  --text3: #aaaaaa;
+  --text2: #cccccc;
+  --text3: #888888;
   --font-display: 'Bebas Neue', sans-serif;
   --font-body: 'Outfit', sans-serif;
   --font-mono: 'DM Mono', monospace;
@@ -851,51 +851,27 @@ input[type=number] { -moz-appearance: textfield; }
 
     <div class="scroll-content" style="padding: 16px 16px 100px;">
 
-      <!-- ── OFFLINE BAZA TERENA ── -->
-      <div class="section-label" style="padding:0 0 8px;">⛳ ODABERI TEREN</div>
-
-      <!-- Padajući izbornik terena -->
+      <!-- ── TEREN ── -->
+      <div class="section-label" style="padding:0 0 8px;">⛳ TEREN</div>
       <div class="input-group">
-        <label class="input-label">Teren (offline baza)</label>
+        <label class="input-label">Odaberi teren</label>
         <select class="input" id="course-select" onchange="onCourseSelect()" style="cursor:pointer;">
           <option value="">— Odaberi teren —</option>
         </select>
       </div>
 
-      <!-- Tee izbornik (pojavi se nakon odabira terena) -->
-      <div id="tee-section" style="display:none;">
-        <div class="input-group">
-          <label class="input-label">Tee / Boja</label>
-          <select class="input" id="tee-select" onchange="onTeeSelect()" style="cursor:pointer;">
-            <option value="">— Odaberi tee —</option>
-          </select>
-        </div>
-
-        <!-- Info o odabranom teeu -->
-        <div id="tee-info" style="background:var(--surface2);border:2px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:14px;display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
-            <div>
-              <div style="font-size:22px;font-weight:700;color:var(--gold);font-family:var(--font-mono);" id="tee-par">—</div>
-              <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);letter-spacing:1px;">PAR</div>
-            </div>
-            <div>
-              <div style="font-size:22px;font-weight:700;color:var(--green);font-family:var(--font-mono);" id="tee-cr">—</div>
-              <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);letter-spacing:1px;">CR</div>
-            </div>
-            <div>
-              <div style="font-size:22px;font-weight:700;color:var(--blue);font-family:var(--font-mono);" id="tee-slope">—</div>
-              <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);letter-spacing:1px;">SLOPE</div>
-            </div>
-          </div>
-        </div>
+      <!-- Info o terenu -->
+      <div id="course-info-box" style="display:none;background:#111;border:2px solid #333;border-radius:12px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:13px;color:#fff;font-weight:700;" id="course-info-name"></div>
+        <div style="font-size:12px;color:#aaa;font-family:var(--font-mono);margin-top:4px;" id="course-info-meta"></div>
       </div>
 
-      <!-- Ručni unos ako nije u bazi -->
+      <!-- Ručni unos -->
       <div id="manual-section">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-          <div style="flex:1;height:1px;background:var(--border2);"></div>
-          <span style="font-size:12px;color:var(--text3);font-family:var(--font-mono);">ili ručno</span>
-          <div style="flex:1;height:1px;background:var(--border2);"></div>
+          <div style="flex:1;height:1px;background:#333;"></div>
+          <span style="font-size:12px;color:#666;font-family:var(--font-mono);">ili ručno</span>
+          <div style="flex:1;height:1px;background:#333;"></div>
         </div>
         <div class="input-group">
           <label class="input-label">Naziv terena</label>
@@ -914,17 +890,15 @@ input[type=number] { -moz-appearance: textfield; }
       </div>
 
       <!-- ── HENDIKEP SISTEM ── -->
-      <div class="section-label" style="padding:0 0 8px;">⚙️ HENDIKEP SISTEM</div>
+      <div class="section-label" style="padding:0 0 8px;">⚙️ HENDIKEP</div>
       <div style="display:flex;gap:8px;margin-bottom:12px;">
         <button id="hcp-btn-whs" class="btn btn-primary btn-sm" style="flex:1" onclick="setHcpSystem('WHS')">WHS</button>
         <button id="hcp-btn-vorgabe" class="btn btn-secondary btn-sm" style="flex:1" onclick="setHcpSystem('Vorgabe')">Vorgabe</button>
       </div>
-
-      <!-- CR/Slope ručno (kad nije iz baze) -->
       <div id="whs-fields">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
           <div class="input-group" style="margin:0">
-            <label class="input-label">Course Rating</label>
+            <label class="input-label">CR</label>
             <input class="input" id="course-rating" type="number" value="72.0" step="0.1" min="60" max="82">
           </div>
           <div class="input-group" style="margin:0">
@@ -932,13 +906,13 @@ input[type=number] { -moz-appearance: textfield; }
             <input class="input" id="slope-rating" type="number" value="113" min="55" max="155">
           </div>
           <div class="input-group" style="margin:0">
-            <label class="input-label">Par terena</label>
+            <label class="input-label">Par</label>
             <input class="input" id="course-par-total" type="number" value="72" min="60" max="80">
           </div>
         </div>
       </div>
 
-      <!-- ── IGRAČI ── -->
+      <!-- ── IGRAČI — tee odabir je OVDJE, po igraču ── -->
       <div class="section-label" style="padding: 0 0 8px;">IGRAČI</div>
       <div id="players-list"></div>
 
@@ -1245,63 +1219,60 @@ function initNewRound() {
 
 function renderPlayersList() {
   const el = document.getElementById('players-list');
-  const selectedCourse = getSelectedCourseData();
+  const course = getSelectedCourseData();
+  const tees = course?.tees || [];
 
   el.innerHTML = state.players.map((p, i) => {
-    const ph = calcPlayingHcp(p.hcp ?? 36);
-    // Tee opcije za ovog igrača ovisno o spolu
-    const teeOptions = selectedCourse
-      ? selectedCourse.tees
-          .filter(t => !t.gender || t.gender === p.gender || t.gender === 'A')
-          .map(t => `<option value="${t.tee_name}" ${p.teeName===t.tee_name?'selected':''}>${t.tee_name} (Par ${t.par}, CR ${t.course_rating}, Slope ${t.slope_rating})</option>`)
-          .join('')
-      : '';
+    // Filtriraj tee opcije po spolu igrača
+    const playerTees = tees.filter(t => !t.gender || t.gender === p.gender || t.gender === 'A');
+    const ph = calcPlayingHcpForPlayer(p);
 
     return `
-    <div class="player-row animate-in" style="animation-delay:${i*0.05}s;flex-direction:column;align-items:stretch;gap:8px;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="player-avatar" style="background:${p.color}22;border:2px solid ${p.color}44;flex-shrink:0;">
-          ${p.avatar}
-        </div>
-        <input class="player-name-input" placeholder="Ime igrača" value="${escHtml(p.name)}"
+    <div style="background:#111;border:2px solid #444;border-radius:14px;padding:16px;margin-bottom:14px;">
+
+      <!-- Ime + brisanje -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:#222;border:2px solid ${p.color};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">${p.avatar}</div>
+        <input style="flex:1;background:transparent;border:none;border-bottom:2px solid #444;color:#fff;font-family:var(--font-body);font-size:18px;font-weight:600;outline:none;padding:4px 0;"
+          placeholder="Ime igrača" value="${escHtml(p.name)}"
           oninput="state.players[${i}].name=this.value">
-        ${state.players.length > 1 ? `<button class="player-remove" onclick="removePlayer(${i})">×</button>` : ''}
+        ${state.players.length > 1 ? `<button style="background:#330000;border:2px solid #ff3333;color:#ff3333;border-radius:8px;padding:6px 12px;font-size:16px;cursor:pointer;" onclick="removePlayer(${i})">✕</button>` : ''}
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <!-- Spol -->
+      <!-- Spol + HCP -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <div>
-          <div style="font-size:11px;color:var(--gold);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:4px;">SPOL</div>
-          <select style="width:100%;background:var(--surface3);border:2px solid var(--border2);border-radius:8px;padding:10px;color:var(--text);font-size:15px;outline:none;"
+          <div style="font-size:12px;color:#ffff00;font-family:var(--font-mono);letter-spacing:2px;margin-bottom:6px;">SPOL</div>
+          <select style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:12px;color:#fff;font-size:16px;outline:none;"
             onchange="state.players[${i}].gender=this.value;state.players[${i}].teeName='';renderPlayersList();">
             <option value="M" ${p.gender==='M'?'selected':''}>♂ Muški</option>
             <option value="F" ${p.gender==='F'?'selected':''}>♀ Ženski</option>
           </select>
         </div>
-        <!-- HCP -->
         <div>
-          <div style="font-size:11px;color:var(--gold);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:4px;">HCP INDEX</div>
+          <div style="font-size:12px;color:#ffff00;font-family:var(--font-mono);letter-spacing:2px;margin-bottom:6px;">HCP INDEX</div>
           <input type="number" step="0.1" min="-10" max="54" value="${p.hcp ?? 36}"
-            style="width:100%;background:var(--surface3);border:2px solid var(--border2);border-radius:8px;padding:10px;color:var(--text);font-size:15px;outline:none;"
+            style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:12px;color:#ffff00;font-size:18px;font-weight:700;outline:none;text-align:center;"
             oninput="state.players[${i}].hcp=parseFloat(this.value)||0;renderPlayersList();">
         </div>
       </div>
 
-      ${selectedCourse && teeOptions ? `
-      <div>
-        <div style="font-size:11px;color:var(--gold);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:4px;">TEE</div>
-        <select style="width:100%;background:var(--surface3);border:2px solid var(--border2);border-radius:8px;padding:10px;color:var(--text);font-size:14px;outline:none;"
+      <!-- TEE odabir (samo ako je teren iz baze) -->
+      ${tees.length > 0 ? `
+      <div style="margin-bottom:12px;">
+        <div style="font-size:12px;color:#ffff00;font-family:var(--font-mono);letter-spacing:2px;margin-bottom:6px;">TEE</div>
+        <select style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:12px;color:#fff;font-size:15px;outline:none;cursor:pointer;"
           onchange="state.players[${i}].teeName=this.value;renderPlayersList();">
           <option value="">— Odaberi tee —</option>
-          ${teeOptions}
+          ${playerTees.map(t => `<option value="${escHtml(t.tee_name)}" ${p.teeName===t.tee_name?'selected':''}>${t.tee_name} | Par ${t.par} | CR ${t.course_rating} | Slope ${t.slope_rating}</option>`).join('')}
         </select>
       </div>
       ` : ''}
 
       <!-- Playing Handicap prikaz -->
-      <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:13px;color:var(--text2);font-family:var(--font-mono);">Playing Handicap:</span>
-        <span style="font-size:20px;font-weight:700;color:var(--gold);font-family:var(--font-mono);" id="ph-val-${i}">${calcPlayingHcpForPlayer(p)}</span>
+      <div style="background:#000;border:2px solid #00ff00;border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:14px;color:#888;font-family:var(--font-mono);">Playing Handicap:</span>
+        <span style="font-size:28px;font-weight:700;color:#00ff00;font-family:var(--font-mono);">${ph}</span>
       </div>
     </div>`;
   }).join('');
@@ -1358,6 +1329,7 @@ function startRound() {
 
   state.currentHole = 0;
   state.strokes = state.players.map(() => Array(state.numHoles).fill(0));
+  state.putts   = state.players.map(() => Array(state.numHoles).fill(0));
 
   // Izračunaj Playing Handicap za svakog igrača
   state.roundPlayingHcps = {};
@@ -1374,12 +1346,12 @@ function initNewRound() {
     state.players = [{ name: 'Igrač 1', color: COLORS[0], avatar: AVATARS[0], hcp: 36, gender: 'M', teeName: '' }];
   }
   state.selectedCourseId = null;
-  state.selectedTeeIdx = null;
+  state.putts = [];
 
   const manualSection = document.getElementById('manual-section');
   if (manualSection) manualSection.style.display = 'block';
-  const teeSection = document.getElementById('tee-section');
-  if (teeSection) teeSection.style.display = 'none';
+  const infoBox = document.getElementById('course-info-box');
+  if (infoBox) infoBox.style.display = 'none';
   const whsFields = document.getElementById('whs-fields');
   if (whsFields) whsFields.style.display = 'block';
 
@@ -1476,32 +1448,69 @@ function renderPlayerScoreCards() {
   const h = state.currentHole;
   const el = document.getElementById('players-scores');
   el.innerHTML = state.players.map((p, pi) => {
-    const s = state.strokes[pi][h];
-    const par = state.par[h];
+    const s    = state.strokes[pi][h];
+    const pu   = (state.putts[pi] || [])[h] || 0;
+    const par  = state.par[h];
     const diff = s > 0 ? s - par : null;
-    const totalS = state.strokes[pi].reduce((a,b)=>a+b,0);
-    const totalP = state.par.reduce((a,b)=>a+b,0);
-    const totalD = totalS - totalP;
-    const diffLabel = diff === null ? '' : diff === 0 ? 'PAR' : diff === -1 ? 'BIRDIE 🐦' : diff === -2 ? 'EAGLE 🦅' : diff <= -3 ? 'ALBATROS 🦅🦅' : diff === 1 ? 'BOGEY' : diff === 2 ? 'DBL BOGEY' : `+${diff}`;
+    const totalS  = state.strokes[pi].reduce((a,b)=>a+b,0);
+    const totalPu = (state.putts[pi]||[]).reduce((a,b)=>a+b,0);
+    const totalP  = state.par.reduce((a,b)=>a+b,0);
+    const totalD  = totalS - totalP;
+
+    const diffLabel = diff === null ? '' :
+      diff === 0 ? 'PAR' :
+      diff === -1 ? 'BIRDIE 🐦' :
+      diff === -2 ? 'EAGLE 🦅' :
+      diff <= -3 ? 'ALBATROS 🦅🦅' :
+      diff === 1 ? 'BOGEY' :
+      diff === 2 ? 'DBL BOGEY' : `+${diff}`;
 
     return `
-    <div class="player-score-card animate-in" style="animation-delay:${pi*0.05}s">
-      <div class="psc-header">
-        <div class="psc-name">
-          <div class="player-avatar" style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:${p.color}22;border:1px solid ${p.color}44;">${p.avatar}</div>
-          <span style="color:var(--text)">${escHtml(p.name)}</span>
+    <div style="background:#111;border:2px solid #333;border-radius:16px;padding:14px;margin-bottom:10px;">
+
+      <!-- Header: ime + ukupno -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#222;border:2px solid ${p.color};display:flex;align-items:center;justify-content:center;font-size:16px;">${p.avatar}</div>
+          <span style="font-size:17px;font-weight:700;color:#fff;">${escHtml(p.name)}</span>
         </div>
-        <div class="psc-diff" style="color:${diffColor(totalD)}">
-          Ukupno: ${totalS > 0 ? fmtDiff(totalD) : '—'}
-        </div>
+        <span style="font-size:16px;font-weight:700;font-family:var(--font-mono);color:${diffColor(totalD)};">
+          ${totalS > 0 ? fmtDiff(totalD) : '—'}
+        </span>
       </div>
-      <div class="stroke-control">
-        <button class="stroke-btn minus" ontouchstart="this.classList.add('pressing')" ontouchend="this.classList.remove('pressing')" onclick="changeStroke(${pi}, -1)">−</button>
-        <div class="stroke-display">
-          <div class="stroke-num">${s}</div>
-          <div class="stroke-sublabel" style="color:${diff===null?'var(--text3)':diffColor(diff)}">${diffLabel || '—'}</div>
+
+      <!-- Udarci -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <button style="width:62px;height:62px;border-radius:50%;border:2px solid #444;background:#222;font-size:30px;color:#fff;cursor:pointer;flex-shrink:0;"
+          ontouchstart="this.style.background='#330000'" ontouchend="this.style.background='#222'"
+          onclick="changeStroke(${pi},-1)">−</button>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:62px;font-weight:700;color:#fff;line-height:1;font-family:var(--font-mono);">${s}</div>
+          <div style="font-size:14px;font-weight:600;color:${diff===null?'#555':diffColor(diff)};margin-top:2px;">${diffLabel||'—'}</div>
         </div>
-        <button class="stroke-btn plus" onclick="changeStroke(${pi}, 1)">+</button>
+        <button style="width:62px;height:62px;border-radius:50%;border:2px solid #444;background:#222;font-size:30px;color:#fff;cursor:pointer;flex-shrink:0;"
+          ontouchstart="this.style.background='#003300'" ontouchend="this.style.background='#222'"
+          onclick="changeStroke(${pi},1)">+</button>
+      </div>
+
+      <!-- Putteri -->
+      <div style="background:#000;border:2px solid #333;border-radius:10px;padding:10px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#aaa;cursor:pointer;"
+              onclick="changePutt(${pi},-1)">−</button>
+            <div style="text-align:center;">
+              <div style="font-size:36px;font-weight:700;color:#55aaff;font-family:var(--font-mono);line-height:1;">${pu}</div>
+              <div style="font-size:11px;color:#666;font-family:var(--font-mono);">PUTTER</div>
+            </div>
+            <button style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#aaa;cursor:pointer;"
+              onclick="changePutt(${pi},1)">+</button>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:13px;color:#555;font-family:var(--font-mono);">ukupno</div>
+            <div style="font-size:20px;color:#55aaff;font-family:var(--font-mono);font-weight:700;">${totalPu}</div>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1510,6 +1519,13 @@ function renderPlayerScoreCards() {
 function changeStroke(playerIdx, delta) {
   const h = state.currentHole;
   state.strokes[playerIdx][h] = Math.max(0, state.strokes[playerIdx][h] + delta);
+  renderPlayerScoreCards();
+}
+
+function changePutt(playerIdx, delta) {
+  const h = state.currentHole;
+  if (!state.putts[playerIdx]) state.putts[playerIdx] = Array(state.numHoles).fill(0);
+  state.putts[playerIdx][h] = Math.max(0, state.putts[playerIdx][h] + delta);
   renderPlayerScoreCards();
 }
 
@@ -1666,8 +1682,13 @@ function finishRound() {
         name: p.name,
         color: p.color,
         avatar: p.avatar,
+        hcp: p.hcp,
+        gender: p.gender,
+        teeName: p.teeName,
         strokes: [...state.strokes[pi]],
+        putts: [...(state.putts[pi]||Array(state.numHoles).fill(0))],
         totalStrokes: totalS,
+        totalPutts: (state.putts[pi]||[]).reduce((a,b)=>a+b,0),
         totalPar: totalP,
         totalDiff: totalS - totalP,
       };
@@ -1680,6 +1701,7 @@ function finishRound() {
   if (state.gpsWatchId) navigator.geolocation.clearWatch(state.gpsWatchId);
   state.players = [];
   state.strokes = [];
+  state.putts   = [];
   state.par = [];
 
   showToast('Runda završena! ✓', 'green');
@@ -1920,80 +1942,37 @@ function onCourseSelect() {
   const sel = document.getElementById('course-select');
   const idx = sel.value;
   state.selectedCourseId = idx !== '' ? parseInt(idx) : null;
-  state.selectedTeeIdx = null;
 
   const course = getSelectedCourseData();
-  const teeSection = document.getElementById('tee-section');
   const manualSection = document.getElementById('manual-section');
-  const teeInfo = document.getElementById('tee-info');
-  const teeSelect = document.getElementById('tee-select');
+  const infoBox = document.getElementById('course-info-box');
 
   if (course) {
-    // Popuni naziv
     document.getElementById('course-name').value = course.club_name;
     document.getElementById('num-holes').value = course.holes;
-
-    // Sakrij ručni unos
     if (manualSection) manualSection.style.display = 'none';
-
-    // Prikaži tee odabir
-    teeSection.style.display = 'block';
-    teeInfo.style.display = 'none';
-
-    // Popuni tee opcije
-    teeSelect.innerHTML = '<option value="">— Odaberi tee —</option>';
-    course.tees.forEach((t, i) => {
-      const opt = document.createElement('option');
-      opt.value = i;
-      const gender = t.gender === 'M' ? '♂' : t.gender === 'F' ? '♀' : '★';
-      opt.textContent = `${gender} ${t.tee_name} — Par ${t.par} | CR ${t.course_rating} | Slope ${t.slope_rating}`;
-      teeSelect.appendChild(opt);
-    });
-
-    // Reset igrač tee odabir
+    if (infoBox) {
+      infoBox.style.display = 'block';
+      document.getElementById('course-info-name').textContent = course.club_name;
+      document.getElementById('course-info-meta').textContent =
+        `${course.holes} rupa · ${course.tees?.length || 0} tee opcija`;
+    }
+    // Sakrij WHS ručna polja — popunit će se kad igrač odabere tee
+    const whsFields = document.getElementById('whs-fields');
+    if (whsFields) whsFields.style.display = 'none';
+    // Reset tee po igračima
     state.players.forEach(p => p.teeName = '');
-    renderPlayersList();
   } else {
     if (manualSection) manualSection.style.display = 'block';
-    teeSection.style.display = 'none';
-    teeInfo.style.display = 'none';
-    renderPlayersList();
+    if (infoBox) infoBox.style.display = 'none';
+    const whsFields = document.getElementById('whs-fields');
+    if (whsFields) whsFields.style.display = 'block';
   }
-}
-
-function onTeeSelect() {
-  const sel = document.getElementById('tee-select');
-  const idx = sel.value;
-  state.selectedTeeIdx = idx !== '' ? parseInt(idx) : null;
-
-  const course = getSelectedCourseData();
-  if (!course || state.selectedTeeIdx === null) return;
-
-  const tee = course.tees[state.selectedTeeIdx];
-  const teeInfo = document.getElementById('tee-info');
-
-  // Popuni CR/Slope/Par poljai za PH izračun
-  document.getElementById('course-rating').value = tee.course_rating;
-  document.getElementById('slope-rating').value = tee.slope_rating;
-  document.getElementById('course-par-total').value = tee.par;
-  document.getElementById('num-holes').value = course.holes;
-  document.getElementById('default-par').value = Math.round(tee.par / course.holes);
-
-  // Spremi SI iz baze
-  state.si = tee.holes ? tee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
-
-  // Prikaži info karticu
-  document.getElementById('tee-par').textContent = tee.par;
-  document.getElementById('tee-cr').textContent = tee.course_rating;
-  document.getElementById('tee-slope').textContent = tee.slope_rating;
-  teeInfo.style.display = 'block';
-
-  // Sakrij WHS ručna polja (već popunjena iz baze)
-  const whsFields = document.getElementById('whs-fields');
-  if (whsFields) whsFields.style.display = 'none';
-
   renderPlayersList();
 }
+
+// onTeeSelect više nije potreban globalno — tee je per player
+function onTeeSelect() {}
 
 function calcPlayingHcpForPlayer(p) {
   // Ako igrač ima odabran tee, koristi njegove podatke
