@@ -1293,22 +1293,29 @@ function removePlayer(idx) {
 function startRound() {
   const course = getSelectedCourseData();
 
-  // Validacija
   if (course) {
-    // Iz offline baze
-    if (!document.getElementById('tee-select')?.value && course.tees?.length > 0) {
-      showToast('Odaberi tee!', 'red'); return;
+    // Provjeri da svaki igrač ima tee (ako teren ima tee opcije)
+    if (course.tees?.length > 0) {
+      const missing = state.players.find(p => !p.teeName);
+      if (missing) { showToast(`Odaberi tee za ${missing.name}!`, 'red'); return; }
     }
+
     state.courseName = course.club_name;
     state.numHoles = course.holes;
 
-    // Uzmi tee podatke od prvog igrača koji ima tee, ili defaultni tee
-    const firstTee = course.tees[state.selectedTeeIdx ?? 0];
-    state.par = firstTee.holes ? firstTee.holes.map(h => h.par) : Array(course.holes).fill(4);
-    state.si  = firstTee.holes ? firstTee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
-    state.courseRating = firstTee.course_rating;
-    state.slopeRating  = firstTee.slope_rating;
-    state.coursePar    = firstTee.par;
+    // Par i SI uzimamo od prvog igrača koji ima tee
+    const firstPlayer = state.players[0];
+    const tee = course.tees?.find(t => t.tee_name === firstPlayer.teeName) || course.tees?.[0];
+    if (tee) {
+      state.par = tee.holes ? tee.holes.map(h => h.par) : Array(course.holes).fill(4);
+      state.si  = tee.holes ? tee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
+      state.courseRating = tee.course_rating;
+      state.slopeRating  = tee.slope_rating;
+      state.coursePar    = tee.par;
+    } else {
+      state.par = Array(course.holes).fill(4);
+      state.si  = Array.from({length:course.holes},(_,i)=>i+1);
+    }
   } else {
     // Ručni unos
     const name = document.getElementById('course-name').value.trim();
@@ -1946,33 +1953,29 @@ function onCourseSelect() {
   const course = getSelectedCourseData();
   const manualSection = document.getElementById('manual-section');
   const infoBox = document.getElementById('course-info-box');
+  const whsFields = document.getElementById('whs-fields');
 
   if (course) {
     document.getElementById('course-name').value = course.club_name;
     document.getElementById('num-holes').value = course.holes;
     if (manualSection) manualSection.style.display = 'none';
+    if (whsFields) whsFields.style.display = 'none';
     if (infoBox) {
       infoBox.style.display = 'block';
       document.getElementById('course-info-name').textContent = course.club_name;
       document.getElementById('course-info-meta').textContent =
-        `${course.holes} rupa · ${course.tees?.length || 0} tee opcija`;
+        `${course.holes} rupa · odaberi tee ispod za svakog igrača`;
     }
-    // Sakrij WHS ručna polja — popunit će se kad igrač odabere tee
-    const whsFields = document.getElementById('whs-fields');
-    if (whsFields) whsFields.style.display = 'none';
-    // Reset tee po igračima
     state.players.forEach(p => p.teeName = '');
   } else {
     if (manualSection) manualSection.style.display = 'block';
     if (infoBox) infoBox.style.display = 'none';
-    const whsFields = document.getElementById('whs-fields');
     if (whsFields) whsFields.style.display = 'block';
   }
   renderPlayersList();
 }
 
-// onTeeSelect više nije potreban globalno — tee je per player
-function onTeeSelect() {}
+function onTeeSelect() {} // Više se ne koristi globalno
 
 function calcPlayingHcpForPlayer(p) {
   // Ako igrač ima odabran tee, koristi njegove podatke
