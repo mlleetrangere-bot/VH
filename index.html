@@ -4,307 +4,421 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Villa Helena – Vodice, Dalmacija</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --ink:#1a2a35;--ink2:#1e3545;
-  --sea:#2a6b7c;--sea2:#4a9baf;--sea3:#1a4a57;
-  --cream:#ffffff;--sand:#f5f0e8;
-  --gold:#c9a84c;--gold2:#e8c860;
-  --muted:#7a8a8e;--white:#fff;
-  --red:#c0392b;--green:#1a6b4a;
-  --radius:14px;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Jost',sans-serif;background:#f8f4ef;color:#1a2a35;font-weight:300}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── LANG / NAV ── */
-.topbar{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);box-shadow:0 1px 12px rgba(0,0,0,0.08);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0.85rem 2.5rem;
-  border-bottom:1px solid rgba(201,168,76,0.25);
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #111111;
+  font-size: 18px;
+  line-height: 1.7;
 }
-.logo-text{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.35rem;font-weight:400;color:#1e3545;letter-spacing:0.04em;
-  text-decoration:none;
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #ffffff;
+  border-bottom: 3px solid #111111;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2rem;
+  flex-wrap: wrap; gap: 0.5rem;
 }
-.logo-text em{font-style:italic;color:var(--sea)}
-.nav-links{display:flex;gap:2rem;list-style:none}
-.nav-links a{
-  text-decoration:none;color:#5a7080;
-  font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;
-  transition:color 0.2s;
+.nav-logo {
+  font-size: 1.6rem; font-weight: bold; color: #111111;
+  text-decoration: none;
 }
-.nav-links a:hover{color:var(--gold)}
-.lang-group{display:flex;gap:0.35rem}
-.lang-btn{
-  background:none;border:1px solid rgba(201,168,76,0.35);
-  color:#7a8a8e;font-family:'Jost',sans-serif;
-  font-size:0.65rem;letter-spacing:0.1em;padding:0.22rem 0.65rem;
-  border-radius:100px;cursor:pointer;transition:all 0.2s;
+.nav-logo span { color: #2a6b7c; }
+.nav-links { display: flex; gap: 1.5rem; list-style: none; flex-wrap: wrap; }
+.nav-links a {
+  text-decoration: none; color: #111111;
+  font-size: 1rem; font-weight: bold;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
 }
-.lang-btn.active,.lang-btn:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+.nav-links a:hover { border-bottom-color: #2a6b7c; }
+.lang-group { display: flex; gap: 0.4rem; }
+.lang-btn {
+  background: #ffffff; border: 2px solid #111111;
+  color: #111111; font-family: Arial, sans-serif;
+  font-size: 0.9rem; font-weight: bold;
+  padding: 0.3rem 0.7rem; cursor: pointer;
+  border-radius: 4px; transition: all 0.2s;
+}
+.lang-btn.active, .lang-btn:hover {
+  background: #111111; color: #ffffff;
+}
 
 /* ── HERO ── */
-.hero{
-  min-height:80vh;
-  background:linear-gradient(160deg,#f8f4ef 0%,#eef5f7 50%,#f0f8fa 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:8rem 2rem 5rem;position:relative;overflow:hidden;
-  border-bottom:1px solid rgba(42,107,124,0.1);
+.hero {
+  background: #f5f5f5;
+  border-bottom: 3px solid #111111;
+  padding: 7rem 2rem 4rem;
+  text-align: center;
 }
-.hero::before{
-  content:'';position:absolute;inset:0;opacity:0.03;
-  background-image:radial-gradient(circle,#2a6b7c 1px,transparent 1px);
-  background-size:32px 32px;
+.hero h1 {
+  font-size: 3.5rem; font-weight: bold;
+  color: #111111; margin-bottom: 0.5rem;
 }
-.hero::after{
-  content:'';position:absolute;bottom:-1px;left:0;right:0;height:60px;
-  background:#f8f4ef;clip-path:ellipse(58% 100% at 50% 100%);
+.hero h1 span { color: #2a6b7c; }
+.hero-sub {
+  font-size: 1.3rem; color: #333333;
+  margin-bottom: 2rem;
 }
-
-/* SVG LOGO in hero */
-.hero-logo{margin-bottom:2rem;animation:fadeUp 1s ease both}
-.hero-logo svg{width:min(340px,80vw);height:auto}
-
-.hero-badges{
-  display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;
-  margin-bottom:2.5rem;animation:fadeUp 1s 0.3s ease both;
+.hero-badges {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  justify-content: center; margin-bottom: 2.5rem;
 }
-.badge{
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
-  color:#fff;font-size:0.7rem;letter-spacing:0.08em;
-  padding:0.4rem 1rem;border-radius:100px;backdrop-filter:blur(4px);
+.badge {
+  background: #ffffff; border: 2px solid #111111;
+  color: #111111; font-size: 1rem; font-weight: bold;
+  padding: 0.5rem 1.2rem; border-radius: 4px;
 }
-.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s 0.5s ease both}
-.btn-primary{
-  display:inline-block;background:var(--gold);color:#fff;text-decoration:none;
-  font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;
-  padding:0.95rem 2.2rem;border-radius:100px;transition:all 0.25s;border:none;cursor:pointer;
-  font-family:'Jost',sans-serif;
+.hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-main {
+  background: #111111; color: #ffffff;
+  font-family: Arial, sans-serif; font-size: 1.1rem; font-weight: bold;
+  padding: 1rem 2.5rem; border: 3px solid #111111;
+  border-radius: 4px; cursor: pointer; text-decoration: none;
+  display: inline-block; transition: all 0.2s;
 }
-.btn-primary:hover{background:#b8922e;transform:translateY(-2px)}
-.btn-outline{
-  display:inline-block;background:transparent;color:#fff;text-decoration:none;
-  font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;
-  padding:0.95rem 2.2rem;border-radius:100px;border:1px solid rgba(255,255,255,0.3);
-  transition:all 0.25s;
+.btn-main:hover { background: #2a6b7c; border-color: #2a6b7c; }
+.btn-sec {
+  background: #ffffff; color: #111111;
+  font-family: Arial, sans-serif; font-size: 1.1rem; font-weight: bold;
+  padding: 1rem 2.5rem; border: 3px solid #111111;
+  border-radius: 4px; cursor: pointer; text-decoration: none;
+  display: inline-block; transition: all 0.2s;
 }
-.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.08)}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.btn-sec:hover { background: #f0f0f0; }
 
 /* ── SECTIONS ── */
-section{padding:6rem 2rem}
-.container{max-width:1100px;margin:0 auto}
-.sec-label{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:300;color:var(--ink2);margin-bottom:0.5rem}
-.sec-title em{font-style:italic}
-.sec-desc{color:var(--muted);max-width:540px;line-height:1.9;font-size:0.9rem}
+section { padding: 4rem 2rem; border-bottom: 2px solid #dddddd; }
+.container { max-width: 1100px; margin: 0 auto; }
+.sec-label {
+  font-size: 0.85rem; text-transform: uppercase;
+  letter-spacing: 0.15em; color: #2a6b7c;
+  font-weight: bold; margin-bottom: 0.4rem;
+}
+.sec-title {
+  font-size: 2.2rem; font-weight: bold;
+  color: #111111; margin-bottom: 0.8rem;
+}
+.sec-desc { font-size: 1.1rem; color: #333333; max-width: 700px; }
 
 /* ── AMENITIES ── */
-.amenities-bg{background:var(--sand)}
-.amenities-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.2rem;margin-top:2.5rem}
-.amenity-card{
-  background:var(--cream);border:1px solid rgba(201,168,76,0.15);
-  border-radius:12px;padding:1.6rem 1.2rem;text-align:center;
-  transition:all 0.2s;
+.amenities-bg { background: #f5f5f5; }
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem; margin-top: 2rem;
 }
-.amenity-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(42,107,124,0.1)}
-.amenity-icon{font-size:1.8rem;margin-bottom:0.6rem}
-.amenity-name{font-size:0.8rem;color:var(--ink2);line-height:1.4}
+.amenity-card {
+  background: #ffffff; border: 2px solid #111111;
+  border-radius: 6px; padding: 1.5rem 1.2rem;
+  text-align: center;
+}
+.amenity-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+.amenity-name { font-size: 1rem; font-weight: bold; color: #111111; }
 
-/* ── ROOMS (info) ── */
-.rooms-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2.5rem}
-.room-info-card{
-  background:#fff;border-radius:var(--radius);border:1px solid rgba(201,168,76,0.15);
-  overflow:hidden;transition:all 0.25s;
+/* ── ROOMS ── */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem; margin-top: 2rem;
 }
-.room-info-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(42,107,124,0.12)}
-.ric-top{background:linear-gradient(135deg,var(--ink2),var(--sea));padding:1.5rem;position:relative}
-.ric-badge{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.15);color:#fff;font-size:0.62rem;letter-spacing:0.08em;padding:0.22rem 0.65rem;border-radius:100px}
-.ric-type{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.25rem}
-.ric-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:#fff;font-weight:400}
-.ric-body{padding:1.4rem}
-.ric-features{list-style:none;margin-bottom:1.2rem}
-.ric-features li{font-size:0.8rem;color:var(--muted);padding:0.2rem 0;display:flex;align-items:center;gap:0.5rem}
-.ric-features li::before{content:'—';color:var(--gold)}
-.ric-price-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(201,168,76,0.15);padding-top:1rem}
-.ric-price{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ink2)}
-.ric-unit{font-size:0.7rem;color:var(--muted)}
-.book-now-btn{
-  background:var(--sea);color:#fff;border:none;cursor:pointer;
-  font-family:'Jost',sans-serif;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;
-  padding:0.5rem 1.1rem;border-radius:100px;transition:all 0.2s;
+.room-card {
+  border: 3px solid #111111; border-radius: 6px;
+  overflow: hidden; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.book-now-btn:hover{background:var(--ink2)}
+.room-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.room-card-top {
+  background: #111111; padding: 1.5rem;
+  position: relative;
+}
+.room-type-lbl {
+  font-size: 0.85rem; text-transform: uppercase;
+  color: #aaaaaa; margin-bottom: 0.3rem; font-weight: bold;
+}
+.room-id {
+  font-size: 2rem; font-weight: bold; color: #ffffff;
+}
+.room-cap {
+  position: absolute; top: 1rem; right: 1rem;
+  background: #ffffff; color: #111111;
+  font-size: 0.85rem; font-weight: bold;
+  padding: 0.3rem 0.7rem; border-radius: 4px;
+}
+.room-card-body { padding: 1.5rem; background: #ffffff; }
+.room-feats { list-style: none; margin-bottom: 1.2rem; }
+.room-feats li {
+  font-size: 1rem; color: #111111;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #eeeeee;
+}
+.room-feats li:last-child { border-bottom: none; }
+.room-price-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem; border-top: 2px solid #111111;
+}
+.room-price {
+  font-size: 2rem; font-weight: bold; color: #111111;
+}
+.room-price-unit { font-size: 0.9rem; color: #555555; }
+.room-btn {
+  background: #2a6b7c; color: #ffffff;
+  border: none; cursor: pointer;
+  font-family: Arial, sans-serif; font-size: 1rem; font-weight: bold;
+  padding: 0.7rem 1.4rem; border-radius: 4px; transition: background 0.2s;
+}
+.room-btn:hover { background: #1a4a57; }
 
 /* ── LOCATION ── */
-.loc-bg{background:#eef5f7;color:#1e3545}
-.loc-bg .sec-title{color:#1e3545}
-.loc-bg .sec-desc{color:#6a7a80}
-.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;margin-top:2.5rem;align-items:start}
-.loc-items{display:flex;flex-direction:column;gap:1rem}
-.loc-item{
-  display:flex;align-items:center;gap:1rem;
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px;padding:1rem 1.3rem;
+.loc-bg { background: #eef5f7; }
+.loc-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2rem; margin-top: 2rem; align-items: start;
 }
-.loc-icon{font-size:1.3rem}
-.loc-text{font-size:0.84rem;color:#5a7080;line-height:1.4}
-.loc-text strong{display:block;color:#1e3545;margin-bottom:0.1rem}
-.map-box{
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
-  border-radius:16px;height:280px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:0.6rem;
-  color:rgba(255,255,255,0.4);font-size:0.82rem;text-align:center;
+.loc-items { display: flex; flex-direction: column; gap: 1rem; }
+.loc-item {
+  display: flex; align-items: center; gap: 1rem;
+  background: #ffffff; border: 2px solid #111111;
+  border-radius: 6px; padding: 1rem 1.3rem;
 }
-
-/* ── BOOKING SECTION ── */
-.booking-bg{background:var(--sand)}
-.booking-panel-wrap{
-  background:#fff;border-radius:var(--radius);
-  border:1px solid rgba(201,168,76,0.2);padding:2.5rem;margin-top:2.5rem;
+.loc-icon { font-size: 1.8rem; }
+.loc-text-title { font-size: 1.1rem; font-weight: bold; color: #111111; }
+.loc-text-desc { font-size: 0.95rem; color: #444444; }
+.map-box {
+  background: #ffffff; border: 2px solid #111111;
+  border-radius: 6px; height: 250px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.5rem; color: #555555; font-size: 1rem;
 }
 
-/* Room selector tabs */
-.room-tabs{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:2rem}
-.room-tab{
-  background:none;border:1px solid rgba(201,168,76,0.25);
-  color:var(--muted);font-family:'Jost',sans-serif;
-  font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
-  padding:0.5rem 1.2rem;border-radius:100px;cursor:pointer;transition:all 0.2s;
+/* ── BOOKING ── */
+.booking-wrap {
+  background: #ffffff; border: 2px solid #111111;
+  border-radius: 6px; padding: 2rem; margin-top: 2rem;
 }
-.room-tab:hover{border-color:var(--sea);color:var(--sea)}
-.room-tab.active{background:var(--sea);border-color:var(--sea);color:#fff}
+.room-tabs {
+  display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2rem;
+}
+.room-tab {
+  background: #ffffff; border: 2px solid #111111;
+  color: #111111; font-family: Arial, sans-serif;
+  font-size: 1rem; font-weight: bold;
+  padding: 0.6rem 1.2rem; border-radius: 4px;
+  cursor: pointer; transition: all 0.2s;
+}
+.room-tab.active { background: #111111; color: #ffffff; }
+.booking-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
 
-.booking-inner{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
-@media(max-width:700px){.booking-inner{grid-template-columns:1fr}}
+/* Calendar */
+.cal-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 1rem;
+}
+.cal-nav {
+  background: #ffffff; border: 2px solid #111111;
+  color: #111111; width: 36px; height: 36px;
+  border-radius: 4px; cursor: pointer;
+  font-size: 1rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.cal-nav:hover { background: #111111; color: #ffffff; }
+.cal-month-lbl { font-size: 1.2rem; font-weight: bold; color: #111111; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.cal-dn {
+  text-align: center; font-size: 0.8rem;
+  font-weight: bold; color: #555555; padding: 0.4rem 0;
+}
+.cal-d {
+  aspect-ratio: 1; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 0.95rem; border-radius: 4px;
+  cursor: pointer; transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.cal-d:hover:not(.disabled):not(.empty) { background: #f0f0f0; border-color: #111111; }
+.cal-d.empty { cursor: default; }
+.cal-d.disabled { color: #cccccc; cursor: not-allowed; }
+.cal-d.booked { background: #dddddd; color: #888888; cursor: not-allowed; text-decoration: line-through; }
+.cal-d.sel-start, .cal-d.sel-end { background: #111111; color: #ffffff; font-weight: bold; }
+.cal-d.in-range { background: #e0e0e0; color: #111111; }
+.cal-d.today { font-weight: bold; color: #2a6b7c; border: 2px solid #2a6b7c; }
+.cal-legend {
+  display: flex; gap: 1.2rem; margin-top: 0.8rem;
+  flex-wrap: wrap; font-size: 0.9rem;
+}
+.leg-item { display: flex; align-items: center; gap: 0.4rem; color: #333333; }
+.leg-dot { width: 14px; height: 14px; border-radius: 3px; }
+.dot-a { background: #ffffff; border: 2px solid #111111; }
+.dot-b { background: #dddddd; border: 2px solid #888888; }
+.dot-s { background: #111111; }
 
-/* ── CALENDAR ── */
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
-.cal-nav{
-  background:none;border:1px solid rgba(201,168,76,0.3);color:var(--ink2);
-  width:32px;height:32px;border-radius:50%;cursor:pointer;
-  transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:0.9rem;
+/* Form */
+.date-sum {
+  background: #f5f5f5; border: 2px solid #111111;
+  border-radius: 6px; padding: 1rem 1.2rem;
+  margin: 1rem 0; display: none;
 }
-.cal-nav:hover{background:var(--gold);border-color:var(--gold);color:#fff}
-.cal-month-lbl{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--ink2);font-style:italic}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dn{text-align:center;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:0.35rem 0}
-.cal-d{
-  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  font-size:0.76rem;border-radius:8px;cursor:pointer;transition:all 0.15s;
-  position:relative;user-select:none;
+.date-sum.visible { display: block; }
+.ds-row {
+  display: flex; justify-content: space-between;
+  font-size: 1rem; color: #111111; margin-bottom: 0.3rem;
 }
-.cal-d:hover:not(.disabled):not(.empty){background:var(--sand)}
-.cal-d.empty{cursor:default}
-.cal-d.disabled{color:rgba(0,0,0,0.2);cursor:not-allowed}
-.cal-d.booked{background:rgba(192,57,43,0.07);color:rgba(192,57,43,0.45);cursor:not-allowed}
-.cal-d.booked::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--red);opacity:0.5}
-.cal-d.sel-start,.cal-d.sel-end{background:var(--sea);color:#fff;font-weight:500}
-.cal-d.in-range{background:rgba(42,107,124,0.12);color:var(--sea)}
-.cal-d.today{font-weight:500;color:var(--gold)}
-.cal-legend{display:flex;gap:1rem;margin-top:0.8rem;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:0.35rem;font-size:0.68rem;color:var(--muted)}
-.leg-dot{width:9px;height:9px;border-radius:3px}
-.dot-a{background:rgba(42,107,124,0.15);border:1px solid var(--sea2)}
-.dot-b{background:rgba(192,57,43,0.15);border:1px solid var(--red)}
-.dot-s{background:var(--sea)}
-
-/* ── BOOKING FORM ── */
-.form-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--ink2);margin-bottom:1.3rem;font-style:italic}
-.date-sum{background:var(--sand);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.3rem;display:none}
-.date-sum.visible{display:block}
-.ds-row{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--ink2);margin-bottom:0.25rem}
-.ds-total{border-top:1px solid rgba(201,168,76,0.3);margin-top:0.5rem;padding-top:0.5rem;font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--ink2);display:flex;justify-content:space-between}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem}
-.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.8rem}
-.fg label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
-.fg input,.fg textarea,.fg select{
-  background:var(--cream);border:1px solid rgba(201,168,76,0.25);
-  border-radius:8px;padding:0.7rem 0.9rem;
-  font-family:'Jost',sans-serif;font-size:0.86rem;font-weight:300;
-  color:var(--ink);outline:none;transition:border-color 0.2s;
+.ds-total {
+  border-top: 2px solid #111111; margin-top: 0.5rem;
+  padding-top: 0.5rem; font-size: 1.2rem;
+  font-weight: bold; color: #111111;
+  display: flex; justify-content: space-between;
 }
-.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--sea)}
-.fg textarea{resize:vertical;min-height:75px}
-.submit-btn{
-  width:100%;background:var(--sea);color:#fff;border:none;cursor:pointer;
-  font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;
-  padding:1rem;border-radius:10px;transition:all 0.25s;margin-top:0.4rem;
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.fg { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.8rem; }
+.fg label {
+  font-size: 0.95rem; font-weight: bold; color: #111111;
 }
-.submit-btn:hover{background:var(--ink2)}
-.submit-btn:disabled{background:var(--muted);cursor:not-allowed}
-.notice{border-radius:10px;padding:1rem 1.3rem;font-size:0.82rem;margin-top:0.8rem;display:none}
-.notice.visible{display:block;animation:fadeUp 0.3s ease}
-.notice.success{background:rgba(26,107,74,0.1);border:1px solid rgba(26,107,74,0.3);color:var(--green)}
-.notice.warning{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#8a6820}
-.notice.error{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.25);color:var(--red)}
+.fg input, .fg textarea, .fg select {
+  background: #ffffff; border: 2px solid #111111;
+  border-radius: 4px; padding: 0.75rem 0.9rem;
+  font-family: Arial, sans-serif; font-size: 1rem;
+  color: #111111; outline: none;
+}
+.fg input:focus, .fg textarea:focus, .fg select:focus {
+  border-color: #2a6b7c; outline: 3px solid rgba(42,107,124,0.2);
+}
+.fg textarea { resize: vertical; min-height: 80px; }
+.submit-btn {
+  width: 100%; background: #111111; color: #ffffff;
+  border: none; cursor: pointer;
+  font-family: Arial, sans-serif; font-size: 1.1rem;
+  font-weight: bold; padding: 1rem;
+  border-radius: 4px; margin-top: 0.5rem; transition: background 0.2s;
+}
+.submit-btn:hover { background: #2a6b7c; }
+.submit-btn:disabled { background: #aaaaaa; cursor: not-allowed; }
+.notice {
+  border-radius: 4px; padding: 1rem 1.2rem;
+  font-size: 1rem; margin-top: 0.8rem; display: none;
+  font-weight: bold;
+}
+.notice.visible { display: block; }
+.notice.success { background: #e6ffe6; border: 2px solid #006600; color: #004400; }
+.notice.warning { background: #fff8e6; border: 2px solid #996600; color: #553300; }
+.notice.error { background: #ffe6e6; border: 2px solid #cc0000; color: #880000; }
 
 /* ── CONTACT ── */
-.contact-cards{display:flex;flex-direction:column;gap:1rem;margin-top:2rem}
-.contact-card{
-  background:#fff;border-radius:12px;padding:1.2rem 1.4rem;
-  display:flex;align-items:center;gap:1rem;
-  border:1px solid rgba(201,168,76,0.15);text-decoration:none;color:inherit;
-  transition:all 0.2s;
+.contact-cards { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; max-width: 500px; }
+.contact-card {
+  background: #ffffff; border: 2px solid #111111;
+  border-radius: 6px; padding: 1.2rem 1.4rem;
+  display: flex; align-items: center; gap: 1.2rem;
+  text-decoration: none; color: #111111;
+  transition: background 0.2s;
 }
-.contact-card:hover{transform:translateX(4px);box-shadow:0 8px 24px rgba(42,107,124,0.1)}
-.cc-icon{width:42px;height:42px;background:var(--sea);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.cc-info{font-size:0.8rem;color:var(--muted)}
-.cc-info strong{display:block;color:var(--ink);font-size:0.92rem;margin-bottom:0.1rem;font-weight:400}
+.contact-card:hover { background: #f5f5f5; }
+.cc-icon {
+  width: 46px; height: 46px; background: #111111;
+  border-radius: 6px; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.cc-strong { font-size: 1.1rem; font-weight: bold; color: #111111; }
+.cc-sub { font-size: 0.9rem; color: #555555; }
 
 /* ── ADMIN ── */
-.admin-section{background:var(--ink);padding:4rem 2rem}
-.admin-toggle{background:none;border:1px solid rgba(30,53,69,0.25);color:#5a7080;font-family:'Jost',sans-serif;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.6rem 1.4rem;border-radius:100px;cursor:pointer;transition:all 0.2s}
-.admin-toggle:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.05)}
-.admin-panel{display:none;margin-top:1.5rem;animation:fadeUp 0.3s ease}
-.admin-panel.visible{display:block}
-.export-btn{background:var(--gold);color:#fff;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.55rem 1.3rem;border-radius:100px;transition:background 0.2s;margin-bottom:1rem}
-.export-btn:hover{background:#b8922e}
-.res-table{width:100%;border-collapse:collapse;font-size:0.78rem;color:#1e3545}
-.res-table th{text-align:left;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#7a8a8e;padding:0.6rem 0.9rem;border-bottom:1px solid rgba(0,0,0,0.08);font-weight:400;background:#f8f4ef}
-.res-table td{padding:0.75rem 0.9rem;border-bottom:1px solid rgba(0,0,0,0.04)}
-.res-table tr:hover td{background:rgba(42,107,124,0.04)}
-.sbadge{display:inline-block;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.18rem 0.55rem;border-radius:100px}
-.sp{background:rgba(201,168,76,0.2);color:var(--gold2)}
-.sc{background:rgba(26,107,74,0.2);color:#4ecf8a}
-.sx{background:rgba(192,57,43,0.15);color:#e57373}
-.act-btn{background:none;border:1px solid currentColor;border-radius:100px;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.18rem 0.55rem;cursor:pointer;transition:all 0.15s;font-family:'Jost',sans-serif;margin-right:0.3rem}
-.ac{color:#4ecf8a}.ac:hover{background:rgba(26,107,74,0.2)}
-.ax{color:#e57373}.ax:hover{background:rgba(192,57,43,0.15)}
-.empty-state{text-align:center;padding:2.5rem;color:rgba(255,255,255,0.3);font-style:italic}
+.admin-section {
+  background: #f5f5f5; padding: 3rem 2rem;
+  border-top: 3px solid #111111;
+}
+.admin-toggle {
+  background: #ffffff; border: 2px solid #111111;
+  color: #111111; font-family: Arial, sans-serif;
+  font-size: 1rem; font-weight: bold;
+  padding: 0.7rem 1.5rem; border-radius: 4px;
+  cursor: pointer; transition: all 0.2s;
+}
+.admin-toggle:hover { background: #111111; color: #ffffff; }
+.admin-panel { display: none; margin-top: 1.5rem; }
+.admin-panel.visible { display: block; }
+.export-btn {
+  background: #2a6b7c; color: #ffffff; border: none;
+  cursor: pointer; font-family: Arial, sans-serif;
+  font-size: 1rem; font-weight: bold;
+  padding: 0.6rem 1.4rem; border-radius: 4px;
+  margin-bottom: 1rem; transition: background 0.2s;
+}
+.export-btn:hover { background: #1a4a57; }
+.tbl-wrap { overflow-x: auto; }
+.res-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.res-table th {
+  text-align: left; font-size: 0.8rem; font-weight: bold;
+  color: #111111; padding: 0.7rem 1rem;
+  border-bottom: 2px solid #111111;
+  background: #eeeeee; white-space: nowrap;
+}
+.res-table td {
+  padding: 0.8rem 1rem; border-bottom: 1px solid #dddddd;
+  color: #111111; white-space: nowrap;
+}
+.res-table tr:hover td { background: #f5f5f5; }
+.sbadge {
+  display: inline-block; font-size: 0.8rem;
+  font-weight: bold; padding: 0.2rem 0.7rem; border-radius: 4px;
+}
+.sp { background: #fff3cc; color: #664400; border: 1px solid #cc9900; }
+.sc { background: #e6ffe6; color: #004400; border: 1px solid #006600; }
+.sx { background: #ffe6e6; color: #880000; border: 1px solid #cc0000; }
+.act-btn {
+  background: none; border: 2px solid currentColor;
+  border-radius: 4px; font-size: 0.85rem; font-weight: bold;
+  padding: 0.2rem 0.7rem; cursor: pointer;
+  font-family: Arial, sans-serif; margin-right: 0.3rem; transition: all 0.15s;
+}
+.ab-confirm { color: #006600; }
+.ab-confirm:hover { background: #e6ffe6; }
+.ab-cancel { color: #cc0000; }
+.ab-cancel:hover { background: #ffe6e6; }
 
 /* ── FOOTER ── */
-footer{background:#1e3545;border-top:1px solid rgba(201,168,76,0.2);padding:2rem;text-align:center;color:rgba(255,255,255,0.65);font-size:0.75rem}
-footer strong{color:#fff}
+footer {
+  background: #111111; color: #ffffff;
+  padding: 2.5rem 2rem; text-align: center;
+  font-size: 1rem; line-height: 1.8;
+}
+footer strong { font-size: 1.2rem; }
+footer a { color: #aaddff; text-decoration: underline; }
 
 /* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .topbar{padding:0.85rem 1.2rem}
-  .nav-links{display:none}
-  .loc-grid{grid-template-columns:1fr}
-  .map-box{display:none}
-  section{padding:4rem 1.2rem}
-  .booking-panel-wrap{padding:1.5rem}
-  .form-row{grid-template-columns:1fr}
+@media(max-width: 768px) {
+  .nav-links { display: none; }
+  .hero h1 { font-size: 2.2rem; }
+  .loc-grid, .booking-inner, .form-row { grid-template-columns: 1fr; }
+  .map-box { display: none; }
+  section { padding: 3rem 1.2rem; }
+  .booking-wrap { padding: 1.2rem; }
 }
 </style>
 </head>
 <body>
 
-<!-- ── TOPBAR ── -->
-<nav class="topbar">
-  <a href="#" class="logo-text">Villa <em>Helena</em></a>
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Villa <span>Helena</span></a>
   <ul class="nav-links">
-    <li><a href="#sadrzaji" data-i18n="nav_amenities">Sadržaji</a></li>
+    <li><a href="#sadrzaji" data-i18n="nav_am">Sadržaji</a></li>
     <li><a href="#smjestaji" data-i18n="nav_rooms">Smještaji</a></li>
-    <li><a href="#lokacija" data-i18n="nav_location">Lokacija</a></li>
+    <li><a href="#lokacija" data-i18n="nav_loc">Lokacija</a></li>
     <li><a href="#rezervacija" data-i18n="nav_book">Rezervacija</a></li>
     <li><a href="#kontakt" data-i18n="nav_contact">Kontakt</a></li>
   </ul>
@@ -315,47 +429,10 @@ footer strong{color:#fff}
   </div>
 </nav>
 
-<!-- ── HERO ── -->
-<header class="hero" id="top">
-  <div class="hero-logo">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260">
-      <defs>
-        <linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#f5e8c0"/>
-          <stop offset="40%" style="stop-color:#e8c860"/>
-          <stop offset="100%" style="stop-color:#c9a84c"/>
-        </linearGradient>
-        <filter id="hglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <!-- Moon -->
-      <circle cx="260" cy="62" r="22" fill="none" stroke="url(#hg1)" stroke-width="0.5" opacity="0.3"/>
-      <circle cx="260" cy="62" r="19" fill="#f5e8c0" opacity="0.12" filter="url(#hglow)"/>
-      <circle cx="260" cy="62" r="16" fill="#f0e0a0" opacity="0.18"/>
-      <circle cx="267" cy="59" r="13" fill="rgba(15,30,40,0.85)"/>
-      <!-- Stars -->
-      <circle cx="185" cy="38" r="1.5" fill="#f5e8c0" opacity="0.7"/>
-      <circle cx="210" cy="52" r="1" fill="#f5e8c0" opacity="0.5"/>
-      <circle cx="320" cy="42" r="1.5" fill="#f5e8c0" opacity="0.7"/>
-      <circle cx="340" cy="55" r="1" fill="#f5e8c0" opacity="0.5"/>
-      <!-- Villa silhouette -->
-      <polygon points="218,100 260,68 302,100" fill="url(#hg1)" opacity="0.9"/>
-      <rect x="222" y="100" width="76" height="44" fill="rgba(245,240,232,0.12)" stroke="url(#hg1)" stroke-width="0.6"/>
-      <rect x="246" y="118" width="20" height="26" fill="rgba(42,107,124,0.5)" stroke="url(#hg1)" stroke-width="0.4" rx="1"/>
-      <rect x="228" y="107" width="14" height="12" fill="rgba(74,155,175,0.4)" stroke="url(#hg1)" stroke-width="0.4" rx="1"/>
-      <rect x="278" y="107" width="14" height="12" fill="rgba(74,155,175,0.4)" stroke="url(#hg1)" stroke-width="0.4" rx="1"/>
-      <!-- Waves -->
-      <path d="M170,152 Q200,144 230,152 Q260,160 290,152 Q320,144 350,152" fill="none" stroke="url(#hg1)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-      <path d="M178,162 Q210,154 240,162 Q270,170 300,162 Q330,154 342,162" fill="none" stroke="url(#hg1)" stroke-width="1" stroke-linecap="round" opacity="0.35"/>
-      <!-- Divider -->
-      <line x1="130" y1="178" x2="390" y2="178" stroke="url(#hg1)" stroke-width="0.5" opacity="0.3"/>
-      <!-- VILLA text -->
-      <text x="260" y="196" font-family="Palatino Linotype,Palatino,Georgia,serif" font-size="9" fill="url(#hg1)" letter-spacing="11" text-anchor="middle" opacity="0.9">VILLA</text>
-      <!-- HELENA text -->
-      <text x="260" y="232" font-family="Palatino Linotype,Palatino,Georgia,serif" font-size="42" font-style="italic" fill="url(#hg1)" letter-spacing="3" text-anchor="middle" filter="url(#hglow)">Helena</text>
-      <!-- Subtitle -->
-      <text x="260" y="250" font-family="Palatino Linotype,Palatino,Georgia,serif" font-size="7" fill="url(#hg1)" letter-spacing="4.5" text-anchor="middle" opacity="0.6">VODICE  ·  DALMACIJA</text>
-    </svg>
-  </div>
+<!-- HERO -->
+<header class="hero">
+  <h1>Villa <span>Helena</span></h1>
+  <p class="hero-sub" data-i18n="hero_sub">Apartmani i sobe u Vodicama, Dalmacija</p>
   <div class="hero-badges">
     <span class="badge">🏊 <span data-i18n="b_pool">Vanjski bazen</span></span>
     <span class="badge">🌿 <span data-i18n="b_quiet">Mirna lokacija</span></span>
@@ -364,16 +441,16 @@ footer strong{color:#fff}
     <span class="badge">🍖 <span data-i18n="b_grill">Roštilj</span></span>
   </div>
   <div class="hero-cta">
-    <a href="#rezervacija" class="btn-primary" data-i18n="cta_book">Rezervirajte sada</a>
-    <a href="#smjestaji" class="btn-outline" data-i18n="cta_rooms">Pogledaj smještaje</a>
+    <a href="#rezervacija" class="btn-main" data-i18n="cta_book">Rezervirajte sada</a>
+    <a href="#smjestaji" class="btn-sec" data-i18n="cta_rooms">Pogledaj smještaje</a>
   </div>
 </header>
 
-<!-- ── AMENITIES ── -->
+<!-- SADRŽAJI -->
 <section class="amenities-bg" id="sadrzaji">
   <div class="container">
-    <p class="sec-label" data-i18n="amenities_label">Što nudimo</p>
-    <h2 class="sec-title" data-i18n="amenities_title">Sve za <em>savršen odmor</em></h2>
+    <p class="sec-label" data-i18n="am_label">Što nudimo</p>
+    <h2 class="sec-title" data-i18n="am_title">Sve za savršen odmor</h2>
     <div class="amenities-grid">
       <div class="amenity-card"><div class="amenity-icon">🏊</div><div class="amenity-name" data-i18n="am1">Vanjski bazen i sunčalište</div></div>
       <div class="amenity-card"><div class="amenity-icon">🌅</div><div class="amenity-name" data-i18n="am2">Privatna terasa</div></div>
@@ -384,51 +461,49 @@ footer strong{color:#fff}
       <div class="amenity-card"><div class="amenity-icon">🍖</div><div class="amenity-name" data-i18n="am7">Roštilj u dvorištu</div></div>
       <div class="amenity-card"><div class="amenity-icon">🍳</div><div class="amenity-name" data-i18n="am8">Opremljena kuhinja*</div></div>
     </div>
-    <p style="margin-top:1rem;font-size:0.72rem;color:var(--muted)" data-i18n="am_note">* Opremljena kuhinja u apartmanima: kuhal, mikrovalna, perilica suđa, hladnjak.</p>
+    <p style="margin-top:1rem;font-size:0.95rem;color:#555555" data-i18n="am_note">* Opremljena kuhinja u apartmanima: kuhal, mikrovalna, perilica suđa, hladnjak.</p>
   </div>
 </section>
 
-<!-- ── ROOMS INFO ── -->
+<!-- SMJEŠTAJI -->
 <section id="smjestaji">
   <div class="container">
     <p class="sec-label" data-i18n="rooms_label">Dostupne jedinice</p>
-    <h2 class="sec-title" data-i18n="rooms_title">Odaberite <em>smještaj</em></h2>
+    <h2 class="sec-title" data-i18n="rooms_title">Odaberite smještaj</h2>
     <p class="sec-desc" data-i18n="rooms_desc">Slobodni termini za srpanj i kolovoz – rezervirajte na vrijeme!</p>
-    <div class="rooms-info-grid" id="roomsInfoGrid"></div>
+    <div class="rooms-grid" id="roomsGrid"></div>
   </div>
 </section>
 
-<!-- ── LOCATION ── -->
+<!-- LOKACIJA -->
 <section class="loc-bg" id="lokacija">
   <div class="container">
-    <p class="sec-label" style="color:var(--gold)" data-i18n="loc_label">Lokacija</p>
-    <h2 class="sec-title" data-i18n="loc_title">Mirna zona <em>Vodica</em></h2>
-    <p class="sec-desc" data-i18n="loc_desc">Smješteni u tihom dijelu Vodica, 10 minuta šetnje do centra i 15 minuta do plaže.</p>
+    <p class="sec-label" data-i18n="loc_label">Lokacija</p>
+    <h2 class="sec-title" data-i18n="loc_title">Vodice, Dalmacija</h2>
+    <p class="sec-desc" data-i18n="loc_desc">Mirni dio Vodica, 10 minuta šetnje do centra i 15 minuta do plaže.</p>
     <div class="loc-grid">
       <div class="loc-items">
-        <div class="loc-item"><div class="loc-icon">🏖️</div><div class="loc-text"><strong data-i18n="loc1t">15 min do plaže</strong><span data-i18n="loc1d">Pješke do kristalno čistog mora</span></div></div>
-        <div class="loc-item"><div class="loc-icon">🏙️</div><div class="loc-text"><strong data-i18n="loc2t">10 min do centra</strong><span data-i18n="loc2d">Restorani, kafići, trgovine</span></div></div>
-        <div class="loc-item"><div class="loc-icon">🚗</div><div class="loc-text"><strong data-i18n="loc3t">Šibenik – 15 km</strong><span data-i18n="loc3d">Laka dostupnost gradom</span></div></div>
-        <div class="loc-item"><div class="loc-icon">🌿</div><div class="loc-text"><strong data-i18n="loc4t">Mirna zona</strong><span data-i18n="loc4d">Daleko od buke, blizu svega</span></div></div>
+        <div class="loc-item"><div class="loc-icon">🏖️</div><div><div class="loc-text-title" data-i18n="loc1t">15 min do plaže</div><div class="loc-text-desc" data-i18n="loc1d">Pješke do kristalno čistog mora</div></div></div>
+        <div class="loc-item"><div class="loc-icon">🏙️</div><div><div class="loc-text-title" data-i18n="loc2t">10 min do centra</div><div class="loc-text-desc" data-i18n="loc2d">Restorani, kafići, trgovine</div></div></div>
+        <div class="loc-item"><div class="loc-icon">🚗</div><div><div class="loc-text-title" data-i18n="loc3t">Šibenik – 15 km</div><div class="loc-text-desc" data-i18n="loc3d">Laka dostupnost gradom</div></div></div>
+        <div class="loc-item"><div class="loc-icon">🌿</div><div><div class="loc-text-title" data-i18n="loc4t">Mirna zona</div><div class="loc-text-desc" data-i18n="loc4d">Daleko od buke, blizu svega</div></div></div>
       </div>
-      <div class="map-box"><div style="font-size:2.5rem">📍</div><div style="color:rgba(255,255,255,0.6)">Villa Helena<br>Vodice, Dalmacija</div></div>
+      <div class="map-box"><div style="font-size:3rem">📍</div><div style="font-size:1.1rem;font-weight:bold">Villa Helena<br>Vodice, Dalmacija</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── BOOKING ── -->
-<section class="booking-bg" id="rezervacija">
+<!-- REZERVACIJA -->
+<section id="rezervacija">
   <div class="container">
     <p class="sec-label" data-i18n="book_label">Online rezervacija</p>
-    <h2 class="sec-title" data-i18n="book_title">Rezervirajte <em>smještaj</em></h2>
-    <p class="sec-desc" data-i18n="book_desc">Odaberite sobu, provjerite dostupnost i pošaljite zahtjev. Potvrdit ćemo vas u najkraćem roku.</p>
-    <div class="booking-panel-wrap">
-      <!-- Room tabs -->
+    <h2 class="sec-title" data-i18n="book_title">Rezervirajte smještaj</h2>
+    <p class="sec-desc" data-i18n="book_desc">Odaberite sobu, provjerite dostupnost i pošaljite zahtjev.</p>
+    <div class="booking-wrap">
       <div class="room-tabs" id="roomTabs"></div>
       <div class="booking-inner">
-        <!-- Calendar -->
         <div>
-          <p class="sec-label" data-i18n="select_dates">Odaberite datume</p>
+          <p style="font-size:1rem;font-weight:bold;margin-bottom:1rem" data-i18n="select_dates">Odaberite datume</p>
           <div class="cal-header">
             <button class="cal-nav" id="calPrev">&#8592;</button>
             <span class="cal-month-lbl" id="calMonthLbl"></span>
@@ -442,9 +517,8 @@ footer strong{color:#fff}
           </div>
           <div class="notice warning" id="calNotice"></div>
         </div>
-        <!-- Form -->
         <div>
-          <p class="form-title" data-i18n="your_details">Vaši podaci</p>
+          <p style="font-size:1.1rem;font-weight:bold;margin-bottom:1rem" data-i18n="your_details">Vaši podaci</p>
           <div class="date-sum" id="dateSummary">
             <div class="ds-row"><span data-i18n="checkin">Dolazak</span><span id="sCheckin">—</span></div>
             <div class="ds-row"><span data-i18n="checkout">Odlazak</span><span id="sCheckout">—</span></div>
@@ -464,7 +538,7 @@ footer strong{color:#fff}
             <div class="fg"><label data-i18n="country">Država</label><input type="text" id="fCO" autocomplete="country-name"/></div>
           </div>
           <div class="fg"><label data-i18n="note">Napomena</label><textarea id="fNO"></textarea></div>
-          <button class="submit-btn" id="submitBtn" onclick="submitBooking()" data-i18n="send_request">Pošalji zahtjev</button>
+          <button class="submit-btn" id="submitBtn" onclick="submitBooking()" data-i18n="send_request">Pošalji zahtjev za rezervaciju</button>
           <div class="notice success" id="successNotice"></div>
           <div class="notice error" id="errorNotice"></div>
         </div>
@@ -473,119 +547,118 @@ footer strong{color:#fff}
   </div>
 </section>
 
-<!-- ── CONTACT ── -->
+<!-- KONTAKT -->
 <section id="kontakt">
   <div class="container">
     <p class="sec-label" data-i18n="contact_label">Kontakt</p>
-    <h2 class="sec-title" data-i18n="contact_title">Javite <em>nam se</em></h2>
-    <p class="sec-desc" data-i18n="contact_desc">Za dodatna pitanja, posebne zahtjeve ili grupna putovanja slobodno nas kontaktirajte.</p>
-    <div class="contact-cards" style="max-width:480px">
+    <h2 class="sec-title" data-i18n="contact_title">Javite nam se</h2>
+    <p class="sec-desc" data-i18n="contact_desc">Za pitanja ili posebne zahtjeve slobodno nas kontaktirajte.</p>
+    <div class="contact-cards">
       <a href="tel:+385958600340" class="contact-card">
         <div class="cc-icon">📞</div>
-        <div class="cc-info"><strong>+385 95 8600 340</strong><span data-i18n="contact_tel">Telefon i WhatsApp</span></div>
+        <div><div class="cc-strong">+385 95 8600 340</div><div class="cc-sub" data-i18n="contact_tel">Telefon i WhatsApp</div></div>
       </a>
       <a href="mailto:villahelena.cro@gmail.com" class="contact-card">
         <div class="cc-icon">✉️</div>
-        <div class="cc-info"><strong>villahelena.cro@gmail.com</strong><span data-i18n="contact_email">Email upiti i rezervacije</span></div>
+        <div><div class="cc-strong">villahelena.cro@gmail.com</div><div class="cc-sub" data-i18n="contact_email">Email upiti i rezervacije</div></div>
       </a>
       <div class="contact-card">
         <div class="cc-icon">📍</div>
-        <div class="cc-info"><strong>Vodice, Hrvatska</strong><span>Dalmacija · kraj Šibenika</span></div>
+        <div><div class="cc-strong">Vodice, Hrvatska</div><div class="cc-sub">Dalmacija · kraj Šibenika</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── ADMIN ── -->
+<!-- ADMIN -->
 <div class="admin-section">
   <div class="container">
     <button class="admin-toggle" onclick="toggleAdmin()" data-i18n="admin_view">🔒 Pregled rezervacija</button>
     <div class="admin-panel" id="adminPanel">
-      <button class="export-btn" onclick="exportCSV()" data-i18n="export_csv">↙ Export CSV</button>
-      <div id="adminTableWrap"></div>
+      <button class="export-btn" onclick="exportCSV()">↙ Export CSV</button>
+      <div class="tbl-wrap"><div id="adminTableWrap"></div></div>
     </div>
   </div>
 </div>
 
-<!-- ── FOOTER ── -->
+<!-- FOOTER -->
 <footer>
-  <p><strong>Villa Helena</strong> · Vodice, Hrvatska · Dalmacija</p>
-  <p style="margin-top:0.4rem">+385 95 8600 340 · villahelena.cro@gmail.com</p>
-  <p style="margin-top:0.8rem;font-size:0.68rem;opacity:0.6">© 2025 Villa Helena. Sva prava pridržana.</p>
+  <p><strong>Villa Helena</strong></p>
+  <p>Vodice, Hrvatska · Dalmacija</p>
+  <p style="margin-top:0.5rem"><a href="tel:+385958600340">+385 95 8600 340</a> · <a href="mailto:villahelena.cro@gmail.com">villahelena.cro@gmail.com</a></p>
+  <p style="margin-top:1rem;font-size:0.85rem;opacity:0.7">© 2025 Villa Helena. Sva prava pridržana.</p>
 </footer>
 
 <script>
-// ═══════════════════════════
-//  TRANSLATIONS
-// ═══════════════════════════
-const T={
+// ══════════════════
+//  PRIJEVODI
+// ══════════════════
+const T = {
   hr:{
-    nav_amenities:"Sadržaji",nav_rooms:"Smještaji",nav_location:"Lokacija",nav_book:"Rezervacija",nav_contact:"Kontakt",
+    nav_am:"Sadržaji",nav_rooms:"Smještaji",nav_loc:"Lokacija",nav_book:"Rezervacija",nav_contact:"Kontakt",
+    hero_sub:"Apartmani i sobe u Vodicama, Dalmacija",
     b_pool:"Vanjski bazen",b_quiet:"Mirna lokacija",b_park:"Privatni parking",b_grill:"Roštilj",
     cta_book:"Rezervirajte sada",cta_rooms:"Pogledaj smještaje",
-    amenities_label:"Što nudimo",amenities_title:"Sve za savršen odmor",
+    am_label:"Što nudimo",am_title:"Sve za savršen odmor",
     am1:"Vanjski bazen i sunčalište",am2:"Privatna terasa",am3:"Klima uređaj",am4:"Besplatan Wi-Fi",
     am5:"Vlastita kupaonica",am6:"Privatni parking",am7:"Roštilj u dvorištu",am8:"Opremljena kuhinja*",
     am_note:"* Opremljena kuhinja u apartmanima: kuhal, mikrovalna, perilica suđa, hladnjak.",
     rooms_label:"Dostupne jedinice",rooms_title:"Odaberite smještaj",
     rooms_desc:"Slobodni termini za srpanj i kolovoz – rezervirajte na vrijeme!",
-    loc_label:"Lokacija",loc_title:"Mirna zona Vodica",
-    loc_desc:"Smješteni u tihom dijelu Vodica, 10 minuta šetnje do centra i 15 minuta do plaže.",
+    loc_label:"Lokacija",loc_title:"Vodice, Dalmacija",
+    loc_desc:"Mirni dio Vodica, 10 minuta šetnje do centra i 15 minuta do plaže.",
     loc1t:"15 min do plaže",loc1d:"Pješke do kristalno čistog mora",
     loc2t:"10 min do centra",loc2d:"Restorani, kafići, trgovine",
     loc3t:"Šibenik – 15 km",loc3d:"Laka dostupnost gradom",
     loc4t:"Mirna zona",loc4d:"Daleko od buke, blizu svega",
     book_label:"Online rezervacija",book_title:"Rezervirajte smještaj",
     book_desc:"Odaberite sobu, provjerite dostupnost i pošaljite zahtjev.",
-    select_dates:"Odaberite datume",
-    leg_free:"Slobodno",leg_booked:"Rezervirano",leg_sel:"Odabrano",
-    your_details:"Vaši podaci",
-    checkin:"Dolazak",checkout:"Odlazak",nights:"Noći",total:"Ukupno",
+    select_dates:"Odaberite datume",leg_free:"Slobodno",leg_booked:"Rezervirano",leg_sel:"Odabrano",
+    your_details:"Vaši podaci",checkin:"Dolazak",checkout:"Odlazak",nights:"Noći",total:"Ukupno",
     first_name:"Ime",last_name:"Prezime",phone:"Telefon",guests:"Gosti",country:"Država",note:"Napomena",
     send_request:"Pošalji zahtjev za rezervaciju",
     contact_label:"Kontakt",contact_title:"Javite nam se",
-    contact_desc:"Za dodatna pitanja slobodno nas kontaktirajte.",
-    contact_tel:"Telefon i WhatsApp",contact_email:"Email upiti",
-    admin_view:"🔒 Pregled rezervacija (vlasnik)",export_csv:"↙ Export CSV",
+    contact_desc:"Za pitanja ili posebne zahtjeve slobodno nas kontaktirajte.",
+    contact_tel:"Telefon i WhatsApp",contact_email:"Email upiti i rezervacije",
+    admin_view:"🔒 Pregled rezervacija (vlasnik)",
     cal_inst:"Kliknite datum dolaska, zatim datum odlaska.",
     pick_dates:"Odaberite datume dolaska i odlaska.",
     fill_all:"Ispunite sva obavezna polja (Ime, Prezime, Email, Telefon).",
     conflict:"Odabrani period nije dostupan. Odaberite druge datume.",
-    success_msg:"✓ Zahtjev primljen! Kontaktirat ćemo vas za potvrdu.",
+    success_msg:"✓ Zahtjev primljen! Kontaktirat ćemo vas u najkraćem roku.",
     pending:"Na čekanju",confirmed:"Potvrđeno",cancelled:"Otkazano",
     confirm_action:"Potvrdi",cancel_action:"Otkaži",no_bookings:"Nema rezervacija.",
-    apt:"Apartman",room:"Soba",persons:"osoba",night:"noć",to:"do",book_this:"Rezerviraj",
+    apt:"Apartman",room:"Soba",to:"do",persons:"osoba",night:"noć",details:"Detalji",
     months:["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"],
     days:["Po","Ut","Sr","Če","Pe","Su","Ne"],
   },
   en:{
-    nav_amenities:"Amenities",nav_rooms:"Rooms",nav_location:"Location",nav_book:"Book",nav_contact:"Contact",
+    nav_am:"Amenities",nav_rooms:"Rooms",nav_loc:"Location",nav_book:"Book",nav_contact:"Contact",
+    hero_sub:"Apartments and rooms in Vodice, Dalmatia",
     b_pool:"Outdoor pool",b_quiet:"Quiet location",b_park:"Private parking",b_grill:"BBQ",
     cta_book:"Book now",cta_rooms:"View rooms",
-    amenities_label:"What we offer",amenities_title:"Everything for a perfect stay",
+    am_label:"What we offer",am_title:"Everything for a perfect stay",
     am1:"Outdoor pool & sun terrace",am2:"Private terrace",am3:"Air conditioning",am4:"Free Wi-Fi",
     am5:"Private bathroom",am6:"Private parking",am7:"BBQ in the garden",am8:"Equipped kitchen*",
     am_note:"* Equipped kitchen in apartments: kettle, microwave, dishwasher, fridge.",
     rooms_label:"Available units",rooms_title:"Choose your accommodation",
     rooms_desc:"Spots available for July and August – book in time!",
-    loc_label:"Location",loc_title:"Quiet zone of Vodice",
-    loc_desc:"Located in a peaceful part of Vodice, 10 min walk to the centre and 15 min to the beach.",
-    loc1t:"15 min to the beach",loc1d:"Walk to the crystal-clear sea",
+    loc_label:"Location",loc_title:"Vodice, Dalmatia",
+    loc_desc:"Peaceful part of Vodice, 10 min walk to the centre and 15 min to the beach.",
+    loc1t:"15 min to beach",loc1d:"Walk to the crystal-clear sea",
     loc2t:"10 min to centre",loc2d:"Restaurants, cafés, shops",
     loc3t:"Šibenik – 15 km",loc3d:"Easy access by car",
     loc4t:"Quiet zone",loc4d:"Away from noise, close to everything",
     book_label:"Online booking",book_title:"Book your stay",
     book_desc:"Select a room, check availability and send your request.",
-    select_dates:"Select dates",
-    leg_free:"Available",leg_booked:"Booked",leg_sel:"Selected",
-    your_details:"Your details",
-    checkin:"Check-in",checkout:"Check-out",nights:"Nights",total:"Total",
+    select_dates:"Select dates",leg_free:"Available",leg_booked:"Booked",leg_sel:"Selected",
+    your_details:"Your details",checkin:"Check-in",checkout:"Check-out",nights:"Nights",total:"Total",
     first_name:"First name",last_name:"Last name",phone:"Phone",guests:"Guests",country:"Country",note:"Note",
     send_request:"Send reservation request",
     contact_label:"Contact",contact_title:"Get in touch",
     contact_desc:"For questions or special requests feel free to contact us.",
     contact_tel:"Phone & WhatsApp",contact_email:"Email enquiries",
-    admin_view:"🔒 Reservations (owner)",export_csv:"↙ Export CSV",
+    admin_view:"🔒 Reservations (owner)",
     cal_inst:"Click check-in date, then check-out date.",
     pick_dates:"Please select check-in and check-out dates.",
     fill_all:"Please fill in all required fields (Name, Surname, Email, Phone).",
@@ -593,46 +666,45 @@ const T={
     success_msg:"✓ Request received! We will contact you to confirm.",
     pending:"Pending",confirmed:"Confirmed",cancelled:"Cancelled",
     confirm_action:"Confirm",cancel_action:"Cancel",no_bookings:"No reservations yet.",
-    apt:"Apartment",room:"Room",persons:"persons",night:"night",to:"up to",book_this:"Book",
+    apt:"Apartment",room:"Room",to:"up to",persons:"persons",night:"night",details:"Details",
     months:["January","February","March","April","May","June","July","August","September","October","November","December"],
     days:["Mo","Tu","We","Th","Fr","Sa","Su"],
   },
   de:{
-    nav_amenities:"Ausstattung",nav_rooms:"Zimmer",nav_location:"Lage",nav_book:"Buchen",nav_contact:"Kontakt",
+    nav_am:"Ausstattung",nav_rooms:"Zimmer",nav_loc:"Lage",nav_book:"Buchen",nav_contact:"Kontakt",
+    hero_sub:"Apartments und Zimmer in Vodice, Dalmatien",
     b_pool:"Außenpool",b_quiet:"Ruhige Lage",b_park:"Privatparkplatz",b_grill:"Grill",
     cta_book:"Jetzt buchen",cta_rooms:"Zimmer ansehen",
-    amenities_label:"Unser Angebot",amenities_title:"Alles für den perfekten Urlaub",
+    am_label:"Unser Angebot",am_title:"Alles für den perfekten Urlaub",
     am1:"Außenpool & Sonnenterrasse",am2:"Private Terrasse",am3:"Klimaanlage",am4:"Kostenloses WLAN",
     am5:"Eigenes Badezimmer",am6:"Privatparkplatz",am7:"Grill im Garten",am8:"Ausgestattete Küche*",
     am_note:"* Ausgestattete Küche in Apartments: Wasserkocher, Mikrowelle, Spülmaschine, Kühlschrank.",
     rooms_label:"Verfügbare Einheiten",rooms_title:"Unterkunft wählen",
     rooms_desc:"Freie Termine im Juli und August – rechtzeitig buchen!",
-    loc_label:"Lage",loc_title:"Ruhige Zone von Vodice",
-    loc_desc:"In einem ruhigen Teil von Vodice gelegen, 10 Min. Fußweg zum Zentrum, 15 Min. zum Strand.",
+    loc_label:"Lage",loc_title:"Vodice, Dalmatien",
+    loc_desc:"Ruhiger Teil von Vodice, 10 Min. Fußweg zum Zentrum, 15 Min. zum Strand.",
     loc1t:"15 Min. zum Strand",loc1d:"Zu Fuß zum kristallklaren Meer",
     loc2t:"10 Min. zum Zentrum",loc2d:"Restaurants, Cafés, Geschäfte",
-    loc3t:"Šibenik – 15 km",loc3d:"Einfach mit dem Auto erreichbar",
+    loc3t:"Šibenik – 15 km",loc3d:"Mit dem Auto erreichbar",
     loc4t:"Ruhige Zone",loc4d:"Abseits vom Trubel, nah an allem",
     book_label:"Online-Buchung",book_title:"Unterkunft buchen",
     book_desc:"Zimmer auswählen, Verfügbarkeit prüfen und Anfrage senden.",
-    select_dates:"Datum auswählen",
-    leg_free:"Verfügbar",leg_booked:"Gebucht",leg_sel:"Ausgewählt",
-    your_details:"Ihre Daten",
-    checkin:"Anreise",checkout:"Abreise",nights:"Nächte",total:"Gesamt",
+    select_dates:"Datum auswählen",leg_free:"Verfügbar",leg_booked:"Gebucht",leg_sel:"Ausgewählt",
+    your_details:"Ihre Daten",checkin:"Anreise",checkout:"Abreise",nights:"Nächte",total:"Gesamt",
     first_name:"Vorname",last_name:"Nachname",phone:"Telefon",guests:"Gäste",country:"Land",note:"Anmerkung",
     send_request:"Buchungsanfrage senden",
     contact_label:"Kontakt",contact_title:"Kontaktieren Sie uns",
-    contact_desc:"Für Fragen oder Sonderwünsche stehen wir gerne zur Verfügung.",
+    contact_desc:"Für Fragen stehen wir gerne zur Verfügung.",
     contact_tel:"Telefon & WhatsApp",contact_email:"E-Mail-Anfragen",
-    admin_view:"🔒 Reservierungen (Eigentümer)",export_csv:"↙ CSV exportieren",
+    admin_view:"🔒 Reservierungen (Eigentümer)",
     cal_inst:"Klicken Sie auf Anreisedatum, dann Abreisedatum.",
     pick_dates:"Bitte wählen Sie An- und Abreisedatum.",
-    fill_all:"Bitte füllen Sie alle Pflichtfelder aus (Vor-, Nachname, E-Mail, Telefon).",
-    conflict:"Der gewählte Zeitraum ist nicht verfügbar. Bitte andere Daten wählen.",
+    fill_all:"Bitte füllen Sie alle Pflichtfelder aus.",
+    conflict:"Der gewählte Zeitraum ist nicht verfügbar.",
     success_msg:"✓ Anfrage erhalten! Wir melden uns zur Bestätigung.",
     pending:"Ausstehend",confirmed:"Bestätigt",cancelled:"Storniert",
     confirm_action:"Bestätigen",cancel_action:"Stornieren",no_bookings:"Keine Reservierungen.",
-    apt:"Apartment",room:"Zimmer",persons:"Personen",night:"Nacht",to:"bis zu",book_this:"Buchen",
+    apt:"Apartment",room:"Zimmer",to:"bis zu",persons:"Personen",night:"Nacht",details:"Details",
     months:["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],
     days:["Mo","Di","Mi","Do","Fr","Sa","So"],
   }
@@ -646,117 +718,107 @@ function setLang(l){
   document.documentElement.lang=l;
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k];});
-  renderRoomsInfo();
-  renderRoomTabs();
-  renderCalendar();
-  if(adminVisible)renderAdmin();
+  renderRooms(); renderRoomTabs(); renderCalendar();
+  if(adminVisible) renderAdmin();
 }
 
-// ═══════════════════════════
-//  ROOM DATA
-// ═══════════════════════════
+// ══════════════════
+//  ROOMS DATA
+// ══════════════════
 const ROOMS=[
-  {id:'C2',type:'apt',capacity:4,price:130,features:{hr:['1 spavaća soba + sofa na razvlačenje','Terasa s pogledom na more','Opremljena kuhinja','Privatna kupaonica'],en:['1 bedroom + sofa bed','Terrace with sea view','Equipped kitchen','Private bathroom'],de:['1 Schlafzimmer + Schlafsofa','Terrasse mit Meerblick','Ausgestattete Küche','Eigenes Bad']}},
-  {id:'B2',type:'apt',capacity:5,price:150,features:{hr:['1 spavaća soba + krevet u dnevnom','Sofa na razvlačenje','Terasa s pogledom na bazen','Opremljena kuhinja + kupaonica'],en:['1 bedroom + bed in living room','Sofa bed','Terrace with pool view','Equipped kitchen + bathroom'],de:['1 Schlafzimmer + Bett im Wohnzimmer','Schlafsofa','Terrasse mit Poolblick','Küche + Bad']}},
-  {id:'C1',type:'room',capacity:2,price:90,features:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad'],en:['Double bed','Private bathroom','Terrace with city view'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick']}},
-  {id:'A1',type:'room',capacity:2,price:90,features:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad'],en:['Double bed','Private bathroom','Terrace with city view'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick']}},
+  {id:'C2',type:'apt',capacity:4,price:130,page:'soba-c2.html',
+    feats:{hr:['1 spavaća soba + sofa na razvlačenje','Terasa s pogledom na more','Opremljena kuhinja','Privatna kupaonica'],
+           en:['1 bedroom + sofa bed','Terrace with sea view','Equipped kitchen','Private bathroom'],
+           de:['1 Schlafzimmer + Schlafsofa','Terrasse mit Meerblick','Ausgestattete Küche','Eigenes Bad']}},
+  {id:'B2',type:'apt',capacity:5,price:150,page:'soba-b2.html',
+    feats:{hr:['1 spavaća soba + krevet u dnevnom','Sofa na razvlačenje','Terasa s pogledom na bazen','Opremljena kuhinja'],
+           en:['1 bedroom + bed in living room','Sofa bed','Terrace with pool view','Equipped kitchen'],
+           de:['1 Schlafzimmer + Bett im Wohnzimmer','Schlafsofa','Terrasse mit Poolblick','Küche']}},
+  {id:'C1',type:'room',capacity:2,price:90,page:'soba-c1.html',
+    feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad'],
+           en:['Double bed','Private bathroom','Terrace with city view'],
+           de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick']}},
+  {id:'A1',type:'room',capacity:2,price:90,page:'soba-a1.html',
+    feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad'],
+           en:['Double bed','Private bathroom','Terrace with city view'],
+           de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick']}},
 ];
 
-// ═══════════════════════════
-//  ROOMS INFO SECTION
-// ═══════════════════════════
-const ROOM_PAGES = { C2:'soba-c2.html', B2:'soba-b2.html', C1:'soba-c1.html', A1:'soba-a1.html' };
-
-function renderRoomsInfo(){
-  const grid=document.getElementById('roomsInfoGrid');
+function renderRooms(){
+  const grid=document.getElementById('roomsGrid');
   grid.innerHTML=ROOMS.map(r=>{
-    const typeLabel=r.type==='apt'?t('apt'):t('room');
-    const feats=(r.features[lang]||r.features.hr).map(f=>`<li>${f}</li>`).join('');
-    const page=ROOM_PAGES[r.id];
-    return `<div class="room-info-card" style="cursor:pointer" onclick="window.location='${page}'">
-      <div class="ric-top">
-        <div class="ric-badge">${t('to')} ${r.capacity} ${t('persons')}</div>
-        <div class="ric-type">${typeLabel}</div>
-        <div class="ric-name">${r.id}</div>
+    const tl=r.type==='apt'?t('apt'):t('room');
+    const feats=(r.feats[lang]||r.feats.hr).map(f=>`<li>${f}</li>`).join('');
+    return `<div class="room-card" onclick="window.location='${r.page}'">
+      <div class="room-card-top">
+        <div class="room-type-lbl">${tl}</div>
+        <div class="room-id">${r.id}</div>
+        <div class="room-cap">${t('to')} ${r.capacity} ${t('persons')}</div>
       </div>
-      <div class="ric-body">
-        <ul class="ric-features">${feats}</ul>
-        <div class="ric-price-row">
-          <div><span class="ric-price">${r.price}</span> <span class="ric-unit">EUR / ${t('night')}</span></div>
-          <a href="${page}" class="book-now-btn" onclick="event.stopPropagation()">${t('book_this')} →</a>
+      <div class="room-card-body">
+        <ul class="room-feats">${feats}</ul>
+        <div class="room-price-row">
+          <div><span class="room-price">${r.price}</span> <span class="room-price-unit">EUR / ${t('night')}</span></div>
+          <button class="room-btn">${t('details')} →</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function jumpToBook(id){
-  selectedRoomId=id;
-  renderRoomTabs();
-  renderCalendar();
-  document.getElementById('rezervacija').scrollIntoView({behavior:'smooth',block:'start'});
-  setTimeout(()=>{
-    document.getElementById('calNotice').textContent=t('cal_inst');
-    document.getElementById('calNotice').className='notice warning visible';
-  },600);
-}
+// ══════════════════
+//  STORAGE
+// ══════════════════
+function getBookings(){try{return JSON.parse(localStorage.getItem('vh_bookings')||'[]')}catch(e){return[]}}
+function saveBookings(b){localStorage.setItem('vh_bookings',JSON.stringify(b))}
 
-// ═══════════════════════════
-//  ROOM TABS
-// ═══════════════════════════
-let selectedRoomId=ROOMS[0].id;
-
+// ══════════════════
+//  BOOKING TABS
+// ══════════════════
+let selectedRoom=ROOMS[0].id;
 function renderRoomTabs(){
   const tabs=document.getElementById('roomTabs');
   tabs.innerHTML=ROOMS.map(r=>{
     const lbl=`${r.type==='apt'?t('apt'):t('room')} ${r.id} – ${r.price}€`;
-    return `<button class="room-tab${r.id===selectedRoomId?' active':''}" onclick="selectTab('${r.id}')">${lbl}</button>`;
+    return `<button class="room-tab${r.id===selectedRoom?' active':''}" onclick="selectTab('${r.id}')">${lbl}</button>`;
   }).join('');
 }
-
 function selectTab(id){
-  selectedRoomId=id;
-  selStart=null;selEnd=null;pickEnd=false;
+  selectedRoom=id; selStart=null; selEnd=null; pickEnd=false;
   document.getElementById('dateSummary').classList.remove('visible');
   document.getElementById('calNotice').textContent=t('cal_inst');
   document.getElementById('calNotice').className='notice warning visible';
-  renderRoomTabs();
-  renderCalendar();
+  renderRoomTabs(); renderCalendar();
 }
 
-// ═══════════════════════════
-//  STORAGE
-// ═══════════════════════════
-function getBookings(){try{return JSON.parse(localStorage.getItem('vh_bookings')||'[]')}catch(e){return[]}}
-function saveBookings(b){localStorage.setItem('vh_bookings',JSON.stringify(b))}
-
-// ═══════════════════════════
-//  CALENDAR STATE
-// ═══════════════════════════
+// ══════════════════
+//  CALENDAR
+// ══════════════════
 let calYear,calMonth,selStart=null,selEnd=null,pickEnd=false;
 function initCal(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth()}
 initCal();
+
+function getBookedRanges(rid){return getBookings().filter(b=>b.roomId===rid&&b.status!=='cancelled').map(b=>({start:new Date(b.checkin),end:new Date(b.checkout)}))}
+function isDateBooked(date,ranges){return ranges.some(r=>date>=r.start&&date<r.end)}
+function isRangeBooked(s,e,rid){const r=getBookedRanges(rid);let d=new Date(s);while(d<e){if(isDateBooked(d,r))return true;d.setDate(d.getDate()+1)}return false}
+function fmt(d){return d.toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit',year:'numeric'})}
 
 function renderCalendar(){
   document.getElementById('calMonthLbl').textContent=`${t('months')[calMonth]} ${calYear}`;
   const grid=document.getElementById('calGrid');
   grid.innerHTML='';
   t('days').forEach(d=>{const e=document.createElement('div');e.className='cal-dn';e.textContent=d;grid.appendChild(e)});
-  const firstDay=new Date(calYear,calMonth,1).getDay();
-  const offset=(firstDay+6)%7;
+  const offset=(new Date(calYear,calMonth,1).getDay()+6)%7;
   for(let i=0;i<offset;i++){const e=document.createElement('div');e.className='cal-d empty';grid.appendChild(e)}
   const dim=new Date(calYear,calMonth+1,0).getDate();
   const today=new Date();today.setHours(0,0,0,0);
-  const ranges=getBookedRanges(selectedRoomId);
+  const ranges=getBookedRanges(selectedRoom);
   for(let d=1;d<=dim;d++){
     const date=new Date(calYear,calMonth,d);
     const el=document.createElement('div');
     el.textContent=d;el.className='cal-d';
-    const isToday=date.getTime()===today.getTime();
-    const isPast=date<today;
-    const isBooked=isDateBooked(date,ranges);
-    if(isToday)el.classList.add('today');
-    if(isPast||isBooked){el.classList.add('disabled');if(isBooked)el.classList.add('booked')}
+    if(date.getTime()===today.getTime())el.classList.add('today');
+    if(date<today||isDateBooked(date,ranges)){el.classList.add('disabled');if(isDateBooked(date,ranges))el.classList.add('booked')}
     else{
       if(selStart&&date.getTime()===selStart.getTime())el.classList.add('sel-start');
       else if(selEnd&&date.getTime()===selEnd.getTime())el.classList.add('sel-end');
@@ -767,31 +829,19 @@ function renderCalendar(){
   }
 }
 
-function getBookedRanges(roomId){
-  return getBookings().filter(b=>b.roomId===roomId&&b.status!=='cancelled')
-    .map(b=>({start:new Date(b.checkin),end:new Date(b.checkout)}));
-}
-function isDateBooked(date,ranges){return ranges.some(r=>date>=r.start&&date<r.end)}
-function isRangeBooked(s,e,rid){
-  const r=getBookedRanges(rid);let d=new Date(s);
-  while(d<e){if(isDateBooked(d,r))return true;d.setDate(d.getDate()+1)}
-  return false;
-}
-
 function onDay(date){
-  const err=document.getElementById('errorNotice');
-  err.classList.remove('visible');
+  document.getElementById('errorNotice').classList.remove('visible');
   if(!pickEnd||!selStart){selStart=date;selEnd=null;pickEnd=true}
   else{
     if(date<=selStart){selStart=date;selEnd=null}
     else{
       selEnd=date;pickEnd=false;
-      if(isRangeBooked(selStart,selEnd,selectedRoomId)){
+      if(isRangeBooked(selStart,selEnd,selectedRoom)){
         document.getElementById('calNotice').textContent=t('conflict');
         document.getElementById('calNotice').className='notice error visible';
         selStart=null;selEnd=null;
       } else {
-        document.getElementById('calNotice').className='notice visible warning';
+        document.getElementById('calNotice').className='notice warning visible';
         document.getElementById('calNotice').textContent='';
         updateSummary();
       }
@@ -802,7 +852,7 @@ function onDay(date){
 
 function updateSummary(){
   if(!selStart||!selEnd)return;
-  const room=ROOMS.find(r=>r.id===selectedRoomId);
+  const room=ROOMS.find(r=>r.id===selectedRoom);
   const nights=Math.round((selEnd-selStart)/86400000);
   document.getElementById('sCheckin').textContent=fmt(selStart);
   document.getElementById('sCheckout').textContent=fmt(selEnd);
@@ -810,14 +860,13 @@ function updateSummary(){
   document.getElementById('sTotal').textContent=`${nights*room.price} EUR`;
   document.getElementById('dateSummary').classList.add('visible');
 }
-function fmt(d){return d.toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit',year:'numeric'})}
 
 document.getElementById('calPrev').onclick=()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCalendar()};
 document.getElementById('calNext').onclick=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCalendar()};
 
-// ═══════════════════════════
+// ══════════════════
 //  SUBMIT
-// ═══════════════════════════
+// ══════════════════
 function submitBooking(){
   const fn=document.getElementById('fFN').value.trim();
   const ln=document.getElementById('fLN').value.trim();
@@ -831,19 +880,13 @@ function submitBooking(){
   err.classList.remove('visible');suc.classList.remove('visible');
   if(!selStart||!selEnd){err.textContent=t('pick_dates');err.classList.add('visible');return}
   if(!fn||!ln||!em||!ph){err.textContent=t('fill_all');err.classList.add('visible');return}
-  if(isRangeBooked(selStart,selEnd,selectedRoomId)){err.textContent=t('conflict');err.classList.add('visible');return}
-  const room=ROOMS.find(r=>r.id===selectedRoomId);
+  if(isRangeBooked(selStart,selEnd,selectedRoom)){err.textContent=t('conflict');err.classList.add('visible');return}
+  const room=ROOMS.find(r=>r.id===selectedRoom);
   const nights=Math.round((selEnd-selStart)/86400000);
-  const bk={
-    id:'VH-'+Date.now(),
-    roomId:selectedRoomId,
-    roomName:`${room.type==='apt'?'Apartman':'Soba'} ${room.id}`,
-    checkin:selStart.toISOString().split('T')[0],
-    checkout:selEnd.toISOString().split('T')[0],
-    nights,total:nights*room.price,
-    firstName:fn,lastName:ln,email:em,phone:ph,guests:gu,country:co,note:no,
-    status:'pending',createdAt:new Date().toISOString()
-  };
+  const bk={id:'VH-'+Date.now(),roomId:selectedRoom,roomName:`${room.type==='apt'?'Apartman':'Soba'} ${room.id}`,
+    checkin:selStart.toISOString().split('T')[0],checkout:selEnd.toISOString().split('T')[0],
+    nights,total:nights*room.price,firstName:fn,lastName:ln,email:em,phone:ph,
+    guests:gu,country:co,note:no,status:'pending',createdAt:new Date().toISOString()};
   const bks=getBookings();bks.push(bk);saveBookings(bks);
   suc.textContent=t('success_msg');suc.classList.add('visible');
   document.getElementById('submitBtn').disabled=true;
@@ -855,21 +898,19 @@ function submitBooking(){
     document.getElementById('fGU').value='2';
     document.getElementById('submitBtn').disabled=false;
     suc.classList.remove('visible');
-  },4000);
-  if(adminVisible)renderAdmin();
+  },4500);
 }
 
-// ═══════════════════════════
+// ══════════════════
 //  ADMIN
-// ═══════════════════════════
+// ══════════════════
 const ADMIN_PASS='Nena1975';
-let adminVisible=false;
-let adminUnlocked=false;
+let adminVisible=false,adminUnlocked=false;
 function toggleAdmin(){
   if(!adminUnlocked){
-    const pass=prompt('Unesite lozinku / Enter password:');
+    const pass=prompt('Unesite lozinku:');
     if(pass===null)return;
-    if(pass!==ADMIN_PASS){alert('Pogrešna lozinka / Wrong password.');return;}
+    if(pass!==ADMIN_PASS){alert('Pogrešna lozinka.');return}
     adminUnlocked=true;
   }
   adminVisible=!adminVisible;
@@ -880,27 +921,27 @@ function toggleAdmin(){
 function renderAdmin(){
   const wrap=document.getElementById('adminTableWrap');
   const bks=getBookings();
-  if(!bks.length){wrap.innerHTML=`<p class="empty-state">${t('no_bookings')}</p>`;return}
+  if(!bks.length){wrap.innerHTML='<p style="padding:1rem;color:#555">Nema rezervacija.</p>';return}
   const sl={pending:t('pending'),confirmed:t('confirmed'),cancelled:t('cancelled')};
   const sc={pending:'sp',confirmed:'sc',cancelled:'sx'};
-  wrap.innerHTML=`<div style="overflow-x:auto"><table class="res-table">
-    <thead><tr>
-      <th>ID</th><th>${t('room')||'Soba'}</th><th>${t('checkin')}</th><th>${t('checkout')}</th>
-      <th>${t('nights')}</th><th>EUR</th><th>${t('first_name')}</th><th>${t('last_name')}</th>
-      <th>Email</th><th>${t('phone')}</th><th>${t('guests')}</th><th>${t('country')}</th><th>Status</th><th>—</th>
-    </tr></thead>
+  wrap.innerHTML=`<table class="res-table">
+    <thead><tr><th>ID</th><th>Soba</th><th>${t('checkin')}</th><th>${t('checkout')}</th>
+    <th>${t('nights')}</th><th>EUR</th><th>${t('first_name')}</th><th>${t('last_name')}</th>
+    <th>Email</th><th>${t('phone')}</th><th>${t('guests')}</th><th>Status</th><th>Akcija</th></tr></thead>
     <tbody>${bks.slice().reverse().map(b=>`<tr>
-      <td style="font-size:0.65rem;opacity:0.5">${b.id}</td>
-      <td>${b.roomName}</td><td>${b.checkin}</td><td>${b.checkout}</td>
-      <td>${b.nights}</td><td>${b.total}</td>
+      <td style="font-size:0.75rem;color:#888">${b.id}</td>
+      <td><strong>${b.roomName}</strong></td>
+      <td>${b.checkin}</td><td>${b.checkout}</td>
+      <td>${b.nights}</td><td><strong>${b.total}</strong></td>
       <td>${b.firstName}</td><td>${b.lastName}</td>
-      <td>${b.email}</td><td>${b.phone}</td>
-      <td>${b.guests}</td><td>${b.country||'—'}</td>
+      <td>${b.email}</td><td>${b.phone}</td><td>${b.guests}</td>
       <td><span class="sbadge ${sc[b.status]}">${sl[b.status]}</span></td>
-      <td>${b.status!=='confirmed'?`<button class="act-btn ac" onclick="chStatus('${b.id}','confirmed')">${t('confirm_action')}</button>`:''
-         }${b.status!=='cancelled'?`<button class="act-btn ax" onclick="chStatus('${b.id}','cancelled')">${t('cancel_action')}</button>`:''}</td>
+      <td>
+        ${b.status!=='confirmed'?`<button class="act-btn ab-confirm" onclick="chStatus('${b.id}','confirmed')">${t('confirm_action')}</button>`:''}
+        ${b.status!=='cancelled'?`<button class="act-btn ab-cancel" onclick="chStatus('${b.id}','cancelled')">${t('cancel_action')}</button>`:''}
+      </td>
     </tr>`).join('')}</tbody>
-  </table></div>`;
+  </table>`;
 }
 
 function chStatus(id,status){
@@ -911,26 +952,24 @@ function chStatus(id,status){
 
 function exportCSV(){
   const bks=getBookings();
-  if(!bks.length){alert(t('no_bookings'));return}
-  const h=['ID','Soba','Dolazak','Odlazak','Noci','EUR','Ime','Prezime','Email','Telefon','Gosti','Drzava','Napomena','Status','Kreirano'];
-  const rows=bks.map(b=>[b.id,b.roomName,b.checkin,b.checkout,b.nights,b.total,b.firstName,b.lastName,b.email,b.phone,b.guests,b.country||'',b.note||'',b.status,b.createdAt].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  if(!bks.length){alert('Nema rezervacija.');return}
+  const h=['ID','Soba','Dolazak','Odlazak','Noci','EUR','Ime','Prezime','Email','Telefon','Gosti','Drzava','Napomena','Status'];
+  const rows=bks.map(b=>[b.id,b.roomName,b.checkin,b.checkout,b.nights,b.total,b.firstName,b.lastName,b.email,b.phone,b.guests,b.country||'',b.note||'',b.status].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
   const csv=[h.join(','),...rows].join('\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;
-  a.download=`villa-helena-${new Date().toISOString().split('T')[0]}.csv`;
+  const a=document.createElement('a');a.href=url;a.download=`villa-helena-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();URL.revokeObjectURL(url);
 }
 
-// ═══════════════════════════
+// ══════════════════
 //  INIT
-// ═══════════════════════════
-renderRoomsInfo();
+// ══════════════════
+renderRooms();
 renderRoomTabs();
 renderCalendar();
 document.getElementById('calNotice').textContent=t('cal_inst');
 document.getElementById('calNotice').className='notice warning visible';
 </script>
-<script src="accessibility.js"></script>
 </body>
 </html>
