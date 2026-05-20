@@ -1118,7 +1118,100 @@ input[type=number] { -moz-appearance: textfield; }
   </div>
 
   <div class="toast" id="toast"></div>
-</div>
+
+  <!-- ════════════════════════════════════════════════
+       WATCH UI — Samsung Galaxy Watch 6
+       Aktivira se automatski kad screen.width < 320
+  ═══════════════════════════════════════════════════ -->
+  <div id="watch-app" style="display:none;height:100dvh;width:100%;background:#000;color:#fff;font-family:'Outfit',sans-serif;overflow:hidden;position:relative;">
+
+    <!-- Watch: Home -->
+    <div class="wscreen active" id="ws-home" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:#00ff00;letter-spacing:2px;line-height:1;">⛳</div>
+      <div style="font-size:22px;font-weight:800;color:#fff;margin:6px 0 2px;">GOLF</div>
+      <div style="font-size:11px;color:#666;font-family:monospace;letter-spacing:2px;margin-bottom:16px;">CADDIE</div>
+      <button onclick="wShowScreen('select-course')" style="width:100%;padding:12px;background:#00ff00;border:none;border-radius:12px;font-size:15px;font-weight:700;color:#000;cursor:pointer;margin-bottom:8px;">▶ Nova runda</button>
+      <button onclick="wShowScreen('history')" style="width:100%;padding:10px;background:#222;border:2px solid #444;border-radius:12px;font-size:13px;color:#fff;cursor:pointer;">📜 Povijest</button>
+    </div>
+
+    <!-- Watch: Select Course -->
+    <div class="wscreen" id="ws-select-course" style="height:100%;display:none;flex-direction:column;">
+      <div style="padding:12px 12px 6px;font-size:13px;font-weight:700;color:#ffff00;text-align:center;flex-shrink:0;">ODABERI TEREN</div>
+      <div id="w-course-list" style="flex:1;overflow-y:auto;padding:0 10px 10px;scrollbar-width:none;"></div>
+      <button onclick="wShowScreen('home')" style="margin:8px 10px;padding:10px;background:#222;border:2px solid #444;border-radius:10px;color:#aaa;font-size:13px;cursor:pointer;">◀ Nazad</button>
+    </div>
+
+    <!-- Watch: Select Tee + HCP -->
+    <div class="wscreen" id="ws-setup-player" style="height:100%;display:none;flex-direction:column;padding:12px;overflow-y:auto;">
+      <div style="font-size:13px;font-weight:700;color:#ffff00;text-align:center;margin-bottom:10px;">POSTAVI IGRAČA</div>
+      <div id="w-player-setup-content"></div>
+      <button onclick="wStartRound()" style="width:100%;padding:12px;background:#00ff00;border:none;border-radius:12px;font-size:15px;font-weight:700;color:#000;cursor:pointer;margin-top:10px;">▶ Počni</button>
+      <button onclick="wShowScreen('select-course')" style="width:100%;padding:10px;background:#222;border:2px solid #444;border-radius:10px;color:#aaa;font-size:13px;cursor:pointer;margin-top:8px;">◀ Nazad</button>
+    </div>
+
+    <!-- Watch: Play (Hole) -->
+    <div class="wscreen" id="ws-play" style="height:100%;display:none;flex-direction:column;">
+      <!-- Hole header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #222;flex-shrink:0;">
+        <div>
+          <div style="font-size:10px;color:#555;font-family:monospace;letter-spacing:1px;" id="w-course-name-play">TEREN</div>
+          <div style="font-size:20px;font-weight:800;color:#00ff00;" id="w-hole-num">1</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:10px;color:#555;font-family:monospace;">PAR</div>
+          <div style="font-size:20px;font-weight:700;color:#ffff00;" id="w-par">4</div>
+        </div>
+      </div>
+
+      <!-- GPS distances -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;padding:6px 10px;flex-shrink:0;">
+        <div style="background:#111;border-radius:8px;padding:5px;text-align:center;">
+          <div style="font-size:9px;color:#555;font-family:monospace;">F</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="w-dist-f">—</div>
+          <div style="font-size:9px;color:#555;">m</div>
+        </div>
+        <div style="background:#111;border:1px solid #ffff00;border-radius:8px;padding:5px;text-align:center;">
+          <div style="font-size:9px;color:#888;font-family:monospace;">M</div>
+          <div style="font-size:18px;font-weight:700;color:#ffff00;" id="w-dist-m">—</div>
+          <div style="font-size:9px;color:#888;">m</div>
+        </div>
+        <div style="background:#111;border-radius:8px;padding:5px;text-align:center;">
+          <div style="font-size:9px;color:#555;font-family:monospace;">B</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="w-dist-b">—</div>
+          <div style="font-size:9px;color:#555;">m</div>
+        </div>
+      </div>
+
+      <!-- Players scroll -->
+      <div id="w-players-play" style="flex:1;overflow-y:auto;padding:0 8px;scrollbar-width:none;"></div>
+
+      <!-- Nav -->
+      <div style="display:flex;gap:6px;padding:6px 10px;border-top:1px solid #222;flex-shrink:0;">
+        <button onclick="wPrevHole()" style="flex:1;padding:8px;background:#222;border:none;border-radius:8px;color:#aaa;font-size:14px;cursor:pointer;">◀</button>
+        <button onclick="wShowScreen('scorecard')" style="flex:1;padding:8px;background:#222;border:none;border-radius:8px;color:#aaa;font-size:14px;cursor:pointer;">📋</button>
+        <button onclick="wNextHole()" id="w-next-btn" style="flex:1;padding:8px;background:#00ff00;border:none;border-radius:8px;color:#000;font-size:14px;font-weight:700;cursor:pointer;">▶</button>
+      </div>
+    </div>
+
+    <!-- Watch: Scorecard -->
+    <div class="wscreen" id="ws-scorecard" style="height:100%;display:none;flex-direction:column;">
+      <div style="padding:8px 12px;font-size:13px;font-weight:700;color:#ffff00;text-align:center;flex-shrink:0;" id="w-sc-title">SCORECARD</div>
+      <div id="w-sc-content" style="flex:1;overflow-y:auto;scrollbar-width:none;padding:0 8px 8px;"></div>
+      <div style="display:flex;gap:6px;padding:6px 10px;border-top:1px solid #222;flex-shrink:0;">
+        <button onclick="wShowScreen('play')" style="flex:1;padding:10px;background:#222;border:none;border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">◀ Igraj</button>
+        <button onclick="wFinishRound()" style="flex:1;padding:10px;background:#ff3333;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">🏁 Kraj</button>
+      </div>
+    </div>
+
+    <!-- Watch: History -->
+    <div class="wscreen" id="ws-history" style="height:100%;display:none;flex-direction:column;">
+      <div style="padding:8px 12px;font-size:13px;font-weight:700;color:#ffff00;text-align:center;flex-shrink:0;">POVIJEST</div>
+      <div id="w-history-list" style="flex:1;overflow-y:auto;scrollbar-width:none;padding:0 8px;"></div>
+      <button onclick="wShowScreen('home')" style="margin:6px 10px;padding:10px;background:#222;border:2px solid #444;border-radius:10px;color:#aaa;font-size:13px;cursor:pointer;">◀ Nazad</button>
+    </div>
+
+  </div><!-- end watch-app -->
+</div><!-- end .app -->
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
@@ -2472,13 +2565,427 @@ function setSearchStatus(msg, isError) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// WATCH DETEKCIJA I WATCH UI
+// ═══════════════════════════════════════════════════════════════════
+
+const IS_WATCH = window.screen.width <= 320 || window.screen.height <= 320 ||
+  /SamsungBrowser/.test(navigator.userAgent) && window.innerWidth <= 360 && window.innerHeight <= 360;
+
+// Watch state
+const wState = {
+  screen: 'home',
+  courses: [],
+  selectedCourseIdx: null,
+  selectedTeeIdx: null,
+  players: [{ name: 'Igrač 1', hcp: 36, gender: 'M', teeName: '' }],
+  currentHole: 0,
+  strokes: [],
+  putts: [],
+  par: [],
+  si: [],
+  courseName: '',
+  numHoles: 18,
+  gpsPos: null,
+  gpsWatchId: null,
+};
+
+function wInit() {
+  // Sakrij phone UI, prikaži watch UI
+  document.querySelector('.app > *:not(#watch-app)') && null;
+  const phoneScreens = document.querySelectorAll('.screen, .modal-overlay, .toast');
+  document.getElementById('watch-app').style.display = 'block';
+  // Sakrij sve phone elemente
+  document.querySelectorAll('.app > div:not(#watch-app)').forEach(el => el.style.display = 'none');
+
+  // Učitaj terene
+  wLoadCourses();
+  wStartGPS();
+  wLoadHistory();
+}
+
+function wShowScreen(name) {
+  wState.screen = name;
+  document.querySelectorAll('.wscreen').forEach(s => {
+    s.style.display = 'none';
+    s.classList.remove('active');
+  });
+  const el = document.getElementById('ws-' + name);
+  if (el) { el.style.display = 'flex'; el.classList.add('active'); }
+
+  if (name === 'select-course') wRenderCourseList();
+  if (name === 'setup-player') wRenderPlayerSetup();
+  if (name === 'play') wRenderPlay();
+  if (name === 'scorecard') wRenderScorecard();
+  if (name === 'history') wRenderHistory();
+}
+
+// ── COURSE LOADING ────────────────────────────────────────────────
+async function wLoadCourses() {
+  try {
+    const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) wState.courses = await res.json();
+  } catch (e) { wState.courses = []; }
+}
+
+async function wLoadHistory() {
+  // Učitaj s GitHuba
+  try {
+    const res = await fetch(
+      `https://raw.githubusercontent.com/mlleetrangere-bot/VH/main/golf-history.json?t=${Date.now()}`,
+      { cache: 'no-store' }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      const rounds = data.rounds || [];
+      const localIds = new Set(state.history.map(r => r.id));
+      const newRounds = rounds.filter(r => !localIds.has(r.id));
+      if (newRounds.length > 0) {
+        state.history = [...state.history, ...newRounds].sort((a,b) => new Date(a.date)-new Date(b.date));
+        localStorage.setItem('golfHistory', JSON.stringify(state.history));
+      }
+    }
+  } catch (e) {}
+}
+
+// ── COURSE LIST ───────────────────────────────────────────────────
+function wRenderCourseList() {
+  const el = document.getElementById('w-course-list');
+  if (wState.courses.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#555;font-size:12px;padding:20px;">Nema terena.<br>Dodaj u Course Manager.</div>';
+    return;
+  }
+  el.innerHTML = wState.courses.map((c, i) => `
+    <div onclick="wSelectCourse(${i})" style="background:#111;border:2px solid ${i===wState.selectedCourseIdx?'#00ff00':'#333'};border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;">
+      <div style="font-size:14px;font-weight:700;color:${i===wState.selectedCourseIdx?'#00ff00':'#fff'};">${escHtml(c.club_name)}</div>
+      <div style="font-size:11px;color:#555;font-family:monospace;">${c.holes} rupa</div>
+    </div>`).join('');
+}
+
+function wSelectCourse(idx) {
+  wState.selectedCourseIdx = idx;
+  wState.selectedTeeIdx = null;
+  wState.players[0].teeName = '';
+  wShowScreen('setup-player');
+}
+
+// ── PLAYER SETUP ──────────────────────────────────────────────────
+function wRenderPlayerSetup() {
+  const course = wState.courses[wState.selectedCourseIdx];
+  if (!course) return;
+  const p = wState.players[0];
+  const tees = course.tees || [];
+
+  let html = `
+    <div style="margin-bottom:10px;">
+      <div style="font-size:11px;color:#ffff00;font-family:monospace;letter-spacing:1px;margin-bottom:5px;">IME</div>
+      <input value="${escHtml(p.name)}" oninput="wState.players[0].name=this.value"
+        style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:10px;color:#fff;font-size:15px;outline:none;">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div>
+        <div style="font-size:11px;color:#ffff00;font-family:monospace;letter-spacing:1px;margin-bottom:5px;">SPOL</div>
+        <select onchange="wState.players[0].gender=this.value;wState.players[0].teeName='';wRenderPlayerSetup();"
+          style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:10px;color:#fff;font-size:14px;outline:none;">
+          <option value="M" ${p.gender==='M'?'selected':''}>♂ M</option>
+          <option value="F" ${p.gender==='F'?'selected':''}>♀ Ž</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#ffff00;font-family:monospace;letter-spacing:1px;margin-bottom:5px;">HCP</div>
+        <input type="number" step="0.1" min="-10" max="54" value="${p.hcp}"
+          oninput="wState.players[0].hcp=parseFloat(this.value)||0;wRenderPlayerSetup();"
+          style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:10px;color:#ffff00;font-size:16px;font-weight:700;text-align:center;outline:none;">
+      </div>
+    </div>`;
+
+  if (tees.length > 0) {
+    const playerTees = tees.filter(t => !t.gender || t.gender === p.gender || t.gender === 'A');
+    html += `<div style="margin-bottom:10px;">
+      <div style="font-size:11px;color:#ffff00;font-family:monospace;letter-spacing:1px;margin-bottom:5px;">TEE</div>
+      <select onchange="wState.players[0].teeName=this.value;wRenderPlayerSetup();"
+        style="width:100%;background:#222;border:2px solid #444;border-radius:8px;padding:10px;color:#fff;font-size:13px;outline:none;">
+        <option value="">— Odaberi —</option>
+        ${playerTees.map(t => `<option value="${escHtml(t.tee_name)}" ${p.teeName===t.tee_name?'selected':''}>${t.tee_name} | Par ${t.par}</option>`).join('')}
+      </select>
+    </div>`;
+  }
+
+  // Playing handicap
+  const ph = wCalcPH(p, course);
+  html += `<div style="background:#000;border:2px solid #00ff00;border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:12px;color:#888;font-family:monospace;">Playing HCP:</span>
+    <span style="font-size:24px;font-weight:700;color:#00ff00;font-family:monospace;">${ph}</span>
+  </div>`;
+
+  document.getElementById('w-player-setup-content').innerHTML = html;
+}
+
+function wCalcPH(p, course) {
+  const tee = course?.tees?.find(t => t.tee_name === p.teeName) || course?.tees?.[0];
+  const cr = tee?.course_rating || 72;
+  const sl = tee?.slope_rating || 113;
+  const cp = tee?.par || 72;
+  const n  = course?.holes || 18;
+  const factor = n === 9 ? 0.5 : 1.0;
+  return Math.round((p.hcp || 0) * (sl / 113) * factor + (cr - cp) * factor);
+}
+
+// ── START ROUND ───────────────────────────────────────────────────
+function wStartRound() {
+  const course = wState.courses[wState.selectedCourseIdx];
+  if (!course) return;
+  const p = wState.players[0];
+  if (course.tees?.length > 0 && !p.teeName) {
+    alert('Odaberi tee!'); return;
+  }
+
+  const tee = course.tees?.find(t => t.tee_name === p.teeName) || course.tees?.[0];
+  wState.courseName = course.club_name;
+  wState.numHoles = course.holes;
+  wState.par = tee?.holes ? tee.holes.map(h => h.par) : Array(course.holes).fill(4);
+  wState.si  = tee?.holes ? tee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
+  wState.strokes = [Array(course.holes).fill(0)];
+  wState.putts   = [Array(course.holes).fill(0)];
+  wState.currentHole = 0;
+  wShowScreen('play');
+}
+
+// ── PLAY SCREEN ───────────────────────────────────────────────────
+function wRenderPlay() {
+  const h = wState.currentHole;
+  document.getElementById('w-course-name-play').textContent = wState.courseName;
+  document.getElementById('w-hole-num').textContent = `${h+1}/${wState.numHoles}`;
+  document.getElementById('w-par').textContent = wState.par[h] || 4;
+
+  const isLast = h === wState.numHoles - 1;
+  document.getElementById('w-next-btn').textContent = isLast ? '✓' : '▶';
+  document.getElementById('w-next-btn').style.background = isLast ? '#ff3333' : '#00ff00';
+
+  wUpdateDistances();
+  wRenderPlayersPlay();
+}
+
+function wRenderPlayersPlay() {
+  const h = wState.currentHole;
+  const el = document.getElementById('w-players-play');
+  el.innerHTML = wState.players.map((p, pi) => {
+    const s  = wState.strokes[pi]?.[h] || 0;
+    const pu = wState.putts[pi]?.[h] || 0;
+    const par = wState.par[h] || 4;
+    const diff = s > 0 ? s - par : null;
+    const diffLabel = diff === null ? '' : diff === 0 ? 'PAR' : diff === -1 ? 'BIRDIE🐦' : diff === -2 ? 'EAGLE🦅' : diff > 0 ? `+${diff}` : `${diff}`;
+    const diffCol = diff === null ? '#555' : diff < 0 ? '#00ff00' : diff > 0 ? '#ff3333' : '#888';
+
+    return `<div style="background:#111;border:2px solid #222;border-radius:12px;padding:10px;margin-bottom:8px;">
+      <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:8px;">${escHtml(p.name)}</div>
+      <!-- Udarci -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <button onclick="wChangeStroke(${pi},-1)" style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#fff;cursor:pointer;">−</button>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:44px;font-weight:800;color:#fff;line-height:1;font-family:monospace;">${s}</div>
+          <div style="font-size:12px;color:${diffCol};">${diffLabel||'—'}</div>
+        </div>
+        <button onclick="wChangeStroke(${pi},1)" style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#fff;cursor:pointer;">+</button>
+      </div>
+      <!-- Putteri -->
+      <div style="background:#000;border:1px solid #333;border-radius:8px;padding:6px 10px;display:flex;align-items:center;gap:8px;">
+        <button onclick="wChangePutt(${pi},-1)" style="width:30px;height:30px;border-radius:50%;border:1px solid #444;background:#222;font-size:16px;color:#aaa;cursor:pointer;">−</button>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:24px;font-weight:700;color:#55aaff;font-family:monospace;">${pu}</div>
+          <div style="font-size:9px;color:#444;font-family:monospace;">PUTTER</div>
+        </div>
+        <button onclick="wChangePutt(${pi},1)" style="width:30px;height:30px;border-radius:50%;border:1px solid #444;background:#222;font-size:16px;color:#aaa;cursor:pointer;">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function wChangeStroke(pi, delta) {
+  if (!wState.strokes[pi]) wState.strokes[pi] = Array(wState.numHoles).fill(0);
+  wState.strokes[pi][wState.currentHole] = Math.max(0, (wState.strokes[pi][wState.currentHole]||0) + delta);
+  wRenderPlayersPlay();
+}
+
+function wChangePutt(pi, delta) {
+  if (!wState.putts[pi]) wState.putts[pi] = Array(wState.numHoles).fill(0);
+  wState.putts[pi][wState.currentHole] = Math.max(0, (wState.putts[pi][wState.currentHole]||0) + delta);
+  wRenderPlayersPlay();
+}
+
+function wNextHole() {
+  if (wState.currentHole < wState.numHoles - 1) {
+    wState.currentHole++;
+    wRenderPlay();
+  } else {
+    wShowScreen('scorecard');
+  }
+}
+
+function wPrevHole() {
+  if (wState.currentHole > 0) {
+    wState.currentHole--;
+    wRenderPlay();
+  }
+}
+
+// ── GPS ───────────────────────────────────────────────────────────
+function wStartGPS() {
+  if (!navigator.geolocation) return;
+  wState.gpsWatchId = navigator.geolocation.watchPosition(
+    pos => {
+      wState.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      if (wState.screen === 'play') wUpdateDistances();
+    },
+    () => {},
+    { enableHighAccuracy: true, maximumAge: 5000 }
+  );
+}
+
+function wUpdateDistances() {
+  const pos = wState.gpsPos;
+  const course = wState.courses[wState.selectedCourseIdx];
+  const tee = course?.tees?.find(t => t.tee_name === wState.players[0].teeName) || course?.tees?.[0];
+  const hole = tee?.holes?.[wState.currentHole];
+
+  ['f','m','b'].forEach(k => {
+    const el = document.getElementById(`w-dist-${k}`);
+    if (el) el.textContent = '—';
+  });
+
+  if (!pos || !hole) return;
+  const pts = { f: hole.front, m: hole.mid, b: hole.back };
+  Object.entries(pts).forEach(([k, pt]) => {
+    const el = document.getElementById(`w-dist-${k}`);
+    if (el && pt?.lat) {
+      const d = haversine(pos.lat, pos.lon, pt.lat, pt.lon);
+      el.textContent = d;
+    }
+  });
+}
+
+// ── SCORECARD ─────────────────────────────────────────────────────
+function wRenderScorecard() {
+  document.getElementById('w-sc-title').textContent = wState.courseName;
+  const el = document.getElementById('w-sc-content');
+
+  let html = `<table style="width:100%;border-collapse:collapse;font-family:monospace;font-size:13px;">
+    <tr style="border-bottom:1px solid #333;">
+      <th style="text-align:left;padding:5px;color:#ffff00;">#</th>
+      <th style="padding:5px;color:#ffff00;">Par</th>
+      <th style="padding:5px;color:#ffff00;">Ud.</th>
+      <th style="padding:5px;color:#ffff00;">Putt</th>
+      <th style="padding:5px;text-align:right;color:#ffff00;">+/−</th>
+    </tr>`;
+
+  let totalS = 0, totalP = 0, totalPu = 0;
+
+  for (let i = 0; i < wState.numHoles; i++) {
+    const s  = wState.strokes[0]?.[i] || 0;
+    const pu = wState.putts[0]?.[i] || 0;
+    const par = wState.par[i] || 4;
+    const diff = s > 0 ? s - par : null;
+    totalS += s; totalP += par; totalPu += pu;
+    const diffStr = diff === null ? '—' : diff === 0 ? 'E' : diff > 0 ? `+${diff}` : `${diff}`;
+    const diffCol = diff === null ? '#555' : diff < 0 ? '#00ff00' : diff > 0 ? '#ff3333' : '#888';
+    const isActive = i === wState.currentHole;
+
+    html += `<tr style="border-bottom:1px solid #1a1a1a;background:${isActive?'#111':'transparent'};cursor:pointer;" onclick="wGoToHole(${i})">
+      <td style="padding:5px;color:${isActive?'#ffff00':'#fff'};font-weight:${isActive?'700':'400'};">${i+1}</td>
+      <td style="padding:5px;color:#555;text-align:center;">${par}</td>
+      <td style="padding:5px;color:#fff;text-align:center;">${s||'—'}</td>
+      <td style="padding:5px;color:#55aaff;text-align:center;">${pu||'—'}</td>
+      <td style="padding:5px;color:${diffCol};text-align:right;font-weight:700;">${diffStr}</td>
+    </tr>`;
+  }
+
+  const totalDiff = totalS - totalP;
+  html += `<tr style="border-top:2px solid #444;font-weight:700;">
+    <td style="padding:6px;color:#00ff00;">∑</td>
+    <td style="padding:6px;color:#555;text-align:center;">${totalP}</td>
+    <td style="padding:6px;color:#fff;text-align:center;">${totalS}</td>
+    <td style="padding:6px;color:#55aaff;text-align:center;">${totalPu}</td>
+    <td style="padding:6px;text-align:right;color:${totalDiff<0?'#00ff00':totalDiff>0?'#ff3333':'#888'};font-size:15px;">${totalDiff===0?'E':totalDiff>0?'+'+totalDiff:totalDiff}</td>
+  </tr></table>`;
+
+  el.innerHTML = html;
+}
+
+function wGoToHole(idx) {
+  wState.currentHole = idx;
+  wShowScreen('play');
+}
+
+// ── FINISH ROUND ──────────────────────────────────────────────────
+async function wFinishRound() {
+  const record = {
+    id: Date.now().toString(),
+    courseName: wState.courseName,
+    numHoles: wState.numHoles,
+    date: new Date().toISOString(),
+    par: [...wState.par],
+    players: wState.players.map((p, pi) => {
+      const totalS  = (wState.strokes[pi]||[]).reduce((a,b)=>a+b,0);
+      const totalPu = (wState.putts[pi]||[]).reduce((a,b)=>a+b,0);
+      const totalP  = wState.par.reduce((a,b)=>a+b,0);
+      return {
+        name: p.name, hcp: p.hcp, gender: p.gender, teeName: p.teeName,
+        avatar: '🏌️', color: '#00ff00',
+        strokes: [...(wState.strokes[pi]||[])],
+        putts:   [...(wState.putts[pi]||[])],
+        totalStrokes: totalS, totalPutts: totalPu,
+        totalPar: totalP, totalDiff: totalS - totalP
+      };
+    })
+  };
+
+  state.history.push(record);
+  localStorage.setItem('golfHistory', JSON.stringify(state.history));
+
+  // Sync na GitHub
+  try {
+    await githubPush('golf-history.json',
+      JSON.stringify({ updated: new Date().toISOString(), rounds: state.history }, null, 2),
+      `Watch runda — ${record.courseName}`
+    );
+  } catch (e) {}
+
+  wShowScreen('home');
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────
+function wRenderHistory() {
+  const el = document.getElementById('w-history-list');
+  if (state.history.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#555;font-size:12px;padding:20px;">Nema rundi.</div>';
+    return;
+  }
+  el.innerHTML = [...state.history].reverse().slice(0,10).map(r => `
+    <div style="background:#111;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:8px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;">${escHtml(r.courseName)}</div>
+      <div style="font-size:10px;color:#555;font-family:monospace;margin-bottom:6px;">${fmtDate(r.date)}</div>
+      ${r.players.map(p => `
+        <div style="display:flex;justify-content:space-between;font-size:12px;">
+          <span style="color:#aaa;">${escHtml(p.name)}</span>
+          <span style="color:${diffColor(p.totalDiff)};font-family:monospace;font-weight:700;">${fmtDiff(p.totalDiff)}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ── AKTIVACIJA ────────────────────────────────────────────────────
+if (IS_WATCH) {
+  document.addEventListener('DOMContentLoaded', wInit);
+  // Ako je DOMContentLoaded već prošao
+  if (document.readyState !== 'loading') wInit();
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // GITHUB API SYNC
 // ═══════════════════════════════════════════════════════════════════
 
 const GITHUB = {
   owner: 'mlleetrangere-bot',
   repo:  'VH',
-  token: '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',
+  token: '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',
   branch: 'main'
 };
 
