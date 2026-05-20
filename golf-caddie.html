@@ -838,6 +838,10 @@ input[type=number] { -moz-appearance: textfield; }
         <span class="nav-icon">📊</span>
         <span class="nav-label">Statistike</span>
       </button>
+      <button class="nav-item" onclick="showScreen('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Postavke</span>
+      </button>
     </div>
   </div>
 
@@ -1050,6 +1054,9 @@ input[type=number] { -moz-appearance: textfield; }
       <button class="nav-item" onclick="showScreen('stats')">
         <span class="nav-icon">📊</span><span class="nav-label">Statistike</span>
       </button>
+      <button class="nav-item" onclick="showScreen('settings')">
+        <span class="nav-icon">⚙️</span><span class="nav-label">Postavke</span>
+      </button>
     </div>
   </div>
 
@@ -1102,6 +1109,9 @@ input[type=number] { -moz-appearance: textfield; }
       <button class="nav-item active" onclick="showScreen('stats')">
         <span class="nav-icon">📊</span><span class="nav-label">Statistike</span>
       </button>
+      <button class="nav-item" onclick="showScreen('settings')">
+        <span class="nav-icon">⚙️</span><span class="nav-label">Postavke</span>
+      </button>
     </div>
   </div>
 
@@ -1121,7 +1131,70 @@ input[type=number] { -moz-appearance: textfield; }
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <!-- ════════════════════════════════════════════════
+       SCREEN: POSTAVKE
+  ═══════════════════════════════════════════════════ -->
+  <div class="screen" id="screen-settings">
+    <div class="header">
+      <div style="width:38px"></div>
+      <div class="header-title">POSTAVKE</div>
+      <div style="width:38px"></div>
+    </div>
+
+    <div class="scroll-content" style="padding:20px 16px 100px;">
+
+      <div class="section-label" style="padding:0 0 8px;">☁️ GITHUB SYNC</div>
+      <div style="font-size:14px;color:#888;font-family:var(--font-mono);margin-bottom:14px;line-height:1.7;">
+        Token se sprema lokalno u browser.<br>
+        GitHub ga nikad ne vidi u kodu.
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">GitHub PAT Token</label>
+        <input class="input" id="settings-pat" type="password"
+          placeholder="ghp_xxxxxxxxxxxx"
+          value="${localStorage.getItem('gh_pat')||''}"
+          style="font-family:var(--font-mono);">
+      </div>
+
+      <div id="settings-pat-status" style="font-size:14px;font-family:var(--font-mono);margin-bottom:14px;"></div>
+
+      <button class="btn btn-primary btn-lg btn-full" onclick="savePatToken()">
+        💾 Spremi token
+      </button>
+
+      <button class="btn btn-ghost btn-md btn-full" style="margin-top:10px;" onclick="testGithubToken()">
+        🔍 Testiraj vezu
+      </button>
+
+      <button class="btn btn-red btn-md btn-full" style="margin-top:10px;" onclick="clearPatToken()">
+        🗑 Obriši token
+      </button>
+
+      <div class="section-label" style="padding:20px 0 8px;">ℹ️ INFO</div>
+      <div style="font-size:14px;color:#888;font-family:var(--font-mono);line-height:1.8;">
+        Token generiraj na:<br>
+        github.com/settings/tokens<br><br>
+        Scope: <span style="color:#00ff00;">repo</span><br>
+        Expiration: <span style="color:#00ff00;">No expiration</span>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('home')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Početna</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('history')">
+        <span class="nav-icon">📜</span><span class="nav-label">Povijest</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('stats')">
+        <span class="nav-icon">📊</span><span class="nav-label">Statistike</span>
+      </button>
+      <button class="nav-item active" onclick="showScreen('settings')">
+        <span class="nav-icon">⚙️</span><span class="nav-label">Postavke</span>
+      </button>
+    </div>
+  </div>
 
   <!-- ══════════════════════════════════════════════════════
        WATCH UI — Samsung Galaxy Watch 6 (okrugli ekran)
@@ -3224,14 +3297,72 @@ if (IS_WATCH) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// PAT TOKEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════
+
+function savePatToken() {
+  const val = document.getElementById('settings-pat').value.trim();
+  if (!val) { showToast('Unesi token!', 'red'); return; }
+  localStorage.setItem('gh_pat', val);
+  showToast('Token spremljen ✓', 'green');
+  setPatStatus('✓ Token je postavljen', '#00ff00');
+}
+
+function clearPatToken() {
+  localStorage.removeItem('gh_pat');
+  document.getElementById('settings-pat').value = '';
+  setPatStatus('Token obrisan', '#ff3333');
+  showToast('Token obrisan', 'red');
+}
+
+async function testGithubToken() {
+  const token = localStorage.getItem('gh_pat');
+  if (!token) { showToast('Nema tokena!', 'red'); return; }
+  setPatStatus('⏳ Testiram...', '#ffff00');
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/mlleetrangere-bot/VH`,
+      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (res.ok) {
+      setPatStatus('✓ Token radi ispravno!', '#00ff00');
+      showToast('GitHub veza OK ✓', 'green');
+    } else {
+      const e = await res.json();
+      setPatStatus(`✗ ${e.message}`, '#ff3333');
+      showToast('Token ne radi', 'red');
+    }
+  } catch(e) {
+    setPatStatus('✗ Greška veze', '#ff3333');
+  }
+}
+
+function setPatStatus(msg, color) {
+  const el = document.getElementById('settings-pat-status');
+  if (el) { el.textContent = msg; el.style.color = color; }
+}
+
+// Inicijaliziraj settings ekran kad se otvori
+const _origShowScreen = showScreen;
+showScreen = function(name) {
+  _origShowScreen(name);
+  if (name === 'settings') {
+    const inp = document.getElementById('settings-pat');
+    if (inp) inp.value = localStorage.getItem('gh_pat') || '';
+    const token = localStorage.getItem('gh_pat');
+    setPatStatus(token ? '✓ Token je postavljen' : 'Token nije postavljen', token ? '#00ff00' : '#888');
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════
 // GITHUB API SYNC
 // ═══════════════════════════════════════════════════════════════════
 
 const GITHUB = {
   owner: 'mlleetrangere-bot',
   repo:  'VH',
-  token: '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',
-  branch: 'main'
+  branch: 'main',
+  get token() { return localStorage.getItem('gh_pat') || ''; }
 };
 
 async function githubGetSha(path) {

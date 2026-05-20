@@ -1180,8 +1180,8 @@ function showToast(msg, type='') {
 const GITHUB = {
   owner: 'mlleetrangere-bot',
   repo:  'VH',
-  token: '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',
-  branch: 'main'
+  branch: 'main',
+  get token() { return localStorage.getItem('gh_pat') || ''; }
 };
 
 async function githubGetFileSha(path) {
@@ -1240,6 +1240,17 @@ async function syncCoursesToGithub(silent = false) {
 // ── INIT ─────────────────────────────────────────────────────────
 loadCourses();
 startGPS();
+
+// Provjeri PAT token pri prvom otvaranju
+if (!localStorage.getItem('gh_pat')) {
+  setTimeout(() => {
+    const pat = prompt('Unesi GitHub PAT token za automatski sync na GitHub:\n\nGeneriraj na: github.com/settings/tokens\n(Classic token, scope: repo)');
+    if (pat && pat.trim()) {
+      localStorage.setItem('gh_pat', pat.trim());
+      showToast('Token spremljen ✓', 'green');
+    }
+  }, 1000);
+}
 </script>
 </body>
 </html>
