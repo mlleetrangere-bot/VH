@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-20T19:38:55.649Z",
+  "updated": "2026-05-20T19:43:17.738Z",
   "rounds": [
     {
       "id": "1779304051388",
@@ -51,6 +51,86 @@
           "totalPutts": 0,
           "totalPar": 35,
           "totalDiff": -35
+        }
+      ]
+    },
+    {
+      "id": "1779306184142",
+      "courseName": "GC Hummelbachaue Neuss — 18 Loch",
+      "numHoles": 18,
+      "date": "2026-05-20T19:43:04.142Z",
+      "par": [
+        4,
+        5,
+        5,
+        3,
+        4,
+        4,
+        4,
+        3,
+        5,
+        3,
+        4,
+        4,
+        4,
+        5,
+        4,
+        3,
+        5,
+        5
+      ],
+      "players": [
+        {
+          "name": "Igrač 1",
+          "color": "#3ddc84",
+          "avatar": "🏌️",
+          "hcp": 36,
+          "gender": "M",
+          "teeName": "Gelb — Herren",
+          "strokes": [
+            1,
+            1,
+            2,
+            4,
+            3,
+            4,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "putts": [
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "totalStrokes": 17,
+          "totalPutts": 7,
+          "totalPar": 74,
+          "totalDiff": -57
         }
       ]
     }
