@@ -2819,22 +2819,7 @@ async function wLoadCourses() {
   }
 }
 
-function wRenderCourseList() {
-  const el = document.getElementById('w-course-list');
-  if (!el) return;
-  if (wState.courses.length === 0) {
-    el.innerHTML = '<div style="text-align:center;color:#888;font-size:13px;padding:20px;">Nema terena u bazi.<br><br>Dodaj terene u<br>Course Manager<br>na telefonu.</div>';
-    return;
-  }
-  el.innerHTML = wState.courses.map((c, i) => `
-    <div onclick="wSelectCourse(${i})" style="background:#111;border:2px solid ${i===wState.selectedCourseIdx?'#00ff00':'#333'};border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;active:border-color:#00ff00;">
-      <div style="font-size:15px;font-weight:700;color:${i===wState.selectedCourseIdx?'#00ff00':'#fff'};">${escHtml(c.club_name)}</div>
-      <div style="font-size:11px;color:#666;font-family:monospace;margin-top:3px;">${c.holes} rupa · ${c.tees?.length||0} tee</div>
-    </div>`).join('');
-}
-
 async function wLoadHistory() {
-  // Učitaj s GitHuba
   try {
     const res = await fetch(
       `https://raw.githubusercontent.com/mlleetrangere-bot/VH/main/golf-history.json?t=${Date.now()}`,
@@ -2856,14 +2841,15 @@ async function wLoadHistory() {
 // ── COURSE LIST ───────────────────────────────────────────────────
 function wRenderCourseList() {
   const el = document.getElementById('w-course-list');
+  if (!el) return;
   if (wState.courses.length === 0) {
-    el.innerHTML = '<div style="text-align:center;color:#555;font-size:12px;padding:20px;">Nema terena.<br>Dodaj u Course Manager.</div>';
+    el.innerHTML = '<div style="text-align:center;color:#888;font-size:28px;padding:24px;line-height:1.8;">Nema terena.<br>Dodaj u Course Manager.</div>';
     return;
   }
   el.innerHTML = wState.courses.map((c, i) => `
-    <div onclick="wSelectCourse(${i})" style="background:#111;border:2px solid ${i===wState.selectedCourseIdx?'#00ff00':'#333'};border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;">
-      <div style="font-size:14px;font-weight:700;color:${i===wState.selectedCourseIdx?'#00ff00':'#fff'};">${escHtml(c.club_name)}</div>
-      <div style="font-size:11px;color:#555;font-family:monospace;">${c.holes} rupa</div>
+    <div class="witem ${i===wState.selectedCourseIdx?'wsel':''}" onclick="wSelectCourse(${i})">
+      <div class="witem-t">${escHtml(c.club_name)}</div>
+      <div class="witem-s">${c.holes} rupa · ${c.tees?.length||0} tee</div>
     </div>`).join('');
 }
 
