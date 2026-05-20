@@ -1507,7 +1507,7 @@ let state = {
 
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
+  document.getElementById('screen-' + name)?.classList.add('active');
   state.currentScreen = name;
 
   if (name === 'home') renderHome();
@@ -1516,6 +1516,12 @@ function showScreen(name) {
   if (name === 'scorecard') renderScorecard();
   if (name === 'history') renderHistory();
   if (name === 'stats') renderStats();
+  if (name === 'settings') {
+    const inp = document.getElementById('settings-pat');
+    if (inp) inp.value = localStorage.getItem('gh_pat') || '';
+    const token = localStorage.getItem('gh_pat');
+    setPatStatus(token ? '✓ Token je postavljen' : 'Token nije postavljen', token ? '#00ff00' : '#888');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2035,8 +2041,17 @@ function goToHole(idx) {
   showScreen('play');
 }
 
+let _finishingRound = false;
+
 function finishRound() {
-  // Spremi u povijest
+  // Guard — spriječi višestruke pozive
+  if (_finishingRound) return;
+  if (!state.courseName || state.strokes.length === 0) {
+    showScreen('home');
+    return;
+  }
+  _finishingRound = true;
+
   const record = {
     id: Date.now().toString(),
     courseName: state.courseName,
@@ -2044,7 +2059,7 @@ function finishRound() {
     date: new Date().toISOString(),
     par: [...state.par],
     players: state.players.map((p, pi) => {
-      const totalS = state.strokes[pi].reduce((a,b)=>a+b,0);
+      const totalS = (state.strokes[pi]||[]).reduce((a,b)=>a+b,0);
       const totalP = state.par.reduce((a,b)=>a+b,0);
       return {
         name: p.name,
@@ -2053,7 +2068,7 @@ function finishRound() {
         hcp: p.hcp,
         gender: p.gender,
         teeName: p.teeName,
-        strokes: [...state.strokes[pi]],
+        strokes: [...(state.strokes[pi]||[])],
         putts: [...(state.putts[pi]||Array(state.numHoles).fill(0))],
         totalStrokes: totalS,
         totalPutts: (state.putts[pi]||[]).reduce((a,b)=>a+b,0),
@@ -2062,19 +2077,23 @@ function finishRound() {
       };
     })
   };
+
   state.history.push(record);
   localStorage.setItem('golfHistory', JSON.stringify(state.history));
 
   // Reset
   if (state.gpsWatchId) navigator.geolocation.clearWatch(state.gpsWatchId);
+  state.gpsWatchId = null;
   state.players = [];
   state.strokes = [];
   state.putts   = [];
-  state.par = [];
+  state.par     = [];
+  state.courseName = '';
+
+  _finishingRound = false;
 
   showToast('Runda završena! ✓', 'green');
   showScreen('home');
-  // Auto-sync na GitHub
   syncHistoryToGithub(true);
 }
 
@@ -3342,18 +3361,6 @@ function setPatStatus(msg, color) {
   if (el) { el.textContent = msg; el.style.color = color; }
 }
 
-// Inicijaliziraj settings ekran kad se otvori
-const _origShowScreen = showScreen;
-showScreen = function(name) {
-  _origShowScreen(name);
-  if (name === 'settings') {
-    const inp = document.getElementById('settings-pat');
-    if (inp) inp.value = localStorage.getItem('gh_pat') || '';
-    const token = localStorage.getItem('gh_pat');
-    setPatStatus(token ? '✓ Token je postavljen' : 'Token nije postavljen', token ? '#00ff00' : '#888');
-  }
-};
-
 // ═══════════════════════════════════════════════════════════════════
 // GITHUB API SYNC
 // ═══════════════════════════════════════════════════════════════════
@@ -3404,12 +3411,43 @@ async function githubPush(path, content, msg) {
 }
 
 async function syncHistoryToGithub(silent = false) {
+  const token = GITHUB.token;
+  if (!token) {
+    if (!silent) showToast('Nema GitHub tokena — idi u Postavke', 'red');
+    return false;
+  }
   try {
+    // Prvo učitaj postojeće podatke s GitHuba
+    let existingRounds = [];
+    try {
+      const res = await fetch(
+        `https://raw.githubusercontent.com/${GITHUB.owner}/${GITHUB.repo}/${GITHUB.branch}/golf-history.json?t=${Date.now()}`,
+        { cache: 'no-store' }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        existingRounds = data.rounds || [];
+      }
+    } catch(e) {}
+
+    // Spoji — izbjegni duplikate po id
+    const allIds = new Set(existingRounds.map(r => r.id));
+    const newRounds = state.history.filter(r => !allIds.has(r.id));
+    const merged = [...existingRounds, ...newRounds]
+      .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+    // Ažuriraj lokalni state
+    state.history = merged;
+    localStorage.setItem('golfHistory', JSON.stringify(merged));
+
+    // Push na GitHub
     const content = JSON.stringify({
       updated: new Date().toISOString(),
-      rounds: state.history
+      rounds: merged
     }, null, 2);
-    await githubPush('golf-history.json', content, `Update povijest — ${new Date().toLocaleString('hr')}`);
+    await githubPush('golf-history.json', content,
+      `Runda — ${new Date().toLocaleString('hr')}`);
+
     if (!silent) showToast('Povijest snimljena na GitHub ✓', 'green');
     return true;
   } catch (e) {
