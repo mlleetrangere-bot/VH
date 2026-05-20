@@ -45,8 +45,17 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: 20px;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ── APP LAYOUT ── */
+.app {
+  display: flex;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
 /* ── LAYOUT ── */
@@ -165,8 +174,8 @@ html, body {
 }
 .nav-item.active { color: var(--gold); background: #1a1a00; }
 .nav-item:active { transform: scale(0.93); }
-.nav-icon { font-size: 28px; line-height: 1; }
-.nav-label { font-size: 12px; font-family: var(--font-mono); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+.nav-icon { font-size: 32px; line-height: 1; }
+.nav-label { font-size: 14px; font-family: var(--font-mono); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
 
 /* ── CARDS ── */
 .card {
@@ -195,9 +204,9 @@ html, body {
   letter-spacing: 0.5px;
 }
 .btn:active { transform: scale(0.96); filter: brightness(0.85); }
-.btn-lg { height: 64px; font-size: 20px; border-radius: 16px; }
-.btn-md { height: 54px; font-size: 18px; }
-.btn-sm { height: 46px; font-size: 16px; border-radius: 12px; }
+.btn-lg { height: 68px; font-size: 22px; border-radius: 16px; }
+.btn-md { height: 58px; font-size: 20px; }
+.btn-sm { height: 50px; font-size: 17px; border-radius: 12px; }
 .btn-primary { background: var(--green); color: #000000; border: 2px solid var(--green); }
 .btn-secondary { background: var(--surface2); color: var(--text); border: 2px solid var(--border2); }
 .btn-gold { background: var(--gold); color: #000000; border: 2px solid var(--gold); }
@@ -213,10 +222,10 @@ html, body {
   background: #1a1a1a;
   border: 2px solid var(--border2);
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 18px 18px;
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: 20px;
   outline: none;
   transition: border-color 0.15s;
   -webkit-appearance: none;
@@ -594,10 +603,10 @@ html, body {
 }
 .sc-row {
   display: grid;
-  padding: 13px 14px;
+  padding: 15px 14px;
   border-bottom: 1px solid var(--border2);
   align-items: center;
-  font-size: 17px;
+  font-size: 19px;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -605,7 +614,7 @@ html, body {
 .sc-row:active { background: var(--surface2); }
 .sc-row.header {
   background: var(--surface2);
-  font-size: 13px;
+  font-size: 14px;
   font-family: var(--font-mono);
   letter-spacing: 1px;
   color: var(--gold);
@@ -613,7 +622,7 @@ html, body {
   cursor: default;
 }
 .sc-row.current { background: #001a00; }
-.sc-row.total-row { background: var(--surface2); font-weight: 700; cursor: default; font-size: 18px; }
+.sc-row.total-row { background: var(--surface2); font-weight: 700; cursor: default; font-size: 20px; }
 .sc-hole { font-family: var(--font-mono); font-weight: 600; }
 .sc-par { color: var(--text2); font-family: var(--font-mono); }
 .sc-diff { font-family: var(--font-mono); text-align: right; font-weight: 700; }
@@ -683,13 +692,8 @@ html, body {
   align-items: flex-start;
   margin-bottom: 10px;
 }
-.round-course { font-size: 18px; font-weight: 700; color: var(--text); }
-.round-date { font-size: 13px; color: var(--text3); font-family: var(--font-mono); }
-.round-players {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+.round-course { font-size: 20px; font-weight: 700; color: var(--text); }
+.round-date { font-size: 14px; color: var(--text3); font-family: var(--font-mono); }
 .round-player-chip {
   display: flex;
   align-items: center;
@@ -697,12 +701,12 @@ html, body {
   background: var(--surface2);
   border: 1px solid var(--border2);
   border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 15px;
+  padding: 8px 16px;
+  font-size: 17px;
 }
 .round-player-score {
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -721,13 +725,13 @@ html, body {
 }
 .stat-value {
   font-family: var(--font-display);
-  font-size: 42px;
+  font-size: 48px;
   color: var(--text);
   line-height: 1;
   letter-spacing: 1px;
 }
 .stat-label {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--gold);
   font-family: var(--font-mono);
   letter-spacing: 1px;
@@ -1127,11 +1131,12 @@ input[type=number] { -moz-appearance: textfield; }
 
     <!-- Watch: Home -->
     <div class="wscreen active" id="ws-home" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;">
-      <div style="font-size:28px;font-weight:800;color:#00ff00;letter-spacing:2px;line-height:1;">⛳</div>
-      <div style="font-size:22px;font-weight:800;color:#fff;margin:6px 0 2px;">GOLF</div>
-      <div style="font-size:11px;color:#666;font-family:monospace;letter-spacing:2px;margin-bottom:16px;">CADDIE</div>
-      <button onclick="wShowScreen('select-course')" style="width:100%;padding:12px;background:#00ff00;border:none;border-radius:12px;font-size:15px;font-weight:700;color:#000;cursor:pointer;margin-bottom:8px;">▶ Nova runda</button>
-      <button onclick="wShowScreen('history')" style="width:100%;padding:10px;background:#222;border:2px solid #444;border-radius:12px;font-size:13px;color:#fff;cursor:pointer;">📜 Povijest</button>
+      <div style="font-size:28px;">⛳</div>
+      <div style="font-size:24px;font-weight:800;color:#fff;margin:6px 0 2px;">GOLF</div>
+      <div style="font-size:11px;color:#666;font-family:monospace;letter-spacing:2px;margin-bottom:20px;">CADDIE</div>
+      <button onclick="wShowScreen('select-course')" style="width:100%;padding:14px;background:#00ff00;border:none;border-radius:12px;font-size:16px;font-weight:700;color:#000;cursor:pointer;margin-bottom:10px;">▶ Nova runda</button>
+      <button onclick="wShowScreen('history')" style="width:100%;padding:12px;background:#222;border:2px solid #444;border-radius:12px;font-size:14px;color:#fff;cursor:pointer;margin-bottom:10px;">📜 Povijest</button>
+      <button onclick="wReloadCourses()" style="width:100%;padding:10px;background:#111;border:1px solid #333;border-radius:10px;font-size:12px;color:#666;cursor:pointer;">🔄 Osvježi terene</button>
     </div>
 
     <!-- Watch: Select Course -->
@@ -2589,18 +2594,17 @@ const wState = {
   gpsWatchId: null,
 };
 
-function wInit() {
-  // Sakrij phone UI, prikaži watch UI
-  document.querySelector('.app > *:not(#watch-app)') && null;
-  const phoneScreens = document.querySelectorAll('.screen, .modal-overlay, .toast');
-  document.getElementById('watch-app').style.display = 'block';
+async function wInit() {
   // Sakrij sve phone elemente
   document.querySelectorAll('.app > div:not(#watch-app)').forEach(el => el.style.display = 'none');
+  document.getElementById('watch-app').style.display = 'block';
 
-  // Učitaj terene
-  wLoadCourses();
+  // Prikaži loading
+  wShowScreen('home');
   wStartGPS();
-  wLoadHistory();
+
+  // Učitaj terene i povijest paralelno
+  await Promise.all([wLoadCourses(), wLoadHistory()]);
 }
 
 function wShowScreen(name) {
@@ -2621,10 +2625,36 @@ function wShowScreen(name) {
 
 // ── COURSE LOADING ────────────────────────────────────────────────
 async function wLoadCourses() {
+  const el = document.getElementById('w-course-list');
+  if (el) el.innerHTML = '<div style="text-align:center;color:#888;font-size:13px;padding:20px;">⏳ Učitavam terene...</div>';
   try {
     const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store' });
-    if (res.ok) wState.courses = await res.json();
-  } catch (e) { wState.courses = []; }
+    if (res.ok) {
+      wState.courses = await res.json();
+      // Ako smo na select-course ekranu, osvježi
+      if (wState.screen === 'select-course') wRenderCourseList();
+    } else {
+      wState.courses = [];
+      if (el) el.innerHTML = '<div style="text-align:center;color:#ff3333;font-size:13px;padding:20px;">❌ courses.json nije pronađen.<br>Provjeri GitHub repozitorij.</div>';
+    }
+  } catch (e) {
+    wState.courses = [];
+    if (el) el.innerHTML = '<div style="text-align:center;color:#ff3333;font-size:13px;padding:20px;">❌ Greška učitavanja.<br>Provjeri internet vezu.</div>';
+  }
+}
+
+function wRenderCourseList() {
+  const el = document.getElementById('w-course-list');
+  if (!el) return;
+  if (wState.courses.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#888;font-size:13px;padding:20px;">Nema terena u bazi.<br><br>Dodaj terene u<br>Course Manager<br>na telefonu.</div>';
+    return;
+  }
+  el.innerHTML = wState.courses.map((c, i) => `
+    <div onclick="wSelectCourse(${i})" style="background:#111;border:2px solid ${i===wState.selectedCourseIdx?'#00ff00':'#333'};border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;active:border-color:#00ff00;">
+      <div style="font-size:15px;font-weight:700;color:${i===wState.selectedCourseIdx?'#00ff00':'#fff'};">${escHtml(c.club_name)}</div>
+      <div style="font-size:11px;color:#666;font-family:monospace;margin-top:3px;">${c.holes} rupa · ${c.tees?.length||0} tee</div>
+    </div>`).join('');
 }
 
 async function wLoadHistory() {
@@ -2666,6 +2696,12 @@ function wSelectCourse(idx) {
   wState.selectedTeeIdx = null;
   wState.players[0].teeName = '';
   wShowScreen('setup-player');
+}
+
+async function wReloadCourses() {
+  wState.courses = [];
+  await wLoadCourses();
+  wShowScreen('select-course');
 }
 
 // ── PLAYER SETUP ──────────────────────────────────────────────────
