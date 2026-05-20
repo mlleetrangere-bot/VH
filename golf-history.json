@@ -1,0 +1,58 @@
+{
+  "updated": "2026-05-20T19:33:15.180Z",
+  "rounds": [
+    {
+      "id": "1779304051388",
+      "courseName": "GC Hummelbachaue Neuss — 9 Loch",
+      "numHoles": 9,
+      "date": "2026-05-20T19:07:31.388Z",
+      "par": [
+        3,
+        4,
+        4,
+        5,
+        3,
+        4,
+        4,
+        4,
+        4
+      ],
+      "players": [
+        {
+          "name": "Igrač 1",
+          "color": "#3ddc84",
+          "avatar": "🏌️",
+          "hcp": 36,
+          "gender": "F",
+          "teeName": "Rot — Damen",
+          "strokes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "putts": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "totalStrokes": 0,
+          "totalPutts": 0,
+          "totalPar": 35,
+          "totalDiff": -35
+        }
+      ]
+    }
+  ]
+}
