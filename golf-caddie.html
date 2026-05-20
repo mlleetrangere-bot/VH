@@ -3058,32 +3058,41 @@ function wPrevHole() {
 
 // ── GPS ───────────────────────────────────────────────────────────
 function wStartGPS() {
-  if (!navigator.geolocation) {
+  const setStatus = (txt, col) => {
     const el = document.getElementById('w-gps-status');
-    if (el) el.textContent = '⚠ GPS N/A';
+    if (el) { el.textContent = txt; el.style.color = col || '#888'; }
+  };
+
+  if (!navigator.geolocation) {
+    setStatus('⚠ GPS N/A', '#ff3333');
     return;
   }
-  wState.gpsWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      wState.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      const acc = Math.round(pos.coords.accuracy);
-      const el = document.getElementById('w-gps-status');
-      if (el) {
-        el.textContent = `GPS ✓ ±${acc}m`;
-        el.style.color = acc < 10 ? '#00ff00' : acc < 30 ? '#ffff00' : '#ff8800';
-      }
-      if (wState.screen === 'play') wUpdateDistances();
-    },
-    err => {
-      const el = document.getElementById('w-gps-status');
-      if (el) { el.textContent = '⚠ GPS greška'; el.style.color = '#ff3333'; }
-    },
-    {
-      enableHighAccuracy: true,
-      maximumAge: 1000,   // Koristi cache max 1 sekundu
-      timeout: 10000
-    }
-  );
+
+  setStatus('GPS traži...', '#ffff00');
+
+  const onSuccess = pos => {
+    wState.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    const acc = Math.round(pos.coords.accuracy);
+    setStatus(`GPS ✓ ±${acc}m`, acc < 15 ? '#00ff00' : acc < 40 ? '#ffff00' : '#ff8800');
+    if (wState.screen === 'play') wUpdateDistances();
+  };
+
+  const onError = err => {
+    const msgs = ['', '⚠ Dozvoli GPS u browseru', '⚠ GPS signal slab', '⚠ GPS timeout'];
+    setStatus(msgs[err.code] || '⚠ GPS greška', '#ff3333');
+  };
+
+  const opts = { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 };
+
+  // Pokušaj watchPosition (može ne raditi na nekim Wear OS browserima)
+  try {
+    wState.gpsWatchId = navigator.geolocation.watchPosition(onSuccess, onError, opts);
+  } catch(e) {}
+
+  // Fallback polling svakih 3s — radi na Samsung Internet Wear OS
+  wState.gpsPollId = setInterval(() => {
+    navigator.geolocation.getCurrentPosition(onSuccess, () => {}, opts);
+  }, 3000);
 }
 
 function wUpdateDistances() {
