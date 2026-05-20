@@ -21,7 +21,11 @@
             "hole_number": 1,
             "par": 4,
             "si": 11,
-            "length_m": 347
+            "length_m": 347,
+            "front": {
+              "lat": 51.2259746,
+              "lon": 6.7917383
+            }
           },
           {
             "hole_number": 2,
