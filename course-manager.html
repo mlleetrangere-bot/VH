@@ -567,8 +567,9 @@ input[type=number] { -moz-appearance: textfield; }
         <div class="topbar">
           <div class="topbar-title" id="editorTitle">Teren</div>
           <div class="topbar-actions">
+            <button class="btn btn-ghost" onclick="syncCoursesToGithub()">☁️ GitHub</button>
             <button class="btn btn-gold" onclick="startGpsCapture()">📍 Snimi GPS</button>
-            <button class="btn btn-green" onclick="exportJson()">💾 Spremi JSON</button>
+            <button class="btn btn-green" onclick="exportJson()">💾 Spremi</button>
             <button class="btn btn-red" onclick="deleteCourse()">🗑</button>
           </div>
         </div>
@@ -661,8 +662,9 @@ input[type=number] { -moz-appearance: textfield; }
     <textarea id="jsonOutput" style="width:100%;height:200px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--green);font-family:var(--mono);font-size:11px;resize:none;outline:none;" readonly></textarea>
     <div class="modal-actions">
       <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalSave')">Zatvori</button>
-      <button class="btn btn-green" style="flex:1" onclick="copyJson()">📋 Kopiraj</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="copyJson()">📋 Kopiraj</button>
       <button class="btn btn-gold" style="flex:1" onclick="downloadJson()">⬇ Download</button>
+      <button class="btn btn-green" style="flex:1" onclick="syncCoursesToGithub()">☁️ GitHub</button>
     </div>
   </div>
 </div>
@@ -991,18 +993,22 @@ function capturePoint() {
         if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 700);
     } else {
-      // Sve rupe snimljene
-      setTimeout(() => {
+      // Sve rupe snimljene — sync na GitHub
+      setTimeout(async () => {
         closeCapturePanel();
-        showToast('Sve rupe snimljene! 🎉', 'green');
         renderEditor();
         renderSidebar();
+        showToast('Sve rupe snimljene! Snimam na GitHub...', 'green');
+        await syncCoursesToGithub(true);
+        showToast('✓ Sve snimljeno na GitHub!', 'green');
       }, 700);
     }
   }
 
   renderEditor();
   renderSidebar();
+  // Auto-sync nakon svake snimljene GPS točke
+  syncCoursesToGithub(true);
 }
 
 // ── GPS ───────────────────────────────────────────────────────────
@@ -1168,6 +1174,67 @@ function showToast(msg, type='') {
   t.className = 'toast show' + (type ? ' '+type : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ── GITHUB API SYNC ───────────────────────────────────────────────
+const GITHUB = {
+  owner: 'mlleetrangere-bot',
+  repo:  'VH',
+  token: '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',
+  branch: 'main'
+};
+
+async function githubGetFileSha(path) {
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}`,
+    { headers: { 'Authorization': `token ${GITHUB.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+  );
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.sha;
+}
+
+async function githubPushFile(path, content, commitMsg) {
+  const sha = await githubGetFileSha(path);
+  const body = {
+    message: commitMsg,
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: GITHUB.branch
+  };
+  if (sha) body.sha = sha;
+
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+  );
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || `HTTP ${res.status}`);
+  }
+  return await res.json();
+}
+
+async function syncCoursesToGithub(silent = false) {
+  const json = JSON.stringify(state.courses, null, 2);
+  setStatus('Snimam na GitHub...');
+  try {
+    await githubPushFile('courses.json', json, `Update courses.json — ${new Date().toLocaleString('hr')}`);
+    setStatus('✓ Snimljeno na GitHub');
+    if (!silent) showToast('courses.json snimljen na GitHub ✓', 'green');
+    return true;
+  } catch (e) {
+    setStatus(`GitHub greška: ${e.message}`);
+    if (!silent) showToast(`GitHub greška: ${e.message}`, 'red');
+    return false;
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────────────────

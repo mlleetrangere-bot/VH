@@ -1018,11 +1018,22 @@ input[type=number] { -moz-appearance: textfield; }
     <div class="header">
       <div style="width:38px"></div>
       <div class="header-title">POVIJEST</div>
-      <button class="btn btn-sm btn-red" onclick="clearHistory()">Briši sve</button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-sm btn-ghost" onclick="syncHistoryToGithub()">☁️ GitHub</button>
+        <button class="btn btn-sm btn-gold" onclick="exportHistory()">⬇ Export</button>
+        <button class="btn btn-sm btn-ghost" onclick="document.getElementById('importFile').click()">⬆ Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importHistory(this)">
+      </div>
     </div>
 
     <div class="scroll-content">
-      <div id="history-list" style="padding-top:12px;"></div>
+      <div style="padding:10px 16px 4px;font-size:12px;color:#555;font-family:var(--font-mono);text-align:center;">
+        Podaci su u localStorage. Export = backup na mobitel.
+      </div>
+      <div id="history-list" style="padding-top:8px;"></div>
+      <div style="padding:0 16px 16px;">
+        <button class="btn btn-red btn-md btn-full" onclick="clearHistory()">🗑 Obriši sve</button>
+      </div>
     </div>
 
     <div class="bottom-nav">
@@ -1713,6 +1724,8 @@ function finishRound() {
 
   showToast('Runda završena! ✓', 'green');
   showScreen('home');
+  // Auto-sync na GitHub
+  syncHistoryToGithub(true);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1795,6 +1808,50 @@ function clearHistory() {
   showToast('Povijest obrisana', 'red');
 }
 
+function exportHistory() {
+  if (state.history.length === 0) { showToast('Nema podataka za export', 'red'); return; }
+  const data = {
+    exported: new Date().toISOString(),
+    version: '1.0',
+    rounds: state.history
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `golf-povijest-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast(`${state.history.length} rundi exportirano ✓`, 'green');
+}
+
+function importHistory(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Podržava i direktni array i objekt s rounds poljem
+      const rounds = Array.isArray(data) ? data : (data.rounds || []);
+      if (rounds.length === 0) { showToast('Nema podataka u fajlu', 'red'); return; }
+
+      // Spoji s postojećim — izbjegni duplikate po id-u
+      const existingIds = new Set(state.history.map(r => r.id));
+      const newRounds = rounds.filter(r => !existingIds.has(r.id));
+
+      state.history = [...state.history, ...newRounds];
+      state.history.sort((a,b) => new Date(a.date) - new Date(b.date));
+      localStorage.setItem('golfHistory', JSON.stringify(state.history));
+
+      renderHistory();
+      showToast(`${newRounds.length} novih rundi uvezeno ✓`, 'green');
+    } catch (err) {
+      showToast('Greška čitanja fajla', 'red');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // STATISTIKE
 // ═══════════════════════════════════════════════════════════════════
@@ -1803,11 +1860,8 @@ function renderStats() {
   const h = state.history;
   document.getElementById('stats-rounds').textContent = h.length;
 
-  // Sve rupe svih igrača
-  let allHoleDiffs = [];
-  let birdies = 0, eagles = 0;
-  let roundDiffs = [];
-
+  // Globalne statistike
+  let allHoleDiffs = [], birdies = 0, eagles = 0, roundDiffs = [];
   h.forEach(r => {
     r.players.forEach(p => {
       roundDiffs.push(p.totalDiff);
@@ -1822,36 +1876,143 @@ function renderStats() {
     });
   });
 
-  const avgDiff = roundDiffs.length ? (roundDiffs.reduce((a,b)=>a+b,0)/roundDiffs.length).toFixed(1) : '—';
-  const bestDiff = roundDiffs.length ? Math.min(...roundDiffs) : null;
-
-  document.getElementById('stats-hcp').textContent = avgDiff;
-  document.getElementById('stats-best').textContent = bestDiff !== null ? fmtDiff(bestDiff) : '—';
+  const avgDiff   = roundDiffs.length ? (roundDiffs.reduce((a,b)=>a+b,0)/roundDiffs.length).toFixed(1) : '—';
+  const bestDiff  = roundDiffs.length ? Math.min(...roundDiffs) : null;
+  document.getElementById('stats-hcp').textContent    = avgDiff;
+  document.getElementById('stats-best').textContent   = bestDiff !== null ? fmtDiff(bestDiff) : '—';
   document.getElementById('stats-birdies').textContent = birdies;
-  document.getElementById('stats-eagles').textContent = eagles;
+  document.getElementById('stats-eagles').textContent  = eagles;
 
-  // Bar chart — distribucija rezultata po rupi
+  // Globalni bar chart
   const counts = {};
   allHoleDiffs.forEach(d => {
     const key = d <= -2 ? 'Eagle−' : d === -1 ? 'Birdie' : d === 0 ? 'Par' : d === 1 ? 'Bogey' : d === 2 ? 'Dbl' : 'Više';
     counts[key] = (counts[key] || 0) + 1;
   });
-
   const categories = ['Eagle−','Birdie','Par','Bogey','Dbl','Više'];
-  const colors = ['var(--gold)','var(--green)','var(--blue)','var(--text2)','var(--red)','#ff4444'];
-  const max = Math.max(...Object.values(counts), 1);
-
+  const barColors  = ['#ffff00','#00ff00','#55aaff','#888888','#ff3333','#cc0000'];
+  const maxG = Math.max(...Object.values(counts), 1);
   document.getElementById('stats-bars').innerHTML = categories.map((cat, i) => {
     const count = counts[cat] || 0;
-    const pct = Math.round(count / max * 100);
+    const pct = Math.round(count / maxG * 100);
     return `<div class="bar-row">
       <span class="bar-label">${cat}</span>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${pct}%;background:${colors[i]};"></div>
-      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColors[i]};"></div></div>
       <span class="bar-count">${count}</span>
     </div>`;
   }).join('');
+
+  // ── STATISTIKE PO TERENU ──────────────────────────────────────────
+  // Grupiraj runde po nazivu terena
+  const courseMap = {};
+  h.forEach(r => {
+    const key = r.courseName || 'Nepoznat teren';
+    if (!courseMap[key]) courseMap[key] = [];
+    courseMap[key].push(r);
+  });
+
+  const barsEl = document.getElementById('stats-bars');
+  let courseHtml = '';
+
+  Object.entries(courseMap).forEach(([courseName, rounds]) => {
+    // Skupi sve rupe za taj teren
+    // holeDiffs[holeIdx] = { diffs: [], strokes: [], putts: [], par }
+    const holeData = {};
+
+    rounds.forEach(r => {
+      r.players.forEach(p => {
+        p.strokes.forEach((s, i) => {
+          if (s === 0) return;
+          if (!holeData[i]) holeData[i] = { diffs: [], strokes: [], putts: [], par: r.par[i], num: i+1 };
+          holeData[i].diffs.push(s - r.par[i]);
+          holeData[i].strokes.push(s);
+          if (p.putts) holeData[i].putts.push(p.putts[i] || 0);
+        });
+      });
+    });
+
+    const numRounds = rounds.length;
+    const holes = Object.values(holeData).sort((a,b) => a.num - b.num);
+    if (holes.length === 0) return;
+
+    courseHtml += `
+    <div style="background:#111;border:2px solid #333;border-radius:14px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">${escHtml(courseName)}</div>
+      <div style="font-size:12px;color:#666;font-family:var(--font-mono);margin-bottom:14px;">${numRounds} rund${numRounds===1?'a':'e'}</div>
+
+      <!-- Tablica po rupi -->
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:13px;">
+          <thead>
+            <tr style="border-bottom:2px solid #333;">
+              <th style="text-align:left;padding:6px 8px;color:#ffff00;font-size:11px;letter-spacing:1px;">RUPA</th>
+              <th style="padding:6px 8px;color:#ffff00;font-size:11px;letter-spacing:1px;">PAR</th>
+              <th style="padding:6px 8px;color:#ffff00;font-size:11px;letter-spacing:1px;">PROSJEK</th>
+              <th style="padding:6px 8px;color:#ffff00;font-size:11px;letter-spacing:1px;">BEST</th>
+              <th style="padding:6px 8px;color:#ffff00;font-size:11px;letter-spacing:1px;">PUTTS</th>
+              <th style="padding:6px 8px;color:#ffff00;font-size:11px;letter-spacing:1px;text-align:right;">DIFF</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${holes.map(h => {
+              const avg     = h.strokes.length ? (h.strokes.reduce((a,b)=>a+b,0) / h.strokes.length) : null;
+              const best    = h.strokes.length ? Math.min(...h.strokes) : null;
+              const avgDiff = avg !== null ? avg - h.par : null;
+              const avgPutt = h.putts.length ? (h.putts.reduce((a,b)=>a+b,0) / h.putts.length).toFixed(1) : '—';
+              const diffCol = avgDiff === null ? '#666' : avgDiff < 0 ? '#00ff00' : avgDiff > 0 ? '#ff3333' : '#888';
+              const bestDiffStr = best !== null ? fmtDiff(best - h.par) : '—';
+              const bestDiffCol = best !== null ? (best-h.par < 0 ? '#00ff00' : best-h.par > 0 ? '#ff3333' : '#888') : '#666';
+
+              // Mini bar chart za ovu rupu
+              const holeCounts = {};
+              h.diffs.forEach(d => {
+                const k = d <= -2 ? '🦅' : d === -1 ? '🐦' : d === 0 ? 'E' : d === 1 ? 'B' : `+${d}`;
+                holeCounts[k] = (holeCounts[k]||0) + 1;
+              });
+
+              return `<tr style="border-bottom:1px solid #222;">
+                <td style="padding:8px;color:#fff;font-weight:700;">${h.num}</td>
+                <td style="padding:8px;color:#888;text-align:center;">${h.par}</td>
+                <td style="padding:8px;color:${diffCol};text-align:center;font-weight:700;">${avg !== null ? avg.toFixed(1) : '—'}</td>
+                <td style="padding:8px;color:${bestDiffCol};text-align:center;">${best || '—'} <span style="font-size:10px;">(${bestDiffStr})</span></td>
+                <td style="padding:8px;color:#55aaff;text-align:center;">${avgPutt}</td>
+                <td style="padding:8px;text-align:right;color:${diffCol};font-weight:700;">${avgDiff !== null ? (avgDiff > 0 ? '+' : '') + avgDiff.toFixed(1) : '—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+          <tfoot>
+            <tr style="border-top:2px solid #444;">
+              <td style="padding:8px;color:#ffff00;font-weight:700;">UKUPNO</td>
+              <td style="padding:8px;color:#888;text-align:center;">${holes.reduce((a,h)=>a+h.par,0)}</td>
+              <td colspan="3"></td>
+              <td style="padding:8px;text-align:right;font-weight:700;color:${
+                (() => { const d = holes.reduce((a,h)=>{const avg=h.strokes.length?h.strokes.reduce((x,y)=>x+y,0)/h.strokes.length:h.par;return a+(avg-h.par);},0); return d<0?'#00ff00':d>0?'#ff3333':'#888'; })()
+              };">${(() => {
+                const d = holes.reduce((a,h)=>{const avg=h.strokes.length?h.strokes.reduce((x,y)=>x+y,0)/h.strokes.length:h.par;return a+(avg-h.par);},0);
+                return (d>0?'+':'')+d.toFixed(1);
+              })()}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>`;
+  });
+
+  // Dodaj sekciju po terenu iza stats-bars
+  let courseSection = document.getElementById('stats-course-section');
+  if (!courseSection) {
+    courseSection = document.createElement('div');
+    courseSection.id = 'stats-course-section';
+    barsEl.parentNode.insertBefore(courseSection, barsEl.nextSibling);
+  }
+
+  if (Object.keys(courseMap).length > 0) {
+    courseSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;font-family:var(--font-mono);padding:20px 0 10px;">STATISTIKE PO TERENU</div>
+      ${courseHtml}`;
+  } else {
+    courseSection.innerHTML = '';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2311,10 +2472,101 @@ function setSearchStatus(msg, isError) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// GITHUB API SYNC
+// ═══════════════════════════════════════════════════════════════════
+
+const GITHUB = {
+  owner: 'mlleetrangere-bot',
+  repo:  'VH',
+  token: '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',
+  branch: 'main'
+};
+
+async function githubGetSha(path) {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}`,
+      { headers: { 'Authorization': `token ${GITHUB.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (!res.ok) return null;
+    return (await res.json()).sha;
+  } catch (e) { return null; }
+}
+
+async function githubPush(path, content, msg) {
+  const sha = await githubGetSha(path);
+  const body = {
+    message: msg,
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: GITHUB.branch
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+  );
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || `HTTP ${res.status}`);
+  }
+  return true;
+}
+
+async function syncHistoryToGithub(silent = false) {
+  try {
+    const content = JSON.stringify({
+      updated: new Date().toISOString(),
+      rounds: state.history
+    }, null, 2);
+    await githubPush('golf-history.json', content, `Update povijest — ${new Date().toLocaleString('hr')}`);
+    if (!silent) showToast('Povijest snimljena na GitHub ✓', 'green');
+    return true;
+  } catch (e) {
+    if (!silent) showToast(`GitHub greška: ${e.message}`, 'red');
+    return false;
+  }
+}
+
+// Učitaj povijest s GitHuba pri pokretanju
+async function loadHistoryFromGithub() {
+  try {
+    const res = await fetch(
+      `https://raw.githubusercontent.com/${GITHUB.owner}/${GITHUB.repo}/${GITHUB.branch}/golf-history.json?t=${Date.now()}`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    const rounds = data.rounds || [];
+    if (rounds.length === 0) return;
+
+    // Spoji s localStorage — izbjegni duplikate
+    const localIds = new Set(state.history.map(r => r.id));
+    const newRounds = rounds.filter(r => !localIds.has(r.id));
+    if (newRounds.length > 0) {
+      state.history = [...state.history, ...newRounds]
+        .sort((a,b) => new Date(a.date) - new Date(b.date));
+      localStorage.setItem('golfHistory', JSON.stringify(state.history));
+      console.log(`Učitano ${newRounds.length} novih rundi s GitHuba`);
+    }
+  } catch (e) {
+    console.log('GitHub povijest nije dostupna:', e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════
 
 renderHome();
+loadHistoryFromGithub().then(() => renderHome());
 </script>
 </body>
 </html>
