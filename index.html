@@ -766,11 +766,45 @@ function renderRooms(){
   }).join('');
 }
 
-// ══════════════════
-//  STORAGE
-// ══════════════════
-function getBookings(){try{return JSON.parse(localStorage.getItem('vh_bookings')||'[]')}catch(e){return[]}}
-function saveBookings(b){localStorage.setItem('vh_bookings',JSON.stringify(b))}
+// ══════════════════════════════════════════════════
+//  GITHUB CONFIG – ZAMIJENI OVDJE SVOJ TOKEN
+//  Token nikad ne dijeli u chatu ili javno!
+// ══════════════════════════════════════════════════
+const GH_TOKEN = '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';
+const GH_REPO  = 'mlleetrangere-bot/VH';
+const GH_FILE  = 'rezervacije.json';
+
+let ghFileSha = null;
+
+async function ghRead(){
+  try{
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`,{
+      headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json'}
+    });
+    if(res.status===404){ghFileSha=null;return[];}
+    const data = await res.json();
+    ghFileSha = data.sha;
+    return JSON.parse(atob(data.content.replace(/\n/g,'')));
+  }catch(e){return JSON.parse(localStorage.getItem('vh_bookings')||'[]');}
+}
+
+async function ghWrite(bookings){
+  try{
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(bookings,null,2))));
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`,{
+      method:'PUT',
+      headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:`Rezervacija ${new Date().toISOString()}`,content,...(ghFileSha?{sha:ghFileSha}:{})})
+    });
+    const data = await res.json();
+    if(data.content) ghFileSha = data.content.sha;
+    localStorage.setItem('vh_bookings',JSON.stringify(bookings));
+    return true;
+  }catch(e){localStorage.setItem('vh_bookings',JSON.stringify(bookings));return false;}
+}
+
+function getBookings(){return JSON.parse(localStorage.getItem('vh_bookings')||'[]');}
+async function saveBookings(b){localStorage.setItem('vh_bookings',JSON.stringify(b));await ghWrite(b);}
 
 // ══════════════════
 //  BOOKING TABS
@@ -867,7 +901,7 @@ document.getElementById('calNext').onclick=()=>{calMonth++;if(calMonth>11){calMo
 // ══════════════════
 //  SUBMIT
 // ══════════════════
-function submitBooking(){
+async function submitBooking(){
   const fn=document.getElementById('fFN').value.trim();
   const ln=document.getElementById('fLN').value.trim();
   const em=document.getElementById('fEM').value.trim();
@@ -887,7 +921,7 @@ function submitBooking(){
     checkin:selStart.toISOString().split('T')[0],checkout:selEnd.toISOString().split('T')[0],
     nights,total:nights*room.price,firstName:fn,lastName:ln,email:em,phone:ph,
     guests:gu,country:co,note:no,status:'pending',createdAt:new Date().toISOString()};
-  const bks=getBookings();bks.push(bk);saveBookings(bks);
+  const bks=getBookings();bks.push(bk);await saveBookings(bks);
   suc.textContent=t('success_msg');suc.classList.add('visible');
   document.getElementById('submitBtn').disabled=true;
   setTimeout(()=>{
@@ -944,9 +978,9 @@ function renderAdmin(){
   </table>`;
 }
 
-function chStatus(id,status){
+async function chStatus(id,status){
   const b=getBookings();const i=b.findIndex(x=>x.id===id);
-  if(i>-1){b[i].status=status;saveBookings(b)}
+  if(i>-1){b[i].status=status;await saveBookings(b)}
   renderAdmin();renderCalendar();
 }
 
