@@ -1331,23 +1331,25 @@ input[type=number] { -moz-appearance: textfield; }
 
       <div class="wdiv"></div>
 
-      <!-- GPS distance — vertikalno, jedno ispod drugoga -->
-      <div class="wsec">DISTANCE DO GREENA</div>
-      <div class="wgps">
-        <div class="wgps-label">FRONT</div>
-        <div class="wgps-val" id="w-dist-f" style="color:#aaa;">—</div>
-        <div class="wgps-unit">metara</div>
+      <!-- GPS distance — horizontalno, Back/Mid/Front, sve na jednom ekranu -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px;">
+        <div style="background:#111;border:2px solid #333;border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:26px;color:#666;font-family:monospace;font-weight:700;margin-bottom:4px;">B</div>
+          <div style="font-size:var(--wf-lg);font-weight:800;color:#aaa;font-family:monospace;line-height:1;" id="w-dist-b">—</div>
+          <div style="font-size:22px;color:#444;font-family:monospace;margin-top:2px;">m</div>
+        </div>
+        <div style="background:#111100;border:3px solid #ffff00;border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:26px;color:#888;font-family:monospace;font-weight:700;margin-bottom:4px;">M</div>
+          <div style="font-size:var(--wf-lg);font-weight:800;color:#ffff00;font-family:monospace;line-height:1;" id="w-dist-m">—</div>
+          <div style="font-size:22px;color:#888;font-family:monospace;margin-top:2px;">m</div>
+        </div>
+        <div style="background:#111;border:2px solid #333;border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:26px;color:#666;font-family:monospace;font-weight:700;margin-bottom:4px;">F</div>
+          <div style="font-size:var(--wf-lg);font-weight:800;color:#aaa;font-family:monospace;line-height:1;" id="w-dist-f">—</div>
+          <div style="font-size:22px;color:#444;font-family:monospace;margin-top:2px;">m</div>
+        </div>
       </div>
-      <div class="wgps wmid">
-        <div class="wgps-label">MID</div>
-        <div class="wgps-val" id="w-dist-m">—</div>
-        <div class="wgps-unit">metara</div>
-      </div>
-      <div class="wgps">
-        <div class="wgps-label">BACK</div>
-        <div class="wgps-val" id="w-dist-b" style="color:#aaa;">—</div>
-        <div class="wgps-unit">metara</div>
-      </div>
+      <div style="text-align:center;font-size:22px;color:#333;font-family:monospace;margin-bottom:4px;" id="w-gps-status">GPS...</div>
 
       <div class="wdiv"></div>
 
@@ -3070,14 +3072,31 @@ function wPrevHole() {
 
 // ── GPS ───────────────────────────────────────────────────────────
 function wStartGPS() {
-  if (!navigator.geolocation) return;
+  if (!navigator.geolocation) {
+    const el = document.getElementById('w-gps-status');
+    if (el) el.textContent = '⚠ GPS N/A';
+    return;
+  }
   wState.gpsWatchId = navigator.geolocation.watchPosition(
     pos => {
       wState.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      const acc = Math.round(pos.coords.accuracy);
+      const el = document.getElementById('w-gps-status');
+      if (el) {
+        el.textContent = `GPS ✓ ±${acc}m`;
+        el.style.color = acc < 10 ? '#00ff00' : acc < 30 ? '#ffff00' : '#ff8800';
+      }
       if (wState.screen === 'play') wUpdateDistances();
     },
-    () => {},
-    { enableHighAccuracy: true, maximumAge: 5000 }
+    err => {
+      const el = document.getElementById('w-gps-status');
+      if (el) { el.textContent = '⚠ GPS greška'; el.style.color = '#ff3333'; }
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 1000,   // Koristi cache max 1 sekundu
+      timeout: 10000
+    }
   );
 }
 
