@@ -1124,225 +1124,272 @@ input[type=number] { -moz-appearance: textfield; }
   <div class="toast" id="toast"></div>
 
   <!-- ══════════════════════════════════════════════════════
-       WATCH UI — Samsung Galaxy Watch 6
-       5mm slova, vertikalni layout, liste umjesto dropdowna
+       WATCH UI — Samsung Galaxy Watch 6 (okrugli ekran)
+       Sve scrollajuće stranice, min 40px font, 20% padding
   ═══════════════════════════════════════════════════════ -->
   <div id="watch-app" style="display:none;height:100dvh;width:100%;background:#000;color:#fff;font-family:'Outfit',sans-serif;overflow:hidden;">
+  <style>
+    /* Okrugli ekran: sve unutar sigurnog kruga */
+    #watch-app {
+      --wp: 14%;        /* padding od ruba — sigurna zona za okrugli ekran */
+      --wf:  44px;      /* normalni tekst ~5.5mm */
+      --wf-lg: 56px;    /* veliki tekst ~7mm */
+      --wf-xl: 80px;    /* udarci */
+      --wf-sm: 36px;    /* mali tekst ~4.5mm */
+      --wbr: 16px;
+    }
+    /* Svaki ekran: puna visina, scroll */
+    .ws {
+      display: none;
+      height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      box-sizing: border-box;
+      /* Horizontalni padding za okrugli ekran */
+      padding: 0 var(--wp);
+    }
+    .ws::-webkit-scrollbar { display: none; }
+    .ws.wactive { display: block; }
 
-    <!-- CSS varijable za sat -->
-    <style>
-      /* Galaxy Watch 6: 480x480px fizički, ~300px CSS širina u browseru */
-      /* 5mm ≈ 44px na 96dpi — koristimo 44px kao minimum za tekst */
-      #watch-app { --wf: 44px; --wf-sm: 36px; --wf-xs: 28px; --wbr: 14px; }
+    /* Velika tapa gumb */
+    .wbtn {
+      display: block;
+      width: 100%;
+      padding: 18px 10px;
+      margin-bottom: 12px;
+      border: 3px solid #444;
+      border-radius: var(--wbr);
+      font-size: var(--wf);
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+      line-height: 1.2;
+    }
+    .wbtn:active { opacity: 0.7; }
+    .wbtn-green { background: #00ff00; color: #000; border-color: #00ff00; }
+    .wbtn-dark  { background: #1a1a1a; color: #ccc; border-color: #333; }
+    .wbtn-red   { background: #1a0000; color: #ff4444; border-color: #ff4444; }
+    .wbtn-blue  { background: #001a33; color: #55aaff; border-color: #55aaff; }
 
-      .ws { height:100dvh; display:none; flex-direction:column; overflow:hidden; }
-      .ws.wactive { display:flex; }
+    /* Lista item */
+    .witem {
+      background: #111;
+      border: 3px solid #333;
+      border-radius: var(--wbr);
+      padding: 18px 14px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    .witem:active { border-color: #fff; background: #1a1a1a; }
+    .witem.wsel { border-color: #00ff00; background: #001a00; }
+    .witem-t { font-size: var(--wf); font-weight: 700; color: #fff; line-height: 1.3; }
+    .witem-s { font-size: var(--wf-sm); color: #888; margin-top: 6px; font-family: monospace; }
+    .witem.wsel .witem-t { color: #00ff00; }
 
-      /* Scrollable lista */
-      .wlist { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:8px; }
-      .wlist::-webkit-scrollbar { display:none; }
+    /* Section naslov */
+    .wsec {
+      font-size: var(--wf-sm);
+      color: #ffff00;
+      font-family: monospace;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 20px 0 8px;
+      font-weight: 700;
+      text-align: center;
+    }
 
-      /* List item — veliki, lako tapati */
-      .witem {
-        background:#111;
-        border:3px solid #333;
-        border-radius:var(--wbr);
-        padding:16px 18px;
-        margin-bottom:10px;
-        cursor:pointer;
-        -webkit-tap-highlight-color:transparent;
-        transition:border-color 0.1s;
-      }
-      .witem:active { border-color:#fff; background:#1a1a1a; }
-      .witem.wselected { border-color:#00ff00; background:#001400; }
-      .witem-title { font-size:var(--wf-sm); font-weight:700; color:#fff; line-height:1.2; }
-      .witem-sub { font-size:var(--wf-xs); color:#888; margin-top:4px; font-family:monospace; }
-      .witem.wselected .witem-title { color:#00ff00; }
+    /* Separator */
+    .wdiv { height: 2px; background: #222; margin: 16px 0; }
 
-      /* Header bar */
-      .wheader {
-        padding:10px 12px 8px;
-        border-bottom:2px solid #222;
-        flex-shrink:0;
-        text-align:center;
-      }
-      .wheader-title { font-size:var(--wf-xs); font-weight:800; color:#ffff00; letter-spacing:2px; text-transform:uppercase; }
-      .wheader-sub { font-size:28px; color:#888; margin-top:2px; }
+    /* Veliki broj */
+    .wnum { font-size: var(--wf-xl); font-weight: 800; text-align: center; font-family: monospace; line-height: 1; }
+    .wnum-label { font-size: var(--wf-sm); text-align: center; margin-top: 4px; font-family: monospace; }
 
-      /* Gumbi */
-      .wbtn {
-        display:block; width:calc(100% - 16px);
-        margin:0 8px 10px;
-        padding:16px;
-        border:3px solid #444;
-        border-radius:var(--wbr);
-        font-size:var(--wf-sm);
-        font-weight:700;
-        cursor:pointer;
-        text-align:center;
-        -webkit-tap-highlight-color:transparent;
-        transition:all 0.1s;
-        font-family:'Outfit',sans-serif;
-      }
-      .wbtn:active { transform:scale(0.96); }
-      .wbtn-green { background:#00ff00; color:#000; border-color:#00ff00; }
-      .wbtn-dark { background:#1a1a1a; color:#ccc; border-color:#333; }
-      .wbtn-red { background:#330000; color:#ff4444; border-color:#ff4444; }
+    /* +/− red */
+    .wplusminus {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .wpm-btn {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 3px solid #444;
+      background: #1a1a1a;
+      font-size: 40px;
+      color: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wpm-btn:active { background: #333; }
+    .wpm-center { flex: 1; text-align: center; }
 
-      /* Footer nav */
-      .wfooter { display:flex; gap:8px; padding:8px; border-top:2px solid #222; flex-shrink:0; }
-      .wfbtn {
-        flex:1; padding:12px 6px;
-        background:#1a1a1a; border:2px solid #333; border-radius:12px;
-        font-size:var(--wf-xs); font-weight:700; color:#ccc;
-        cursor:pointer; text-align:center;
-        -webkit-tap-highlight-color:transparent;
-      }
-      .wfbtn:active { background:#333; }
-      .wfbtn-green { background:#003300; border-color:#00ff00; color:#00ff00; }
+    /* GPS blok */
+    .wgps {
+      background: #111;
+      border: 3px solid #222;
+      border-radius: var(--wbr);
+      padding: 14px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .wgps-label { font-size: var(--wf-sm); color: #666; font-family: monospace; margin-bottom: 6px; }
+    .wgps-val { font-size: var(--wf-lg); font-weight: 800; font-family: monospace; }
+    .wgps.wmid { border-color: #ffff00; background: #111100; }
+    .wgps.wmid .wgps-val { color: #ffff00; }
+    .wgps-unit { font-size: var(--wf-sm); color: #666; font-family: monospace; margin-top: 2px; }
 
-      /* Velika broja (udarci) */
-      .wbig-num { font-size:88px; font-weight:800; color:#fff; line-height:1; text-align:center; font-family:monospace; }
-      .wbig-label { font-size:var(--wf-xs); color:#888; text-align:center; margin-top:4px; }
+    /* Scorecard row */
+    .wscrow {
+      display: flex;
+      padding: 14px 0;
+      border-bottom: 1px solid #1a1a1a;
+      font-family: monospace;
+      font-size: var(--wf-sm);
+      align-items: center;
+      cursor: pointer;
+    }
+    .wscrow:active { background: #111; }
+    .wscrow.wcur { background: #001400; }
+    .wscrow-n { width: 36px; font-weight: 700; color: #888; font-size: var(--wf-sm); }
+    .wscrow-n.wact { color: #ffff00; }
+    .wscrow-p { width: 36px; color: #555; text-align: center; }
+    .wscrow-s { flex: 1; color: #fff; text-align: center; font-size: var(--wf); font-weight: 700; }
+    .wscrow-d { width: 56px; text-align: right; font-weight: 800; font-size: var(--wf); }
 
-      /* GPS blokovi */
-      .wdist-row { display:flex; gap:6px; padding:8px; flex-shrink:0; }
-      .wdist-block { flex:1; background:#111; border:2px solid #333; border-radius:10px; padding:8px 4px; text-align:center; }
-      .wdist-block.wmid { border-color:#ffff00; background:#111100; }
-      .wdist-label { font-size:24px; color:#666; font-family:monospace; font-weight:700; }
-      .wdist-val { font-size:var(--wf); font-weight:800; color:#fff; font-family:monospace; line-height:1.1; }
-      .wdist-block.wmid .wdist-val { color:#ffff00; }
-      .wdist-unit { font-size:22px; color:#555; }
+    /* Input */
+    .winput {
+      width: 100%;
+      background: #1a1a1a;
+      border: 3px solid #444;
+      border-radius: var(--wbr);
+      padding: 16px 14px;
+      color: #fff;
+      font-size: var(--wf);
+      outline: none;
+      font-family: 'Outfit', sans-serif;
+      box-sizing: border-box;
+    }
+    .winput:focus { border-color: #ffff00; }
 
-      /* Putt blok */
-      .wputt-row { display:flex; align-items:center; gap:10px; padding:8px 10px; background:#111; border:2px solid #222; border-radius:12px; margin:0 8px 8px; }
-      .wputt-label { font-size:var(--wf-xs); color:#55aaff; font-family:monospace; font-weight:700; flex-shrink:0; }
-      .wputt-num { font-size:var(--wf); font-weight:800; color:#55aaff; font-family:monospace; flex:1; text-align:center; }
-      .wputt-btn { width:50px; height:50px; border-radius:50%; border:2px solid #444; background:#222; font-size:28px; color:#aaa; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-      .wputt-btn:active { background:#333; }
+    /* Spacer za okrugli ekran — vrh i dno */
+    .wtop { height: 18%; }   /* sigurna gornja zona */
+    .wbot { height: 22%; }   /* sigurna donja zona */
+  </style>
 
-      /* Scorecard tablica */
-      .wsc-row { display:flex; padding:12px 10px; border-bottom:1px solid #1a1a1a; font-family:monospace; font-size:var(--wf-xs); align-items:center; cursor:pointer; }
-      .wsc-row:active { background:#111; }
-      .wsc-row.wcurrent { background:#001400; }
-      .wsc-num { width:44px; font-weight:700; color:#fff; }
-      .wsc-num.wactive { color:#ffff00; }
-      .wsc-par { width:40px; color:#666; text-align:center; }
-      .wsc-s { flex:1; color:#fff; text-align:center; }
-      .wsc-diff { width:52px; text-align:right; font-weight:700; }
-
-      /* PH prikaz */
-      .wph-box { background:#001400; border:3px solid #00ff00; border-radius:12px; padding:12px 16px; margin:0 8px 10px; display:flex; align-items:center; justify-content:space-between; }
-      .wph-label { font-size:var(--wf-xs); color:#888; }
-      .wph-val { font-size:var(--wf); font-weight:800; color:#00ff00; font-family:monospace; }
-
-      /* Input za ime */
-      .winput { width:100%; background:#1a1a1a; border:3px solid #444; border-radius:12px; padding:14px; color:#fff; font-size:var(--wf-sm); outline:none; font-family:'Outfit',sans-serif; box-sizing:border-box; }
-      .winput:focus { border-color:#ffff00; }
-
-      /* Section label */
-      .wsec { font-size:var(--wf-xs); color:#ffff00; font-family:monospace; letter-spacing:2px; padding:12px 10px 6px; font-weight:700; }
-    </style>
-
-    <!-- ── HOME ───────────────────────────────────────────── -->
+    <!-- ── HOME ──────────────────────────────────────── -->
     <div class="ws wactive" id="ws-home">
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;text-align:center;">
-        <div style="font-size:52px;">⛳</div>
-        <div style="font-size:52px;font-weight:800;color:#fff;line-height:1;">GOLF</div>
-        <div style="font-size:28px;color:#555;font-family:monospace;letter-spacing:3px;margin-bottom:24px;">CADDIE</div>
-        <button class="wbtn wbtn-green" onclick="wShowScreen('select-course')">▶ Nova runda</button>
-        <button class="wbtn wbtn-dark" onclick="wShowScreen('history')">📜 Povijest</button>
-        <button class="wbtn wbtn-dark" onclick="wReloadCourses()" style="font-size:28px;color:#555;border-color:#222;">🔄 Osvježi</button>
+      <div class="wtop"></div>
+      <div style="text-align:center;padding-bottom:16px;">
+        <div style="font-size:60px;">⛳</div>
+        <div style="font-size:64px;font-weight:800;color:#fff;line-height:1;">GOLF</div>
+        <div style="font-size:var(--wf-sm);color:#555;font-family:monospace;letter-spacing:4px;margin-bottom:20px;">CADDIE</div>
       </div>
+      <button class="wbtn wbtn-green" onclick="wShowScreen('select-course')">▶  Nova runda</button>
+      <button class="wbtn wbtn-dark"  onclick="wShowScreen('history')">📜  Povijest</button>
+      <button class="wbtn wbtn-dark"  style="font-size:var(--wf-sm);color:#555;border-color:#222;" onclick="wReloadCourses()">🔄  Osvježi terene</button>
+      <div class="wbot"></div>
     </div>
 
-    <!-- ── ODABIR TERENA ──────────────────────────────────── -->
+    <!-- ── ODABIR TERENA ─────────────────────────────── -->
     <div class="ws" id="ws-select-course">
-      <div class="wheader">
-        <div class="wheader-title">Odaberi teren</div>
-      </div>
-      <div class="wlist" id="w-course-list"></div>
-      <button class="wbtn wbtn-dark" onclick="wShowScreen('home')">◀ Nazad</button>
+      <div class="wtop"></div>
+      <div class="wsec">Odaberi teren</div>
+      <div id="w-course-list"></div>
+      <button class="wbtn wbtn-dark" onclick="wShowScreen('home')">◀  Nazad</button>
+      <div class="wbot"></div>
     </div>
 
-    <!-- ── POSTAVI IGRAČA ─────────────────────────────────── -->
+    <!-- ── POSTAVI IGRAČA ────────────────────────────── -->
     <div class="ws" id="ws-setup-player">
-      <div class="wheader">
-        <div class="wheader-title" id="w-setup-course-title">Postavi igrača</div>
-      </div>
-      <div class="wlist" id="w-player-setup-content"></div>
+      <div class="wtop"></div>
+      <div class="wsec" id="w-setup-course-title">Postavi igrača</div>
+      <div id="w-player-setup-content"></div>
+      <div class="wbot"></div>
     </div>
 
-    <!-- ── IGRA ───────────────────────────────────────────── -->
+    <!-- ── IGRA — jedna scrollajuća stranica ─────────── -->
     <div class="ws" id="ws-play">
-      <!-- Rupa header -->
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:2px solid #1a1a1a;flex-shrink:0;">
-        <div>
-          <div style="font-size:24px;color:#555;font-family:monospace;" id="w-course-name-play">TEREN</div>
-          <div style="font-size:52px;font-weight:800;color:#00ff00;line-height:1;" id="w-hole-num">1</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:24px;color:#555;font-family:monospace;">PAR</div>
-          <div style="font-size:52px;font-weight:800;color:#ffff00;line-height:1;" id="w-par">4</div>
-        </div>
+      <div class="wtop"></div>
+
+      <!-- Naziv + rupa + par -->
+      <div style="text-align:center;margin-bottom:8px;">
+        <div style="font-size:var(--wf-sm);color:#555;font-family:monospace;" id="w-course-name-play">TEREN</div>
+        <div style="font-size:var(--wf-lg);color:#888;margin-top:4px;" id="w-hole-num-label">RUPA</div>
+        <div style="font-size:96px;font-weight:800;color:#00ff00;line-height:1;font-family:monospace;" id="w-hole-num">1</div>
+        <div style="font-size:var(--wf-sm);color:#888;font-family:monospace;margin-top:4px;">PAR <span id="w-par" style="color:#ffff00;font-size:var(--wf-lg);font-weight:700;">4</span></div>
       </div>
 
-      <!-- GPS distance -->
-      <div class="wdist-row">
-        <div class="wdist-block">
-          <div class="wdist-label">F</div>
-          <div class="wdist-val" id="w-dist-f">—</div>
-          <div class="wdist-unit">m</div>
-        </div>
-        <div class="wdist-block wmid">
-          <div class="wdist-label">M</div>
-          <div class="wdist-val" id="w-dist-m">—</div>
-          <div class="wdist-unit">m</div>
-        </div>
-        <div class="wdist-block">
-          <div class="wdist-label">B</div>
-          <div class="wdist-val" id="w-dist-b">—</div>
-          <div class="wdist-unit">m</div>
-        </div>
+      <div class="wdiv"></div>
+
+      <!-- GPS distance — vertikalno, jedno ispod drugoga -->
+      <div class="wsec">DISTANCE DO GREENA</div>
+      <div class="wgps">
+        <div class="wgps-label">FRONT</div>
+        <div class="wgps-val" id="w-dist-f" style="color:#aaa;">—</div>
+        <div class="wgps-unit">metara</div>
+      </div>
+      <div class="wgps wmid">
+        <div class="wgps-label">MID</div>
+        <div class="wgps-val" id="w-dist-m">—</div>
+        <div class="wgps-unit">metara</div>
+      </div>
+      <div class="wgps">
+        <div class="wgps-label">BACK</div>
+        <div class="wgps-val" id="w-dist-b" style="color:#aaa;">—</div>
+        <div class="wgps-unit">metara</div>
       </div>
 
-      <!-- Player scores (scrollable) -->
-      <div id="w-players-play" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 8px;"></div>
+      <div class="wdiv"></div>
 
-      <!-- Nav gumbi -->
-      <div class="wfooter">
-        <button class="wfbtn" onclick="wPrevHole()">◀</button>
-        <button class="wfbtn" onclick="wShowScreen('scorecard')">📋</button>
-        <button class="wfbtn wfbtn-green" id="w-next-btn" onclick="wNextHole()">▶</button>
-      </div>
+      <!-- Player scores — jedan ispod drugoga -->
+      <div id="w-players-play"></div>
+
+      <div class="wdiv"></div>
+
+      <!-- Navigacija -->
+      <div class="wsec">NAVIGACIJA</div>
+      <button class="wbtn wbtn-green" id="w-next-btn" onclick="wNextHole()">▶  Sljedeća rupa</button>
+      <button class="wbtn wbtn-dark"  onclick="wPrevHole()">◀  Prethodna rupa</button>
+      <button class="wbtn wbtn-dark"  onclick="wShowScreen('scorecard')">📋  Scorecard</button>
+
+      <div class="wbot"></div>
     </div>
 
-    <!-- ── SCORECARD ──────────────────────────────────────── -->
+    <!-- ── SCORECARD ──────────────────────────────────── -->
     <div class="ws" id="ws-scorecard">
-      <div class="wheader">
-        <div class="wheader-title" id="w-sc-title">SCORECARD</div>
-      </div>
-      <!-- Header row -->
-      <div style="display:flex;padding:8px 10px;border-bottom:2px solid #333;flex-shrink:0;font-family:monospace;font-size:24px;color:#ffff00;font-weight:700;">
-        <span style="width:44px;">#</span>
-        <span style="width:40px;text-align:center;">Par</span>
+      <div class="wtop"></div>
+      <div class="wsec" id="w-sc-title">SCORECARD</div>
+      <!-- Header -->
+      <div style="display:flex;padding:10px 0;border-bottom:2px solid #333;font-family:monospace;font-size:var(--wf-sm);color:#ffff00;font-weight:700;">
+        <span style="width:36px;">#</span>
+        <span style="width:36px;text-align:center;">Par</span>
         <span style="flex:1;text-align:center;">Ud.</span>
-        <span style="width:52px;text-align:right;">+/−</span>
+        <span style="width:56px;text-align:right;">+/−</span>
       </div>
-      <div id="w-sc-content" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
-      <div class="wfooter">
-        <button class="wfbtn" onclick="wShowScreen('play')">◀ Igraj</button>
-        <button class="wfbtn wfbtn-green" onclick="wFinishRound()">🏁 Kraj</button>
-      </div>
+      <div id="w-sc-content"></div>
+      <div class="wdiv"></div>
+      <button class="wbtn wbtn-green" onclick="wShowScreen('play')">◀  Nastavi igru</button>
+      <button class="wbtn wbtn-red"   onclick="wFinishRound()">🏁  Završi rundu</button>
+      <div class="wbot"></div>
     </div>
 
-    <!-- ── POVIJEST ───────────────────────────────────────── -->
+    <!-- ── POVIJEST ───────────────────────────────────── -->
     <div class="ws" id="ws-history">
-      <div class="wheader">
-        <div class="wheader-title">POVIJEST</div>
-      </div>
-      <div class="wlist" id="w-history-list"></div>
-      <button class="wbtn wbtn-dark" onclick="wShowScreen('home')">◀ Nazad</button>
+      <div class="wtop"></div>
+      <div class="wsec">POVIJEST</div>
+      <div id="w-history-list"></div>
+      <button class="wbtn wbtn-dark" onclick="wShowScreen('home')">◀  Nazad</button>
+      <div class="wbot"></div>
     </div>
 
   </div><!-- end watch-app -->
@@ -3169,7 +3216,7 @@ if (IS_WATCH) {
 const GITHUB = {
   owner: 'mlleetrangere-bot',
   repo:  'VH',
-  token: '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',
+  token: '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',
   branch: 'main'
 };
 
