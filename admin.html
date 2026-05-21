@@ -3,377 +3,274 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Villa Helena – Admin Panel</title>
+<title>Villa Helena – Admin</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f0f0f0;color:#111;font-size:16px;line-height:1.6}
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
-  color: #111111;
-  font-size: 17px;
-  line-height: 1.6;
-}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:9999;background:#f5f5f5;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border:3px solid #111;border-radius:8px;padding:3rem;width:min(420px,90vw);text-align:center}
+.login-logo{font-size:2rem;font-weight:bold;color:#111;margin-bottom:0.3rem}
+.login-logo span{color:#2a6b7c}
+.login-sub{font-size:1rem;color:#555;margin-bottom:2rem}
+.login-input{width:100%;background:#f5f5f5;border:2px solid #111;border-radius:4px;padding:0.9rem 1.2rem;font-family:Arial,sans-serif;font-size:1.1rem;color:#111;outline:none;text-align:center;letter-spacing:0.15em;margin-bottom:1rem}
+.login-input:focus{border-color:#2a6b7c}
+.login-btn{width:100%;background:#111;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem;border-radius:4px;transition:background 0.2s}
+.login-btn:hover{background:#2a6b7c}
+.login-err{color:#cc0000;font-size:1rem;margin-top:0.8rem;display:none;font-weight:bold}
+.login-err.visible{display:block}
 
-/* ── LOGIN ── */
-#loginScreen {
-  position: fixed; inset: 0; z-index: 9999;
-  background: #f5f5f5;
-  display: flex; align-items: center; justify-content: center;
-}
-.login-box {
-  background: #ffffff; border: 3px solid #111111;
-  border-radius: 8px; padding: 3rem;
-  width: min(420px, 90vw); text-align: center;
-}
-.login-logo { font-size: 2rem; font-weight: bold; color: #111111; margin-bottom: 0.3rem; }
-.login-logo span { color: #2a6b7c; }
-.login-sub { font-size: 1rem; color: #555555; margin-bottom: 2rem; }
-.login-input {
-  width: 100%; background: #f5f5f5; border: 2px solid #111111;
-  border-radius: 4px; padding: 0.9rem 1.2rem;
-  font-family: Arial, sans-serif; font-size: 1.1rem;
-  color: #111111; outline: none; text-align: center;
-  letter-spacing: 0.15em; margin-bottom: 1rem;
-}
-.login-input:focus { border-color: #2a6b7c; outline: 3px solid rgba(42,107,124,0.2); }
-.login-btn {
-  width: 100%; background: #111111; color: #ffffff; border: none;
-  cursor: pointer; font-family: Arial, sans-serif;
-  font-size: 1.1rem; font-weight: bold;
-  padding: 1rem; border-radius: 4px; transition: background 0.2s;
-}
-.login-btn:hover { background: #2a6b7c; }
-.login-err { color: #cc0000; font-size: 1rem; margin-top: 0.8rem; display: none; font-weight: bold; }
-.login-err.visible { display: block; }
+/* LAYOUT */
+#app{display:none}
+#app.visible{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:#111;color:#fff;display:flex;flex-direction:column;padding:0;position:fixed;top:0;bottom:0;left:0;z-index:100}
+.sidebar-logo{padding:1.5rem;border-bottom:2px solid #333}
+.sidebar-logo-text{font-size:1.4rem;font-weight:bold;color:#fff}
+.sidebar-logo-text span{color:#4a9baf}
+.sidebar-logo-sub{font-size:0.8rem;color:#aaa;margin-top:0.2rem}
+.sidebar-nav{padding:1rem 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1.5rem;cursor:pointer;font-size:1rem;font-weight:bold;color:#aaa;transition:all 0.2s;border-left:4px solid transparent}
+.nav-item:hover{color:#fff;background:#222}
+.nav-item.active{color:#fff;border-left-color:#4a9baf;background:#222}
+.nav-icon{font-size:1.1rem;width:22px;text-align:center}
+.sidebar-footer{padding:1.5rem;border-top:2px solid #333}
+.logout-btn{width:100%;background:none;border:2px solid #555;color:#aaa;font-family:Arial,sans-serif;font-size:0.95rem;font-weight:bold;padding:0.6rem;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.logout-btn:hover{border-color:#cc0000;color:#cc0000}
 
-/* ── APP LAYOUT ── */
-#app { display: none; }
-#app.visible { display: flex; min-height: 100vh; }
+.main{margin-left:220px;flex:1;padding:2rem;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
 
-/* SIDEBAR */
-.sidebar {
-  width: 230px; flex-shrink: 0;
-  background: #111111; color: #ffffff;
-  display: flex; flex-direction: column;
-  padding: 0; position: fixed;
-  top: 0; bottom: 0; left: 0; z-index: 100;
-}
-.sidebar-logo {
-  padding: 1.5rem;
-  border-bottom: 2px solid #333333;
-}
-.sidebar-logo-text { font-size: 1.5rem; font-weight: bold; color: #ffffff; }
-.sidebar-logo-text span { color: #4a9baf; }
-.sidebar-logo-sub { font-size: 0.85rem; color: #aaaaaa; margin-top: 0.2rem; }
-.sidebar-nav { padding: 1rem 0; flex: 1; }
-.nav-item {
-  display: flex; align-items: center; gap: 0.8rem;
-  padding: 0.9rem 1.5rem; cursor: pointer;
-  font-size: 1rem; font-weight: bold; color: #aaaaaa;
-  transition: all 0.2s; border-left: 4px solid transparent;
-}
-.nav-item:hover { color: #ffffff; background: #222222; }
-.nav-item.active { color: #ffffff; border-left-color: #4a9baf; background: #222222; }
-.nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
-.sidebar-footer { padding: 1.5rem; border-top: 2px solid #333333; }
-.logout-btn {
-  width: 100%; background: none; border: 2px solid #555555;
-  color: #aaaaaa; font-family: Arial, sans-serif;
-  font-size: 0.95rem; font-weight: bold;
-  padding: 0.6rem; border-radius: 4px; cursor: pointer; transition: all 0.2s;
-}
-.logout-btn:hover { border-color: #cc0000; color: #cc0000; }
-
-/* MAIN */
-.main { margin-left: 230px; flex: 1; padding: 2rem; background: #f5f5f5; min-height: 100vh; }
-.page { display: none; }
-.page.active { display: block; }
-
-/* TOP */
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
-.page-title { font-size: 1.8rem; font-weight: bold; color: #111111; }
-.today-badge {
-  background: #ffffff; border: 2px solid #111111;
-  border-radius: 4px; padding: 0.4rem 1rem;
-  font-size: 0.95rem; color: #333333; font-weight: bold;
-}
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.5rem}
+.page-title{font-size:1.8rem;font-weight:bold;color:#111}
+.today-badge{background:#fff;border:2px solid #111;border-radius:4px;padding:0.4rem 1rem;font-size:0.95rem;color:#333;font-weight:bold}
 
 /* CARDS */
-.cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-.stat-card {
-  background: #ffffff; border: 2px solid #111111;
-  border-radius: 6px; padding: 1.4rem 1.5rem;
-}
-.stat-card-label { font-size: 0.85rem; font-weight: bold; color: #555555; margin-bottom: 0.4rem; text-transform: uppercase; }
-.stat-card-value { font-size: 2.5rem; font-weight: bold; color: #111111; }
-.stat-card-sub { font-size: 0.85rem; color: #555555; margin-top: 0.2rem; }
-.stat-card.green .stat-card-value { color: #006600; }
-.stat-card.blue .stat-card-value { color: #2a6b7c; }
-.stat-card.red .stat-card-value { color: #cc0000; }
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:2px solid #111;border-radius:6px;padding:1.4rem 1.5rem}
+.stat-card-label{font-size:0.8rem;font-weight:bold;color:#555;margin-bottom:0.4rem;text-transform:uppercase}
+.stat-card-value{font-size:2.5rem;font-weight:bold;color:#111}
+.stat-card-sub{font-size:0.85rem;color:#555;margin-top:0.2rem}
+.stat-card.green .stat-card-value{color:#006600}
+.stat-card.blue .stat-card-value{color:#2a6b7c}
 
-/* DAILY PANEL */
-.daily-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-.daily-col {
-  background: #ffffff; border: 2px solid #111111;
-  border-radius: 6px; padding: 1.4rem;
-}
-.daily-col-title {
-  font-size: 1rem; font-weight: bold; margin-bottom: 1rem;
-  text-transform: uppercase; letter-spacing: 0.05em;
-}
-.daily-col-title.arrivals { color: #006600; }
-.daily-col-title.departures { color: #cc6600; }
-.daily-item {
-  background: #f5f5f5; border-radius: 4px;
-  padding: 0.9rem 1rem; margin-bottom: 0.6rem;
-  border-left: 4px solid;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.daily-item.arr { border-color: #006600; }
-.daily-item.dep { border-color: #cc6600; }
-.daily-name { font-size: 1rem; font-weight: bold; color: #111111; }
-.daily-room { font-size: 0.9rem; color: #555555; margin-top: 0.1rem; }
-.daily-nights { font-size: 0.9rem; color: #555555; text-align: right; }
-.daily-empty { font-size: 0.95rem; color: #888888; font-style: italic; padding: 0.5rem 0; }
+/* DAILY */
+.daily-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.daily-col{background:#fff;border:2px solid #111;border-radius:6px;padding:1.4rem}
+.daily-col-title{font-size:1rem;font-weight:bold;margin-bottom:1rem;text-transform:uppercase}
+.daily-col-title.arr{color:#006600}
+.daily-col-title.dep{color:#cc6600}
+.daily-item{background:#f5f5f5;border-radius:4px;padding:0.9rem 1rem;margin-bottom:0.6rem;border-left:4px solid;display:flex;align-items:center;justify-content:space-between}
+.daily-item.a{border-color:#006600}
+.daily-item.d{border-color:#cc6600}
+.daily-name{font-size:1rem;font-weight:bold;color:#111}
+.daily-room{font-size:0.85rem;color:#555;margin-top:0.1rem}
+.daily-empty{font-size:0.9rem;color:#888;font-style:italic}
 
 /* BOX */
-.box {
-  background: #ffffff; border: 2px solid #111111;
-  border-radius: 6px; margin-bottom: 1.5rem; overflow: hidden;
-}
-.box-header {
-  padding: 1rem 1.5rem; border-bottom: 2px solid #111111;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 0.5rem; background: #f5f5f5;
-}
-.box-title { font-size: 1.1rem; font-weight: bold; color: #111111; }
-
-/* TIMELINE */
-.tl-wrap { overflow-x: auto; }
-.tl-table { min-width: 900px; width: 100%; border-collapse: collapse; }
-.tl-room-col {
-  width: 120px; background: #eeeeee; padding: 0.6rem 1rem;
-  font-size: 0.8rem; font-weight: bold; text-transform: uppercase;
-  color: #555555; border-right: 2px solid #111111;
-  border-bottom: 1px solid #dddddd; position: sticky; left: 0; z-index: 2;
-}
-.tl-day-header {
-  padding: 0.4rem 0; text-align: center; font-size: 0.75rem;
-  font-weight: bold; color: #555555;
-  border-bottom: 2px solid #111111; border-right: 1px solid #dddddd;
-  min-width: 30px; background: #f5f5f5;
-}
-.tl-day-header.today-h { color: #2a6b7c; background: #eef5f7; }
-.tl-day-header.weekend { color: #888888; }
-.tl-room-name {
-  background: #eeeeee; padding: 0.6rem 1rem; font-size: 0.9rem;
-  font-weight: bold; color: #111111;
-  border-right: 2px solid #111111; border-bottom: 1px solid #dddddd;
-  position: sticky; left: 0; z-index: 2;
-}
-.tl-room-type { font-size: 0.75rem; color: #666666; display: block; font-weight: normal; }
-.tl-cell {
-  height: 44px; border-right: 1px solid #eeeeee;
-  border-bottom: 1px solid #dddddd;
-  position: relative; cursor: pointer; min-width: 30px;
-  background: #ffffff; transition: background 0.1s;
-}
-.tl-cell:hover { background: #f0f0f0; }
-.tl-cell.today-col { background: #eef5f7; }
-.tl-cell.booked { background: #cce5ff; }
-.tl-cell.booked-start { background: #99ccff; border-left: 4px solid #2a6b7c; }
-.tl-cell.manual { background: #ffd6d6; }
-.tl-cell.manual-start { background: #ffaaaa; border-left: 4px solid #cc0000; }
-.tl-label {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  left: 4px; right: 2px; font-size: 0.7rem; font-weight: bold;
-  color: #111111; white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis; pointer-events: none;
-}
-.tl-legend {
-  display: flex; gap: 1.5rem; padding: 0.8rem 1.5rem;
-  border-top: 2px solid #dddddd; flex-wrap: wrap;
-}
-.leg { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; color: #333333; font-weight: bold; }
-.leg-box { width: 16px; height: 16px; border-radius: 3px; border: 1px solid #999; }
-.lb-free { background: #ffffff; }
-.lb-booked { background: #99ccff; border-left: 4px solid #2a6b7c; }
-.lb-manual { background: #ffaaaa; border-left: 4px solid #cc0000; }
-.lb-today { background: #eef5f7; border: 2px solid #2a6b7c; }
-
-/* NAV MONTHS */
-.month-nav { display: flex; align-items: center; gap: 0.5rem; }
-.tl-btn {
-  background: #ffffff; border: 2px solid #111111; color: #111111;
-  width: 34px; height: 34px; border-radius: 4px; cursor: pointer;
-  font-size: 1rem; font-weight: bold; transition: all 0.2s;
-  display: flex; align-items: center; justify-content: center;
-}
-.tl-btn:hover { background: #111111; color: #ffffff; }
-.tl-month-label { font-size: 1rem; font-weight: bold; color: #111111; min-width: 130px; text-align: center; }
+.box{background:#fff;border:2px solid #111;border-radius:6px;margin-bottom:1.5rem;overflow:hidden}
+.box-header{padding:1rem 1.5rem;border-bottom:2px solid #111;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;background:#f5f5f5}
+.box-title{font-size:1.1rem;font-weight:bold;color:#111}
+.box-body{padding:1.5rem}
 
 /* TABLE */
-.data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; display: block; overflow-x: auto; }
-.data-table th {
-  text-align: left; font-size: 0.8rem; font-weight: bold;
-  color: #111111; padding: 0.7rem 1rem;
-  border-bottom: 2px solid #111111; background: #eeeeee;
-  white-space: nowrap;
-}
-.data-table td {
-  padding: 0.8rem 1rem; border-bottom: 1px solid #dddddd;
-  color: #111111; white-space: nowrap; vertical-align: middle;
-}
-.data-table tr:hover td { background: #f5f5f5; }
-.empty-row td { text-align: center; color: #888888; font-style: italic; padding: 2rem; }
+.data-table{width:100%;border-collapse:collapse;font-size:0.9rem;display:block;overflow-x:auto}
+.data-table th{text-align:left;font-size:0.78rem;font-weight:bold;color:#111;padding:0.7rem 1rem;border-bottom:2px solid #111;background:#eee;white-space:nowrap}
+.data-table td{padding:0.75rem 1rem;border-bottom:1px solid #ddd;color:#111;white-space:nowrap;vertical-align:middle}
+.data-table tr:hover td{background:#f5f5f5}
+.empty-row td{text-align:center;color:#888;font-style:italic;padding:2rem}
 
 /* BADGES */
-.sbadge {
-  display: inline-block; font-size: 0.8rem; font-weight: bold;
-  padding: 0.2rem 0.7rem; border-radius: 4px; border: 1px solid;
-}
-.sp { background: #fff3cc; color: #664400; border-color: #cc9900; }
-.sc { background: #e6ffe6; color: #004400; border-color: #006600; }
-.sx { background: #ffe6e6; color: #880000; border-color: #cc0000; }
+.sbadge{display:inline-block;font-size:0.8rem;font-weight:bold;padding:0.2rem 0.7rem;border-radius:4px;border:1px solid}
+.sp{background:#fff3cc;color:#664400;border-color:#cc9900}
+.sc{background:#e6ffe6;color:#004400;border-color:#006600}
+.sx{background:#ffe6e6;color:#880000;border-color:#cc0000}
+.sm{background:#e0f0ff;color:#003366;border-color:#2a6b7c}
 
 /* ACTION BUTTONS */
-.act-btn {
-  background: none; border: 2px solid currentColor; border-radius: 4px;
-  font-size: 0.85rem; font-weight: bold; padding: 0.25rem 0.7rem;
-  cursor: pointer; font-family: Arial, sans-serif; margin-right: 0.3rem; transition: all 0.15s;
-}
-.ab-c { color: #006600; } .ab-c:hover { background: #e6ffe6; }
-.ab-x { color: #cc0000; } .ab-x:hover { background: #ffe6e6; }
+.act-btn{background:none;border:2px solid currentColor;border-radius:4px;font-size:0.85rem;font-weight:bold;padding:0.25rem 0.7rem;cursor:pointer;font-family:Arial,sans-serif;margin-right:0.3rem;transition:all 0.15s}
+.ab-c{color:#006600}.ab-c:hover{background:#e6ffe6}
+.ab-x{color:#cc0000}.ab-x:hover{background:#ffe6e6}
 
-/* FILTER TABS */
-.filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-.filter-btn {
-  background: #ffffff; border: 2px solid #111111; color: #111111;
-  font-family: Arial, sans-serif; font-size: 0.9rem; font-weight: bold;
-  padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; transition: all 0.2s;
-}
-.filter-btn.active, .filter-btn:hover { background: #111111; color: #ffffff; }
+/* FILTERS */
+.filter-tabs{display:flex;gap:0.4rem;flex-wrap:wrap}
+.filter-btn{background:#fff;border:2px solid #111;color:#111;font-family:Arial,sans-serif;font-size:0.9rem;font-weight:bold;padding:0.4rem 1rem;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.filter-btn.active,.filter-btn:hover{background:#111;color:#fff}
 
-/* EXPORT */
-.export-btn {
-  background: #2a6b7c; color: #ffffff; border: none; cursor: pointer;
-  font-family: Arial, sans-serif; font-size: 0.95rem; font-weight: bold;
-  padding: 0.6rem 1.4rem; border-radius: 4px; transition: background 0.2s;
-}
-.export-btn:hover { background: #1a4a57; }
+/* BUTTONS */
+.btn{border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.6rem 1.3rem;border-radius:4px;transition:all 0.2s;color:#fff}
+.btn-dark{background:#111}.btn-dark:hover{background:#333}
+.btn-blue{background:#2a6b7c}.btn-blue:hover{background:#1a4a57}
+.btn-green{background:#006600}.btn-green:hover{background:#004400}
+.btn-red{background:#cc0000}.btn-red:hover{background:#880000}
+.btn-outline{background:#fff;color:#111;border:2px solid #111}.btn-outline:hover{background:#f0f0f0}
+.btn-sm{font-size:0.85rem;padding:0.4rem 0.9rem}
 
-/* OVERRIDE TABS */
-.tab-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.tab-btn {
-  background: #ffffff; border: 2px solid #111111; color: #111111;
-  font-family: Arial, sans-serif; font-size: 1rem; font-weight: bold;
-  padding: 0.6rem 1.3rem; border-radius: 4px; cursor: pointer; transition: all 0.2s;
-}
-.tab-btn.active { background: #111111; color: #ffffff; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+/* ══════════════════════════════════
+   TIMELINE CALENDAR
+══════════════════════════════════ */
+.tl-wrap{overflow-x:auto}
+.tl-table{min-width:900px;width:100%;border-collapse:collapse}
+.tl-room-col{width:120px;background:#eee;padding:0.6rem 1rem;font-size:0.78rem;font-weight:bold;text-transform:uppercase;color:#555;border-right:2px solid #111;border-bottom:1px solid #ddd;position:sticky;left:0;z-index:2}
+.tl-day-hdr{padding:0.4rem 0;text-align:center;font-size:0.72rem;font-weight:bold;color:#555;border-bottom:2px solid #111;border-right:1px solid #ddd;min-width:32px;background:#f5f5f5;cursor:default}
+.tl-day-hdr.today-h{color:#2a6b7c;background:#eef5f7}
+.tl-day-hdr.wknd{color:#888}
+.tl-room-name{background:#eee;padding:0.6rem 1rem;font-size:0.9rem;font-weight:bold;color:#111;border-right:2px solid #111;border-bottom:1px solid #ddd;position:sticky;left:0;z-index:2}
+.tl-room-sub{font-size:0.72rem;color:#666;display:block;font-weight:normal}
+.tl-cell{height:42px;border-right:1px solid #eee;border-bottom:1px solid #ddd;position:relative;min-width:32px;background:#fff;cursor:pointer;transition:background 0.1s;vertical-align:middle}
+.tl-cell:hover{background:#e8f4f6}
+.tl-cell.today-c{background:#eef5f7}
+.tl-cell.bk{background:#a8d8ea}
+.tl-cell.bk-s{background:#5bb8d4;border-left:4px solid #2a6b7c}
+.tl-cell.bl{background:#ffcccc}
+.tl-cell.bl-s{background:#ff9999;border-left:4px solid #cc0000}
+.tl-cell.sel{background:#ffd700;border-left:3px solid #cc9900}
+.tl-lbl{position:absolute;top:50%;transform:translateY(-50%);left:4px;right:2px;font-size:0.68rem;font-weight:bold;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tl-legend{display:flex;gap:1.5rem;padding:0.8rem 1.5rem;border-top:2px solid #ddd;flex-wrap:wrap;background:#f9f9f9}
+.leg{display:flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:#333;font-weight:bold}
+.leg-box{width:18px;height:18px;border-radius:3px;border:1px solid #999}
+.lb-free{background:#fff}
+.lb-bk{background:#5bb8d4;border-left:4px solid #2a6b7c}
+.lb-bl{background:#ff9999;border-left:4px solid #cc0000}
+.lb-today{background:#eef5f7;border:2px solid #2a6b7c}
+.lb-sel{background:#ffd700;border:2px solid #cc9900}
 
-/* OVERRIDE FORM */
-.ov-box {
-  background: #ffffff; border: 2px solid #111111;
-  border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem;
-}
-.ov-box-title { font-size: 1.1rem; font-weight: bold; color: #111111; margin-bottom: 0.5rem; }
-.ov-box-desc { font-size: 0.9rem; color: #555555; margin-bottom: 1.2rem; }
-.ov-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; align-items: end; }
-.of-g { display: flex; flex-direction: column; gap: 0.3rem; }
-.of-lbl { font-size: 0.9rem; font-weight: bold; color: #111111; }
-.of-in, .of-sel {
-  background: #f5f5f5; border: 2px solid #111111; border-radius: 4px;
-  padding: 0.7rem 0.9rem; font-family: Arial, sans-serif;
-  font-size: 1rem; color: #111111; outline: none; width: 100%;
-}
-.of-in:focus, .of-sel:focus { border-color: #2a6b7c; outline: 3px solid rgba(42,107,124,0.2); }
-.ov-btn {
-  background: #111111; color: #ffffff; border: none; cursor: pointer;
-  font-family: Arial, sans-serif; font-size: 1rem; font-weight: bold;
-  padding: 0.75rem 1.3rem; border-radius: 4px; transition: background 0.2s; white-space: nowrap;
-}
-.ov-btn:hover { background: #2a6b7c; }
+/* Click mode toolbar */
+.tl-toolbar{display:flex;align-items:center;gap:1rem;padding:0.8rem 1.5rem;border-bottom:2px solid #ddd;background:#f9f9f9;flex-wrap:wrap}
+.tl-mode-btn{background:#fff;border:2px solid #111;color:#111;font-family:Arial,sans-serif;font-size:0.9rem;font-weight:bold;padding:0.4rem 1rem;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.tl-mode-btn.active-block{background:#cc0000;border-color:#cc0000;color:#fff}
+.tl-mode-btn.active-free{background:#006600;border-color:#006600;color:#fff}
+.tl-mode-btn.active-manual{background:#2a6b7c;border-color:#2a6b7c;color:#fff}
+.tl-room-sel{border:2px solid #111;border-radius:4px;padding:0.4rem 0.8rem;font-family:Arial,sans-serif;font-size:0.9rem;font-weight:bold;background:#fff;outline:none}
+.tl-note-inp{border:2px solid #111;border-radius:4px;padding:0.4rem 0.8rem;font-family:Arial,sans-serif;font-size:0.9rem;background:#fff;outline:none;width:180px}
+.tl-status{font-size:0.85rem;color:#555;font-style:italic}
 
-/* OVERRIDE LIST */
-.ov-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
-.ov-item {
-  background: #f5f5f5; border-radius: 4px; padding: 0.9rem 1rem;
-  display: flex; align-items: center; justify-content: space-between;
-  border-left: 4px solid #cc0000;
-}
-.ov-item.booking-item { border-left-color: #2a6b7c; }
-.ov-room { font-size: 1rem; font-weight: bold; color: #111111; }
-.ov-dates { font-size: 0.85rem; color: #555555; margin-top: 0.1rem; }
-.ov-note { font-size: 0.85rem; color: #cc6600; margin-top: 0.1rem; font-style: italic; }
-.ov-del {
-  background: none; border: 2px solid #cc0000; color: #cc0000;
-  font-family: Arial, sans-serif; font-size: 0.85rem; font-weight: bold;
-  padding: 0.3rem 0.8rem; border-radius: 4px; cursor: pointer;
-  transition: all 0.15s; white-space: nowrap;
-}
-.ov-del:hover { background: #ffe6e6; }
-.ov-free-btn {
-  background: none; border: 2px solid #006600; color: #006600;
-  font-family: Arial, sans-serif; font-size: 0.85rem; font-weight: bold;
-  padding: 0.3rem 0.8rem; border-radius: 4px; cursor: pointer;
-  transition: all 0.15s; white-space: nowrap;
-}
-.ov-free-btn:hover { background: #e6ffe6; }
-.no-items { font-size: 0.95rem; color: #888888; font-style: italic; padding: 0.5rem 0; }
+/* MANUAL BOOKING FORM */
+.mb-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.8rem}
+.fg label{font-size:0.9rem;font-weight:bold;color:#111}
+.fg input,.fg textarea,.fg select{background:#f5f5f5;border:2px solid #111;border-radius:4px;padding:0.65rem 0.9rem;font-family:Arial,sans-serif;font-size:1rem;color:#111;outline:none;width:100%}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:#2a6b7c;outline:3px solid rgba(42,107,124,0.2)}
+.fg textarea{resize:vertical;min-height:70px}
+.selected-info{background:#eef5f7;border:2px solid #2a6b7c;border-radius:6px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:0.95rem;font-weight:bold;color:#111;display:none}
+.selected-info.visible{display:block}
 
 /* NOTICE */
-.notice {
-  border-radius: 4px; padding: 0.9rem 1.1rem;
-  font-size: 1rem; font-weight: bold; margin-top: 1rem; display: none;
-}
-.notice.visible { display: block; }
-.notice.success { background: #e6ffe6; border: 2px solid #006600; color: #004400; }
-.notice.error { background: #ffe6e6; border: 2px solid #cc0000; color: #880000; }
+.notice{border-radius:4px;padding:0.9rem 1.1rem;font-size:1rem;font-weight:bold;margin-top:0.8rem;display:none}
+.notice.visible{display:block}
+.notice.success{background:#e6ffe6;border:2px solid #006600;color:#004400}
+.notice.error{background:#ffe6e6;border:2px solid #cc0000;color:#880000}
+.notice.info{background:#e0f0ff;border:2px solid #2a6b7c;color:#003366}
 
 /* MODAL */
-.modal-bg {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-  z-index: 500; display: none; align-items: center; justify-content: center;
-}
-.modal-bg.visible { display: flex; }
-.modal {
-  background: #ffffff; border: 3px solid #111111;
-  border-radius: 8px; padding: 2rem; width: min(500px,90vw);
-  max-height: 90vh; overflow-y: auto;
-}
-.modal-title { font-size: 1.3rem; font-weight: bold; color: #111111; margin-bottom: 1.5rem; }
-.modal-row {
-  display: flex; justify-content: space-between;
-  padding: 0.6rem 0; border-bottom: 1px solid #dddddd;
-  font-size: 1rem;
-}
-.modal-row:last-child { border-bottom: none; }
-.modal-key { color: #555555; font-weight: bold; }
-.modal-val { color: #111111; text-align: right; }
-.modal-actions { display: flex; gap: 0.6rem; margin-top: 1.2rem; }
-.modal-close {
-  width: 100%; background: #f5f5f5; border: 2px solid #111111;
-  color: #111111; font-family: Arial, sans-serif;
-  font-size: 1rem; font-weight: bold; padding: 0.7rem;
-  border-radius: 4px; cursor: pointer; margin-top: 1rem; transition: all 0.2s;
-}
-.modal-close:hover { background: #111111; color: #ffffff; }
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-bg.visible{display:flex}
+.modal{background:#fff;border:3px solid #111;border-radius:8px;padding:2rem;width:min(500px,90vw);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1.3rem;font-weight:bold;color:#111;margin-bottom:1.5rem}
+.modal-row{display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid #ddd;font-size:1rem}
+.modal-row:last-child{border-bottom:none}
+.modal-key{color:#555;font-weight:bold}
+.modal-val{color:#111;text-align:right}
+.modal-close{width:100%;background:#f5f5f5;border:2px solid #111;color:#111;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.7rem;border-radius:4px;cursor:pointer;margin-top:1rem;transition:all 0.2s}
+.modal-close:hover{background:#111;color:#fff}
 
-/* RESPONSIVE */
-@media(max-width: 768px) {
-  .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap; }
-  .main { margin-left: 0; }
-  #app.visible { flex-direction: column; }
-  .daily-grid { grid-template-columns: 1fr; }
-  .cards-row { grid-template-columns: 1fr 1fr; }
+/* PRICES PAGE */
+.prices-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:1.5rem}
+.price-card{background:#fff;border:2px solid #111;border-radius:6px;overflow:hidden}
+.price-card-top{background:#111;padding:1.2rem 1.5rem}
+.price-card-room{font-size:0.8rem;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:0.2rem}
+.price-card-name{font-size:1.6rem;font-weight:bold;color:#fff}
+.price-card-body{padding:1.5rem}
+.price-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem}
+.price-field{display:flex;flex-direction:column;gap:0.3rem}
+.price-field label{font-size:0.82rem;font-weight:bold;color:#555}
+.price-input{border:2px solid #111;border-radius:4px;padding:0.55rem 0.8rem;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;color:#111;outline:none;width:100%;background:#f9f9f9}
+.price-input:focus{border-color:#2a6b7c;background:#fff}
+.price-divider{border:none;border-top:2px solid #ddd;margin:1rem 0}
+.price-save-btn{width:100%;background:#2a6b7c;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.8rem;border-radius:4px;transition:background 0.2s;margin-top:0.5rem}
+.price-save-btn:hover{background:#1a4a57}
+
+/* SETTINGS PAGE */
+.settings-section{background:#fff;border:2px solid #111;border-radius:6px;padding:2rem;margin-bottom:1.5rem}
+.settings-title{font-size:1.2rem;font-weight:bold;color:#111;margin-bottom:0.5rem}
+.settings-desc{font-size:0.95rem;color:#555;margin-bottom:1.5rem;line-height:1.6}
+.settings-row{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1rem}
+.settings-field{display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:200px}
+.settings-field label{font-size:0.9rem;font-weight:bold;color:#111}
+.settings-input{border:2px solid #111;border-radius:4px;padding:0.7rem 0.9rem;font-family:Arial,sans-serif;font-size:1rem;color:#111;outline:none;width:100%;background:#f5f5f5}
+.settings-input:focus{border-color:#2a6b7c}
+.settings-input.password{font-family:monospace;letter-spacing:0.1em}
+.settings-status{font-size:0.9rem;font-weight:bold;margin-top:0.5rem}
+.settings-status.ok{color:#006600}
+.settings-status.err{color:#cc0000}
+.settings-status.warn{color:#996600}
+
+/* OVERRIDE LIST */
+.ov-list{display:flex;flex-direction:column;gap:0.6rem}
+.ov-item{background:#f5f5f5;border-radius:4px;padding:0.9rem 1rem;display:flex;align-items:center;justify-content:space-between;border-left:4px solid #cc0000}
+.ov-item.bk-item{border-left-color:#2a6b7c}
+.ov-room{font-size:1rem;font-weight:bold;color:#111}
+.ov-dates{font-size:0.85rem;color:#555;margin-top:0.1rem}
+.ov-del-btn{background:none;border:2px solid #cc0000;color:#cc0000;font-family:Arial,sans-serif;font-size:0.85rem;font-weight:bold;padding:0.3rem 0.8rem;border-radius:4px;cursor:pointer;white-space:nowrap}
+.ov-del-btn:hover{background:#ffe6e6}
+.ov-free-btn{background:none;border:2px solid #006600;color:#006600;font-family:Arial,sans-serif;font-size:0.85rem;font-weight:bold;padding:0.3rem 0.8rem;border-radius:4px;cursor:pointer;white-space:nowrap}
+.ov-free-btn:hover{background:#e6ffe6}
+.no-items{font-size:0.95rem;color:#888;font-style:italic}
+
+/* FINANCIJE */
+.fin-year-sel{border:2px solid #111;border-radius:4px;padding:0.4rem 0.9rem;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;background:#fff;outline:none;cursor:pointer}
+.fin-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+.fin-card{background:#fff;border:2px solid #111;border-radius:6px;padding:1.2rem 1.4rem}
+.fin-card-label{font-size:0.78rem;font-weight:bold;color:#555;text-transform:uppercase;margin-bottom:0.3rem}
+.fin-card-value{font-size:2rem;font-weight:bold;color:#111}
+.fin-card-sub{font-size:0.82rem;color:#555;margin-top:0.2rem}
+.fin-card.green .fin-card-value{color:#006600}
+.fin-card.blue .fin-card-value{color:#2a6b7c}
+.fin-card.orange .fin-card-value{color:#cc6600}
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:160px;padding:0 0.5rem;border-bottom:2px solid #111;margin-bottom:0.5rem}
+.chart-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end}
+.chart-bar{width:100%;background:#2a6b7c;border-radius:3px 3px 0 0;min-height:2px;transition:height 0.3s;cursor:pointer;position:relative}
+.chart-bar:hover{background:#1a4a57}
+.chart-bar-lbl{font-size:0.62rem;font-weight:bold;color:#555;margin-top:0.3rem;text-align:center}
+.chart-bar-val{font-size:0.6rem;color:#fff;position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold;background:#111;padding:1px 4px;border-radius:3px;display:none}
+.chart-bar:hover .chart-bar-val{display:block}
+.month-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin-top:1rem}
+.month-card{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:0.8rem 1rem;cursor:pointer;transition:all 0.15s;border-left:4px solid #2a6b7c}
+.month-card:hover{background:#eef5f7;border-color:#2a6b7c}
+.month-card.active-month{background:#eef5f7;border:2px solid #2a6b7c;border-left:4px solid #2a6b7c}
+.month-card-name{font-size:0.9rem;font-weight:bold;color:#111}
+.month-card-eur{font-size:1.3rem;font-weight:bold;color:#2a6b7c}
+.month-card-sub{font-size:0.78rem;color:#555}
+.room-fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem}
+.room-fin-card{background:#fff;border:2px solid #111;border-radius:6px;overflow:hidden}
+.room-fin-top{background:#111;padding:0.8rem 1.2rem}
+.room-fin-name{font-size:1.1rem;font-weight:bold;color:#fff}
+.room-fin-body{padding:1rem 1.2rem}
+.room-fin-row{display:flex;justify-content:space-between;font-size:0.9rem;padding:0.3rem 0;border-bottom:1px solid #eee}
+.room-fin-row:last-child{border-bottom:none;font-weight:bold;font-size:1rem}
+.occ-bar{height:12px;background:#eee;border-radius:6px;margin-top:0.3rem;overflow:hidden}
+.occ-bar-fill{height:100%;background:#2a6b7c;border-radius:6px;transition:width 0.3s}
+.detail-table-wrap{overflow-x:auto;margin-top:1rem}
+
+/* GH STATUS */
+#ghStatus,#ghError{position:fixed;top:1rem;right:1rem;z-index:9999;padding:0.6rem 1.2rem;border-radius:4px;font-family:Arial,sans-serif;font-size:0.95rem;font-weight:bold;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+#ghStatus{background:#006600;color:#fff}
+#ghError{background:#cc0000;color:#fff;max-width:320px}
+
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative}
+  .main{margin-left:0}
+  #app.visible{flex-direction:column}
+  .daily-grid,.mb-grid,.prices-grid,.price-row{grid-template-columns:1fr}
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+<div id="ghStatus"></div>
+<div id="ghError"></div>
 
 <!-- LOGIN -->
 <div id="loginScreen">
@@ -382,7 +279,7 @@ body {
     <div class="login-sub">Admin Panel · Vlasnik</div>
     <input class="login-input" type="password" id="loginPass" placeholder="Lozinka" onkeydown="if(event.key==='Enter')doLogin()"/>
     <button class="login-btn" onclick="doLogin()">Prijava</button>
-    <div class="login-err" id="loginErr">Pogrešna lozinka. Pokušajte ponovo.</div>
+    <div class="login-err" id="loginErr">Pogrešna lozinka.</div>
   </div>
 </div>
 
@@ -397,7 +294,10 @@ body {
       <div class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span> Danas</div>
       <div class="nav-item" data-page="calendar"><span class="nav-icon">📅</span> Kalendar</div>
       <div class="nav-item" data-page="bookings"><span class="nav-icon">📋</span> Rezervacije</div>
-      <div class="nav-item" data-page="override"><span class="nav-icon">✏️</span> Ručni unos</div>
+      <div class="nav-item" data-page="manual"><span class="nav-icon">✏️</span> Ručni unos</div>
+      <div class="nav-item" data-page="prices"><span class="nav-icon">💶</span> Cijene</div>
+      <div class="nav-item" data-page="financije"><span class="nav-icon">💰</span> Obračuni</div>
+      <div class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span> Postavke</div>
     </nav>
     <div class="sidebar-footer">
       <button class="logout-btn" onclick="logout()">Odjava</button>
@@ -406,7 +306,7 @@ body {
 
   <main class="main">
 
-    <!-- DASHBOARD -->
+    <!-- ══ DASHBOARD ══ -->
     <div class="page active" id="page-dashboard">
       <div class="topbar">
         <div class="page-title">📊 Danas</div>
@@ -414,59 +314,62 @@ body {
       </div>
       <div class="cards-row" id="statsCards"></div>
       <div class="daily-grid">
-        <div class="daily-col">
-          <div class="daily-col-title arrivals">✈️ Dolasci danas</div>
-          <div id="arrivalsToday"></div>
-        </div>
-        <div class="daily-col">
-          <div class="daily-col-title departures">🧳 Odlasci danas</div>
-          <div id="departuresToday"></div>
-        </div>
+        <div class="daily-col"><div class="daily-col-title arr">✈️ Dolasci danas</div><div id="arrivalsToday"></div></div>
+        <div class="daily-col"><div class="daily-col-title dep">🧳 Odlasci danas</div><div id="departuresToday"></div></div>
       </div>
-      <div class="box" style="margin-bottom:1.5rem">
+      <div class="box">
         <div class="box-header"><span class="box-title">Status soba danas</span></div>
-        <table class="data-table" style="display:table">
-          <thead><tr><th>Soba</th><th>Status</th><th>Gost</th><th>Dolazak</th><th>Odlazak</th><th>Gosti</th><th>Noći ostalo</th></tr></thead>
-          <tbody id="roomStatusToday"></tbody>
-        </table>
+        <table class="data-table" style="display:table"><thead><tr><th>Soba</th><th>Status</th><th>Gost</th><th>Dolazak</th><th>Odlazak</th><th>Odrasli</th><th>Noći ostalo</th></tr></thead><tbody id="roomStatusToday"></tbody></table>
       </div>
       <div class="box">
         <div class="box-header"><span class="box-title">Sljedećih 7 dana</span></div>
-        <table class="data-table" style="display:table">
-          <thead><tr><th>Datum</th><th>Soba</th><th>Gost</th><th>Vrsta</th></tr></thead>
-          <tbody id="upcomingEvents"></tbody>
-        </table>
+        <table class="data-table" style="display:table"><thead><tr><th>Datum</th><th>Soba</th><th>Gost</th><th>Vrsta</th></tr></thead><tbody id="upcomingEvents"></tbody></table>
       </div>
     </div>
 
-    <!-- CALENDAR -->
+    <!-- ══ CALENDAR ══ -->
     <div class="page" id="page-calendar">
       <div class="topbar">
-        <div class="page-title">📅 Kalendar dostupnosti</div>
-        <div class="month-nav">
-          <button class="tl-btn" onclick="calOffset--;renderTimeline()">&#8592;</button>
-          <span class="tl-month-label" id="tlMonthLabel"></span>
-          <button class="tl-btn" onclick="calOffset++;renderTimeline()">&#8594;</button>
+        <div class="page-title">📅 Kalendar</div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-outline btn-sm" onclick="calOffset--;renderTimeline()">&#8592;</button>
+          <span id="tlMonthLabel" style="font-size:1rem;font-weight:bold;min-width:140px;text-align:center"></span>
+          <button class="btn btn-outline btn-sm" onclick="calOffset++;renderTimeline()">&#8594;</button>
         </div>
       </div>
       <div class="box">
+        <div class="tl-toolbar">
+          <span style="font-weight:bold;font-size:0.9rem">Klik na dan:</span>
+          <button class="tl-mode-btn" id="modeView" onclick="setMode('view')">👁 Pregled</button>
+          <button class="tl-mode-btn" id="modeBlock" onclick="setMode('block')">🔒 Blokiraj</button>
+          <button class="tl-mode-btn" id="modeFree" onclick="setMode('free')">🔓 Oslobodi</button>
+          <select class="tl-room-sel" id="tlRoomSel">
+            <option value="C2">Apt C2</option>
+            <option value="B2">Apt B2</option>
+            <option value="C1">Soba C1</option>
+            <option value="A1">Soba A1</option>
+          </select>
+          <input class="tl-note-inp" id="tlNote" placeholder="Razlog blokade (opcijalno)"/>
+          <span class="tl-status" id="tlStatus">Odaberi način i klikni na dan</span>
+        </div>
         <div class="tl-wrap" id="timelineTable"></div>
         <div class="tl-legend">
           <div class="leg"><div class="leg-box lb-free"></div> Slobodno</div>
-          <div class="leg"><div class="leg-box lb-booked"></div> Rezervirano</div>
-          <div class="leg"><div class="leg-box lb-manual"></div> Blokirano ručno</div>
+          <div class="leg"><div class="leg-box lb-bk"></div> Rezervirano (gost)</div>
+          <div class="leg"><div class="leg-box lb-bl"></div> Blokirano (ručno)</div>
           <div class="leg"><div class="leg-box lb-today"></div> Danas</div>
+          <div class="leg"><div class="leg-box lb-sel"></div> Odabrano za blokadu</div>
         </div>
       </div>
     </div>
 
-    <!-- BOOKINGS -->
+    <!-- ══ BOOKINGS ══ -->
     <div class="page" id="page-bookings">
       <div class="topbar">
         <div class="page-title">📋 Rezervacije</div>
         <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
-          <button class="export-btn" onclick="exportCSV()">↙ Export CSV</button>
-          <button class="export-btn" style="background:#006600" onclick="exportExcel()">↙ Export Excel (.xlsx)</button>
+          <button class="btn btn-dark btn-sm" onclick="exportCSV()">↙ CSV</button>
+          <button class="btn btn-green btn-sm" onclick="exportExcel()">↙ Excel</button>
         </div>
       </div>
       <div class="box">
@@ -483,100 +386,277 @@ body {
           <thead><tr>
             <th>ID</th><th>Soba</th><th>Dolazak</th><th>Odlazak</th>
             <th>Noći</th><th>EUR</th><th>Ime</th><th>Prezime</th>
-            <th>Email</th><th>Telefon</th><th>Gosti</th><th>Država</th>
-            <th>Napomena</th><th>Status</th><th>Akcije</th>
+            <th>Email</th><th>Telefon</th><th>Odrasli</th><th>Napomena</th>
+            <th>Rezervirano</th><th>Status</th><th>Akcije</th>
           </tr></thead>
           <tbody id="bookingsBody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- OVERRIDE -->
-    <div class="page" id="page-override">
+    <!-- ══ MANUAL / OVERRIDE ══ -->
+    <div class="page" id="page-manual">
       <div class="topbar"><div class="page-title">✏️ Ručni unos</div></div>
-      <div class="tab-btns">
-        <button class="tab-btn active" onclick="switchTab('block',this)">🔒 Blokiraj sobu</button>
-        <button class="tab-btn" onclick="switchTab('free',this)">🔓 Oslobodi sobu</button>
-        <button class="tab-btn" onclick="switchTab('manual',this)">➕ Ručna rezervacija</button>
-      </div>
 
-      <!-- BLOCK -->
-      <div class="tab-content active" id="tc-block">
-        <div class="ov-box">
-          <div class="ov-box-title">🔒 Blokiraj period</div>
-          <div class="ov-box-desc">Označi sobu kao zauzetu bez rezervacije (renovacija, osobna potreba, održavanje...).</div>
-          <div class="ov-form">
-            <div class="of-g"><label class="of-lbl">Soba</label>
-              <select class="of-sel" id="ovRoom">
-                <option value="C2">Apartman C2</option><option value="B2">Apartman B2</option>
-                <option value="C1">Soba C1</option><option value="A1">Soba A1</option>
-              </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+        <!-- LEFT: Calendar -->
+        <div>
+          <div class="box">
+            <div class="box-header">
+              <span class="box-title">Kalendar rezervacija</span>
+              <div style="display:flex;gap:0.4rem;align-items:center">
+                <button class="btn btn-outline btn-sm" onclick="mbCalPrev()">&#8592;</button>
+                <span id="mbCalLbl" style="font-weight:bold;font-size:0.9rem;min-width:120px;text-align:center"></span>
+                <button class="btn btn-outline btn-sm" onclick="mbCalNext()">&#8594;</button>
+              </div>
             </div>
-            <div class="of-g"><label class="of-lbl">Datum od</label><input type="date" class="of-in" id="ovFrom"/></div>
-            <div class="of-g"><label class="of-lbl">Datum do</label><input type="date" class="of-in" id="ovTo"/></div>
-            <div class="of-g"><label class="of-lbl">Razlog</label><input type="text" class="of-in" id="ovNote" placeholder="npr. Renovacija"/></div>
-            <div class="of-g"><button class="ov-btn" onclick="addOverride()">+ Blokiraj</button></div>
-          </div>
-          <div class="notice" id="ovNotice"></div>
-        </div>
-        <div class="ov-box">
-          <div class="ov-box-title">Aktivne blokade</div>
-          <div class="ov-list" id="blockList"></div>
-        </div>
-      </div>
-
-      <!-- FREE -->
-      <div class="tab-content" id="tc-free">
-        <div class="ov-box">
-          <div class="ov-box-title">🔓 Ukloni blokadu</div>
-          <div class="ov-box-desc">Klikni "Oslobodi" pored blokade da se soba vrati u slobodan status.</div>
-          <div class="ov-list" id="freeBlockList"></div>
-        </div>
-        <div class="ov-box">
-          <div class="ov-box-title">Otkaži rezervaciju gosta</div>
-          <div class="ov-box-desc">Filtriraj i odaberi rezervaciju za otkazivanje.</div>
-          <div class="ov-form" style="margin-bottom:1rem">
-            <div class="of-g"><label class="of-lbl">Soba</label>
-              <select class="of-sel" id="freeRoom" onchange="renderFreeBookings()">
-                <option value="">— Sve sobe —</option>
-                <option value="C2">Apartman C2</option><option value="B2">Apartman B2</option>
-                <option value="C1">Soba C1</option><option value="A1">Soba A1</option>
-              </select>
-            </div>
-            <div class="of-g"><label class="of-lbl">Od datuma</label>
-              <input type="date" class="of-in" id="freeDate" onchange="renderFreeBookings()"/>
+            <div class="box-body">
+              <div style="margin-bottom:0.8rem">
+                <select id="mbCalRoom" onchange="renderMbCal()" style="border:2px solid #111;border-radius:4px;padding:0.4rem 0.8rem;font-family:Arial,sans-serif;font-size:0.95rem;font-weight:bold;background:#fff;outline:none;width:100%">
+                  <option value="C2">Apartman C2</option>
+                  <option value="B2">Apartman B2</option>
+                  <option value="C1">Soba C1</option>
+                  <option value="A1">Soba A1</option>
+                </select>
+              </div>
+              <!-- Cal grid -->
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:0.8rem" id="mbCalDayNames"></div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px" id="mbCalGrid"></div>
+              <div style="font-size:0.82rem;color:#555;margin-top:0.8rem;line-height:1.5">
+                <span style="display:inline-block;width:14px;height:14px;background:#5bb8d4;border:1px solid #2a6b7c;border-radius:2px;margin-right:4px;vertical-align:middle"></span> Rezervirano &nbsp;
+                <span style="display:inline-block;width:14px;height:14px;background:#ffcccc;border:1px solid #cc0000;border-radius:2px;margin-right:4px;vertical-align:middle"></span> Blokirano &nbsp;
+                <span style="display:inline-block;width:14px;height:14px;background:#ffd700;border:1px solid #cc9900;border-radius:2px;margin-right:4px;vertical-align:middle"></span> Odabrano
+              </div>
+              <div class="selected-info" id="mbSelectedInfo"></div>
             </div>
           </div>
-          <div class="ov-list" id="freeBookingList"></div>
+
+          <!-- Block/Free -->
+          <div class="box">
+            <div class="box-header"><span class="box-title">🔒 Blokiraj / 🔓 Oslobodi</span></div>
+            <div class="box-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem">
+                <div class="fg"><label>Od datuma</label><input type="date" id="ovFrom"/></div>
+                <div class="fg"><label>Do datuma</label><input type="date" id="ovTo"/></div>
+              </div>
+              <div class="fg"><label>Razlog (opcijalno)</label><input type="text" id="ovNote" placeholder="Renovacija, osobna potreba..."/></div>
+              <div style="display:flex;gap:0.6rem;margin-top:0.5rem">
+                <button class="btn btn-red" style="flex:1" onclick="addOverride()">🔒 Blokiraj period</button>
+                <button class="btn btn-green" style="flex:1" onclick="showFreePanel()">🔓 Oslobodi</button>
+              </div>
+              <div class="notice" id="ovNotice"></div>
+            </div>
+          </div>
+
+          <!-- Active overrides -->
+          <div class="box">
+            <div class="box-header"><span class="box-title">Aktivne blokade</span></div>
+            <div class="box-body"><div class="ov-list" id="ovList"></div></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Manual booking form -->
+        <div>
+          <div class="box">
+            <div class="box-header"><span class="box-title">➕ Ručno dodaj rezervaciju</span></div>
+            <div class="box-body">
+              <p style="font-size:0.9rem;color:#555;margin-bottom:1.2rem">Za rezervacije primljene telefonom ili osobno. Kliknite na kalendar da odaberete datume.</p>
+              <div class="fg"><label>Soba</label>
+                <select id="mbRoom" onchange="document.getElementById('mbCalRoom').value=this.value;renderMbCal()">
+                  <option value="C2">Apartman C2 – 130€/noć</option>
+                  <option value="B2">Apartman B2 – 150€/noć</option>
+                  <option value="C1">Soba C1 – 90€/noć</option>
+                  <option value="A1">Soba A1 – 90€/noć</option>
+                </select>
+              </div>
+              <div class="mb-grid">
+                <div class="fg"><label>Datum dolaska</label><input type="date" id="mbFrom" onchange="syncMbDates()"/></div>
+                <div class="fg"><label>Datum odlaska</label><input type="date" id="mbTo" onchange="syncMbDates()"/></div>
+              </div>
+              <div id="mbPriceSummary" style="background:#eef5f7;border:2px solid #2a6b7c;border-radius:6px;padding:0.8rem 1rem;margin-bottom:0.8rem;font-size:0.95rem;display:none"></div>
+              <div class="mb-grid">
+                <div class="fg"><label>Ime</label><input type="text" id="mbFN"/></div>
+                <div class="fg"><label>Prezime</label><input type="text" id="mbLN"/></div>
+              </div>
+              <div class="mb-grid">
+                <div class="fg"><label>Telefon</label><input type="tel" id="mbPH"/></div>
+                <div class="fg"><label>Email</label><input type="email" id="mbEM"/></div>
+              </div>
+              <div class="mb-grid">
+                <div class="fg"><label>Odrasli</label><select id="mbAdults"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></div>
+                <div class="fg"><label>Država</label><input type="text" id="mbCountry"/></div>
+              </div>
+              <div class="fg"><label>Napomena</label><textarea id="mbNote"></textarea></div>
+              <button class="btn btn-blue" style="width:100%" onclick="addManualBooking()">✓ Dodaj rezervaciju</button>
+              <div class="notice" id="mbNotice"></div>
+            </div>
+          </div>
+
+          <!-- Cancel reservation panel -->
+          <div class="box" id="freePanelBox" style="display:none">
+            <div class="box-header"><span class="box-title">🔓 Otkaži rezervaciju</span></div>
+            <div class="box-body">
+              <div class="ov-list" id="cancelList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PRICES ══ -->
+    <div class="page" id="page-prices">
+      <div class="topbar"><div class="page-title">💶 Cijene</div></div>
+      <div class="box" style="margin-bottom:1.5rem">
+        <div class="box-body">
+          <p style="font-size:0.95rem;color:#333;line-height:1.7">
+            Bazna cijena vrijedi za <strong>2 odrasle osobe</strong>. Za svaku dodatnu odraslu osobu iznad baze dodaje se dodatak.<br>
+            <strong>Sezona = srpanj i kolovoz.</strong> Van sezone = svi ostali termini.<br>
+            Djeca do 3 godine ne plaćaju i ne računaju se u kapacitet.
+          </p>
+        </div>
+      </div>
+      <div class="prices-grid" id="pricesGrid"></div>
+      <div class="notice" id="priceNotice" style="max-width:600px"></div>
+    </div>
+
+    <!-- ══ FINANCIJE ══ -->
+    <div class="page" id="page-financije">
+      <div class="topbar">
+        <div class="page-title">💰 Obračuni</div>
+        <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">
+          <label style="font-weight:bold;font-size:0.95rem">Godina:</label>
+          <select class="fin-year-sel" id="finYear" onchange="renderFinancije()"></select>
+          <button class="btn btn-green btn-sm" onclick="exportFinExcel()">↙ Excel izvještaj</button>
         </div>
       </div>
 
-      <!-- MANUAL -->
-      <div class="tab-content" id="tc-manual">
-        <div class="ov-box">
-          <div class="ov-box-title">➕ Ručno dodaj rezervaciju</div>
-          <div class="ov-box-desc">Za rezervacije primljene telefonom ili osobno.</div>
-          <div class="ov-form">
-            <div class="of-g"><label class="of-lbl">Soba</label>
-              <select class="of-sel" id="mbRoom">
-                <option value="C2">Apt C2 – 130€</option><option value="B2">Apt B2 – 150€</option>
-                <option value="C1">Soba C1 – 90€</option><option value="A1">Soba A1 – 90€</option>
-              </select>
-            </div>
-            <div class="of-g"><label class="of-lbl">Ime</label><input type="text" class="of-in" id="mbFN"/></div>
-            <div class="of-g"><label class="of-lbl">Prezime</label><input type="text" class="of-in" id="mbLN"/></div>
-            <div class="of-g"><label class="of-lbl">Telefon</label><input type="tel" class="of-in" id="mbPH"/></div>
-            <div class="of-g"><label class="of-lbl">Email</label><input type="email" class="of-in" id="mbEM"/></div>
-            <div class="of-g"><label class="of-lbl">Dolazak</label><input type="date" class="of-in" id="mbFrom"/></div>
-            <div class="of-g"><label class="of-lbl">Odlazak</label><input type="date" class="of-in" id="mbTo"/></div>
-            <div class="of-g"><label class="of-lbl">Gosti</label>
-              <select class="of-sel" id="mbGuests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select>
-            </div>
-            <div class="of-g"><label class="of-lbl">Napomena</label><input type="text" class="of-in" id="mbNote"/></div>
-            <div class="of-g"><button class="ov-btn" onclick="addManualBooking()">+ Dodaj</button></div>
-          </div>
-          <div class="notice" id="mbNotice"></div>
+      <!-- UKUPNI PRIHODI -->
+      <div class="fin-cards" id="finTotalCards"></div>
+
+      <!-- GRAFIKON PO MJESECIMA -->
+      <div class="box" style="margin-bottom:1.5rem">
+        <div class="box-header"><span class="box-title">Prihodi po mjesecima</span></div>
+        <div style="padding:1.5rem">
+          <div class="chart-bar-wrap" id="finChart"></div>
+          <div style="display:flex;justify-content:space-between;padding:0 0.5rem;margin-top:0.3rem" id="finChartLabels"></div>
         </div>
+      </div>
+
+      <!-- PO SOBI -->
+      <div class="box" style="margin-bottom:1.5rem">
+        <div class="box-header"><span class="box-title">Prihodi po sobi</span></div>
+        <div style="padding:1.5rem">
+          <div class="room-fin-grid" id="finRoomGrid"></div>
+        </div>
+      </div>
+
+      <!-- DETALJI PO MJESECU -->
+      <div class="box" style="margin-bottom:1.5rem">
+        <div class="box-header">
+          <span class="box-title">Detalji po mjesecu</span>
+          <span style="font-size:0.85rem;color:#555">Klikni na mjesec da vidiš detalje</span>
+        </div>
+        <div style="padding:1.5rem">
+          <div class="month-grid" id="finMonthGrid"></div>
+          <div id="finMonthDetail" style="margin-top:1.5rem;display:none">
+            <div style="font-size:1.1rem;font-weight:bold;color:#111;margin-bottom:1rem" id="finMonthDetailTitle"></div>
+            <div class="detail-table-wrap">
+              <table class="data-table" style="display:table">
+                <thead><tr><th>Soba</th><th>Gost</th><th>Dolazak</th><th>Odlazak</th><th>Noći</th><th>EUR</th><th>Status</th></tr></thead>
+                <tbody id="finMonthDetailBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GODIŠNJA TABLICA -->
+      <div class="box">
+        <div class="box-header"><span class="box-title">Godišnja tablica – svi prihodi</span></div>
+        <div style="overflow-x:auto">
+          <table class="data-table" style="display:table">
+            <thead><tr><th>Soba</th><th>Rez.</th><th>Noći</th><th>Van sezone €</th><th>Sezona €</th><th>Ukupno €</th><th>Prosj. duljina</th><th>Popunjenost</th></tr></thead>
+            <tbody id="finYearTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="topbar"><div class="page-title">⚙️ Postavke</div></div>
+
+      <!-- GitHub Token -->
+      <div class="settings-section">
+        <div class="settings-title">🔑 GitHub Personal Access Token (PAT)</div>
+        <div class="settings-desc">
+          Token omogućuje snimanje rezervacija na GitHub repozitorij. Rezervacije se čuvaju u fajlu <strong>rezervacije.json</strong> na tvom GitHub repozitoriju i dostupne su s bilo kojeg uređaja.<br><br>
+          <strong>Kako dobiti token:</strong><br>
+          1. Idi na GitHub.com → Settings → Developer Settings → Personal Access Tokens → Tokens (classic)<br>
+          2. Klikni "Generate new token (classic)"<br>
+          3. Odaberi scope: <strong>repo</strong> (puna kontrola repozitorija)<br>
+          4. Kopiraj token i zalijepi ovdje – čuva se lokalno u browseru<br><br>
+          ⚠️ Token nikad ne dijeli javno ili u chatu!
+        </div>
+        <div class="settings-row">
+          <div class="settings-field">
+            <label>GitHub PAT Token</label>
+            <input class="settings-input password" type="password" id="patInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
+          </div>
+          <button class="btn btn-blue" onclick="savePAT()">Spremi token</button>
+          <button class="btn btn-outline" onclick="testPAT()">Testiraj</button>
+        </div>
+        <div class="settings-status" id="patStatus"></div>
+      </div>
+
+      <!-- Repo info -->
+      <div class="settings-section">
+        <div class="settings-title">📁 GitHub repozitorij</div>
+        <div class="settings-desc">Repozitorij gdje se čuvaju rezervacije. Standardno je podešen na tvoj repozitorij.</div>
+        <div class="settings-row">
+          <div class="settings-field">
+            <label>Repozitorij (owner/repo)</label>
+            <input class="settings-input" type="text" id="repoInput" value="mlleetrangere-bot/VH"/>
+          </div>
+          <div class="settings-field">
+            <label>Naziv fajla</label>
+            <input class="settings-input" type="text" id="fileInput" value="rezervacije.json"/>
+          </div>
+          <button class="btn btn-dark" onclick="saveRepoSettings()">Spremi</button>
+        </div>
+        <div class="settings-status" id="repoStatus"></div>
+      </div>
+
+      <!-- Social links -->
+      <div class="settings-section">
+        <div class="settings-title">📱 Društvene mreže</div>
+        <div class="settings-desc">Linkovi na društvene mreže koji se prikazuju na vrhu glavne stranice. Ažuriraj ručno u index.html.</div>
+        <div style="background:#f5f5f5;border:2px solid #ddd;border-radius:4px;padding:1rem;font-family:monospace;font-size:0.85rem;line-height:1.8">
+          WhatsApp: <strong>https://wa.me/385958600340</strong><br>
+          Facebook: <strong>https://www.facebook.com/villahelena.vodice</strong><br>
+          Instagram: <strong>https://www.instagram.com/villahelena.vodice</strong>
+        </div>
+        <p style="font-size:0.85rem;color:#888;margin-top:0.8rem">Kad dobiješ prave linkove, ažuriraj ih u index.html (otvori Notepad, Ctrl+H za zamjenu).</p>
+      </div>
+
+      <!-- Admin password -->
+      <div class="settings-section">
+        <div class="settings-title">🔒 Admin lozinka</div>
+        <div class="settings-desc">Trenutna lozinka za pristup admin panelu i pregledu rezervacija na glavnoj stranici.</div>
+        <div style="background:#f5f5f5;border:2px solid #ddd;border-radius:4px;padding:1rem;font-size:0.95rem">
+          Lozinka: <strong>Nena1975</strong> &nbsp;(ugrađena u kod – da je promijeniš, ažuriraj u HTML fajlovima)
+        </div>
+      </div>
+
+      <!-- Sync status -->
+      <div class="settings-section">
+        <div class="settings-title">🔄 Sinkronizacija rezervacija</div>
+        <div class="settings-desc">Ručno učitaj rezervacije s GitHuba ili ih sve resetiraj.</div>
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+          <button class="btn btn-blue" onclick="forceSyncFromGH()">↓ Učitaj s GitHuba</button>
+          <button class="btn btn-dark" onclick="forceSyncToGH()">↑ Spremi na GitHub</button>
+        </div>
+        <div class="settings-status" id="syncStatus"></div>
       </div>
     </div>
 
@@ -593,330 +673,311 @@ body {
 </div>
 
 <script>
-// ══════════════════════════════════════════════════
-//  GITHUB CONFIG – ZAMIJENI OVDJE SVOJ TOKEN
-//  Token nikad ne dijeli u chatu ili javno!
-// ══════════════════════════════════════════════════
-const GH_TOKEN = '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';
-const GH_REPO  = 'mlleetrangere-bot/VH';
-const GH_FILE  = 'rezervacije.json';
+// ══════════════════════════════════
+//  CONSTANTS & CONFIG
+// ══════════════════════════════════
+const PASS = 'Nena1975';
+const ROOMS_META = [
+  {id:'C2',name:'Apartman C2',type:'Apartman',capacity:4},
+  {id:'B2',name:'Apartman B2',type:'Apartman',capacity:5},
+  {id:'C1',name:'Soba C1',type:'Soba',capacity:2},
+  {id:'A1',name:'Soba A1',type:'Soba',capacity:2},
+];
+const MONTHS = ['Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj','Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'];
+const DAYS_SHORT = ['Po','Ut','Sr','Če','Pe','Su','Ne'];
 
-// ══════════════════════════════════════════════════
-//  GITHUB API – čitanje i snimanje rezervacija
-// ══════════════════════════════════════════════════
-let ghFileSha = null; // SHA fajla potreban za update
+let GH_TOKEN = '';
+let GH_REPO  = 'mlleetrangere-bot/VH';
+let GH_FILE  = 'rezervacije.json';
+let ghFileSha = null;
 
+const DEFAULT_PRICES = {
+  C2:{base:2,offseason:110,season:130,extraPerson:15},
+  B2:{base:2,offseason:130,season:150,extraPerson:15},
+  C1:{base:2,offseason:70,season:90,extraPerson:10},
+  A1:{base:2,offseason:70,season:90,extraPerson:10},
+};
+
+function loadConfig(){
+  GH_TOKEN = localStorage.getItem('vh_gh_token')||'';
+  GH_REPO  = localStorage.getItem('vh_gh_repo')||'mlleetrangere-bot/VH';
+  GH_FILE  = localStorage.getItem('vh_gh_file')||'rezervacije.json';
+}
+
+function getPrices(){
+  try{return JSON.parse(localStorage.getItem('vh_prices')||'null')||DEFAULT_PRICES;}catch(e){return DEFAULT_PRICES;}
+}
+function savePricesLocal(p){localStorage.setItem('vh_prices',JSON.stringify(p));}
+
+function isSeason(dateStr){const m=new Date(dateStr).getMonth()+1;return m===7||m===8;}
+
+// ══════════════════════════════════
+//  CET TIME
+// ══════════════════════════════════
+function cetNow(){return new Date().toLocaleString('hr-HR',{timeZone:'Europe/Zagreb',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function cetIso(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Zagreb'})).toISOString();}
+const todayStr=()=>new Date().toISOString().split('T')[0];
+const fmtD=d=>new Date(d).toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const daysBetween=(a,b)=>Math.round((new Date(b)-new Date(a))/86400000);
+
+// ══════════════════════════════════
+//  GITHUB API
+// ══════════════════════════════════
 async function ghRead(){
-  try {
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+  if(!GH_TOKEN){return JSON.parse(localStorage.getItem('vh_bookings')||'[]');}
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`,{
+      headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json'}
     });
-    if(res.status === 404){
-      // Fajl ne postoji još – vrati prazno
-      ghFileSha = null;
-      return [];
-    }
-    const data = await res.json();
-    ghFileSha = data.sha;
-    const decoded = atob(data.content.replace(/\n/g,''));
-    return JSON.parse(decoded);
-  } catch(e){
-    console.error('GitHub read error:', e);
-    return getLocalBookings();
-  }
+    if(res.status===404){ghFileSha=null;return[];}
+    if(!res.ok){showGhError(`GitHub greška: ${res.status}`);return JSON.parse(localStorage.getItem('vh_bookings')||'[]');}
+    const data=await res.json();
+    ghFileSha=data.sha;
+    const decoded=JSON.parse(atob(data.content.replace(/\n/g,'')));
+    localStorage.setItem('vh_bookings',JSON.stringify(decoded));
+    return decoded;
+  }catch(e){showGhError('Greška pri čitanju s GitHuba');return JSON.parse(localStorage.getItem('vh_bookings')||'[]');}
 }
 
 async function ghWrite(bookings){
-  try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(bookings, null, 2))));
-    const body = {
-      message: `Rezervacije update ${new Date().toISOString()}`,
-      content: content,
-      ...(ghFileSha ? { sha: ghFileSha } : {})
-    };
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${GH_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
+  localStorage.setItem('vh_bookings',JSON.stringify(bookings));
+  if(!GH_TOKEN){showGhError('Token nije postavljen – rezervacija snimljena samo lokalno!');return false;}
+  try{
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(bookings,null,2))));
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`,{
+      method:'PUT',
+      headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:`Rezervacije update ${cetNow()}`,content,...(ghFileSha?{sha:ghFileSha}:{})})
     });
-    const data = await res.json();
-    if(data.content) ghFileSha = data.content.sha;
-    // Spremi i lokalno kao backup
-    localStorage.setItem('vh_bookings', JSON.stringify(bookings));
+    if(!res.ok){const err=await res.json();showGhError(`GitHub greška: ${err.message}`);return false;}
+    const data=await res.json();
+    if(data.content)ghFileSha=data.content.sha;
+    showGhStatus('✓ Snimljeno na GitHub');
     return true;
-  } catch(e){
-    console.error('GitHub write error:', e);
-    localStorage.setItem('vh_bookings', JSON.stringify(bookings));
-    return false;
-  }
+  }catch(e){showGhError('Greška pri snimanju na GitHub');return false;}
 }
 
-// Wrapper funkcije – koriste GitHub umjesto localStorage
-function getLocalBookings(){ try{ return JSON.parse(localStorage.getItem('vh_bookings')||'[]'); }catch(e){ return []; } }
-
-// Globalna lista rezervacija (učitana s GitHuba)
-let ALL_BOOKINGS = [];
-
-async function loadBookings(){
-  showLoading(true);
-  ALL_BOOKINGS = await ghRead();
-  localStorage.setItem('vh_bookings', JSON.stringify(ALL_BOOKINGS));
-  showLoading(false);
-}
-
-function getBookings(){ return ALL_BOOKINGS; }
-
-async function saveBookings(b){
-  ALL_BOOKINGS = b;
-  localStorage.setItem('vh_bookings', JSON.stringify(b));
-  const ok = await ghWrite(b);
-  if(!ok) showGhError('Rezervacija snimljena lokalno, ali nije sinkronizirana s GitHubom. Provjeri token.');
-  else showGhStatus('✓ Snimljeno na GitHub');
-}
-
-function showLoading(on){
-  let el = document.getElementById('ghLoading');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'ghLoading';
-    el.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;background:#111;color:#fff;padding:0.6rem 1.2rem;border-radius:4px;font-family:Arial;font-size:0.95rem;font-weight:bold';
-    document.body.appendChild(el);
-  }
-  el.textContent = '⏳ Učitavanje s GitHuba...';
-  el.style.display = on ? 'block' : 'none';
-}
+let ALL_BOOKINGS=[];
+function getBookings(){return ALL_BOOKINGS;}
+async function saveBookings(b){ALL_BOOKINGS=b;await ghWrite(b);}
+async function loadBookings(){ALL_BOOKINGS=await ghRead();}
 
 function showGhStatus(msg){
-  let el = document.getElementById('ghStatus');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'ghStatus';
-    el.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;background:#006600;color:#fff;padding:0.6rem 1.2rem;border-radius:4px;font-family:Arial;font-size:0.95rem;font-weight:bold;transition:opacity 0.5s';
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.style.display = 'block';
-  el.style.opacity = '1';
-  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.style.display='none',500); }, 3000);
+  const el=document.getElementById('ghStatus');
+  el.textContent=msg;el.style.display='block';el.style.opacity='1';
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.style.display='none',500);},3000);
 }
-
 function showGhError(msg){
-  let el = document.getElementById('ghError');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'ghError';
-    el.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;background:#cc0000;color:#fff;padding:0.6rem 1.2rem;border-radius:4px;font-family:Arial;font-size:0.95rem;font-weight:bold;max-width:300px';
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.style.display = 'block';
-  setTimeout(()=>el.style.display='none', 6000);
+  const el=document.getElementById('ghError');
+  el.textContent=msg;el.style.display='block';
+  setTimeout(()=>el.style.display='none',6000);
 }
 
-// ══════════════════
+// ══════════════════════════════════
 //  AUTH
-// ══════════════════
-const PASS = 'Nena1975';
-function doLogin(){
-  const v = document.getElementById('loginPass').value;
-  if(v === PASS){
-    document.getElementById('loginScreen').style.display = 'none';
+// ══════════════════════════════════
+async function doLogin(){
+  const v=document.getElementById('loginPass').value;
+  if(v===PASS){
+    document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').classList.add('visible');
-    initApp();
+    await initApp();
   } else {
     document.getElementById('loginErr').classList.add('visible');
-    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').value='';
     document.getElementById('loginPass').focus();
   }
 }
 function logout(){
-  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginScreen').style.display='flex';
   document.getElementById('app').classList.remove('visible');
-  document.getElementById('loginPass').value = '';
+  document.getElementById('loginPass').value='';
   document.getElementById('loginErr').classList.remove('visible');
 }
 
-// ══════════════════
-//  DATA
-// ══════════════════
-const ROOMS = [
-  {id:'C2', name:'Apartman C2', type:'Apartman', capacity:4, price:130},
-  {id:'B2', name:'Apartman B2', type:'Apartman', capacity:5, price:150},
-  {id:'C1', name:'Soba C1',     type:'Soba',     capacity:2, price:90},
-  {id:'A1', name:'Soba A1',     type:'Soba',     capacity:2, price:90},
-];
-const MONTHS = ['Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj','Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'];
-const DAYS = ['N','P','U','S','Č','P','S'];
-
-function getBookings(){ try{ return JSON.parse(localStorage.getItem('vh_bookings')||'[]'); }catch(e){ return []; } }
-function saveBookings(b){ localStorage.setItem('vh_bookings', JSON.stringify(b)); }
-function getOverrides(){ try{ return JSON.parse(localStorage.getItem('vh_overrides')||'[]'); }catch(e){ return []; } }
-function saveOverrides(o){ localStorage.setItem('vh_overrides', JSON.stringify(o)); }
-
-// ══════════════════
-//  NAV
-// ══════════════════
-document.querySelectorAll('.nav-item').forEach(el => {
-  el.addEventListener('click', async () => {
-    const page = el.dataset.page;
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+// ══════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click',async()=>{
+    const page=el.dataset.page;
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('page-'+page).classList.add('active');
-    // Osvježi rezervacije s GitHuba pri svakoj navigaciji
     await loadBookings();
     if(page==='dashboard') renderDashboard();
     if(page==='calendar') renderTimeline();
     if(page==='bookings') renderBookings();
-    if(page==='override'){ renderOverrideLists(); renderFreeBookings(); }
+    if(page==='manual'){renderMbCal();renderOvList();renderCancelList();}
+    if(page==='prices') renderPrices();
+    if(page==='settings') renderSettings();
+    if(page==='financije'){populateYearSelector();renderFinancije();}
   });
 });
 
-// ══════════════════
-//  TABS
-// ══════════════════
-function switchTab(id, btn){
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tc-'+id).classList.add('active');
-  if(id==='free'){ renderOverrideLists(); renderFreeBookings(); }
-  if(id==='block') renderOverrideLists();
-}
-
-// ══════════════════
-//  HELPERS
-// ══════════════════
-const fmtD = d => new Date(d).toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit',year:'numeric'});
-const daysBetween = (a,b) => Math.round((new Date(b)-new Date(a))/86400000);
-const todayStr = () => new Date().toISOString().split('T')[0];
-
-function isActive(b){ return b.status !== 'cancelled'; }
-function coversDate(checkin, checkout, date){
-  const s = new Date(checkin); s.setHours(0,0,0,0);
-  const e = new Date(checkout); e.setHours(0,0,0,0);
-  const d = new Date(date); d.setHours(0,0,0,0);
-  return d >= s && d < e;
-}
-function ovCoversDate(from, to, date){
-  const s = new Date(from); s.setHours(0,0,0,0);
-  const e = new Date(to); e.setHours(0,0,0,0);
-  const d = new Date(date); d.setHours(0,0,0,0);
-  return d >= s && d <= e;
-}
-
-// ══════════════════
+// ══════════════════════════════════
 //  DASHBOARD
-// ══════════════════
+// ══════════════════════════════════
 function renderDashboard(){
-  const now = new Date(); now.setHours(0,0,0,0);
-  const ts = todayStr();
-  document.getElementById('todayBadge').textContent = now.toLocaleDateString('hr-HR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-  const bks = getBookings().filter(isActive);
-  const confirmed = bks.filter(b=>b.status==='confirmed').length;
-  const pending = bks.filter(b=>b.status==='pending').length;
-  const occupied = ROOMS.filter(r => bks.some(b=>b.roomId===r.id&&coversDate(b.checkin,b.checkout,now)) || getOverrides().some(o=>o.roomId===r.id&&ovCoversDate(o.from,o.to,now))).length;
-  const revenue = bks.filter(b=>new Date(b.checkin).getMonth()===now.getMonth()&&new Date(b.checkin).getFullYear()===now.getFullYear()).reduce((s,b)=>s+b.total,0);
-
-  document.getElementById('statsCards').innerHTML = `
-    <div class="stat-card blue"><div class="stat-card-label">Zauzeto danas</div><div class="stat-card-value">${occupied}/${ROOMS.length}</div><div class="stat-card-sub">soba zauzeto</div></div>
+  const now=new Date();now.setHours(0,0,0,0);
+  const ts=todayStr();
+  document.getElementById('todayBadge').textContent=now.toLocaleDateString('hr-HR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const bks=getBookings().filter(b=>b.status!=='cancelled');
+  const confirmed=bks.filter(b=>b.status==='confirmed').length;
+  const pending=bks.filter(b=>b.status==='pending').length;
+  const ovs=getOverrides();
+  const occupied=ROOMS_META.filter(r=>bks.some(b=>b.roomId===r.id&&coversDate(b.checkin,b.checkout,now))||ovs.some(o=>o.roomId===r.id&&ovCoversDate(o.from,o.to,now))).length;
+  const revenue=bks.filter(b=>new Date(b.checkin).getMonth()===now.getMonth()&&new Date(b.checkin).getFullYear()===now.getFullYear()).reduce((s,b)=>s+b.total,0);
+  document.getElementById('statsCards').innerHTML=`
+    <div class="stat-card blue"><div class="stat-card-label">Zauzeto danas</div><div class="stat-card-value">${occupied}/${ROOMS_META.length}</div><div class="stat-card-sub">od ${ROOMS_META.length} soba</div></div>
     <div class="stat-card green"><div class="stat-card-label">Potvrđene</div><div class="stat-card-value">${confirmed}</div><div class="stat-card-sub">aktivne rezervacije</div></div>
     <div class="stat-card"><div class="stat-card-label">Na čekanju</div><div class="stat-card-value">${pending}</div><div class="stat-card-sub">čekaju potvrdu</div></div>
-    <div class="stat-card"><div class="stat-card-label">Prihod ovaj mjesec</div><div class="stat-card-value">${revenue}</div><div class="stat-card-sub">EUR</div></div>`;
-
-  const arr = bks.filter(b=>b.checkin===ts);
-  const dep = bks.filter(b=>b.checkout===ts);
-
-  document.getElementById('arrivalsToday').innerHTML = arr.length
-    ? arr.map(b=>`<div class="daily-item arr"><div><div class="daily-name">${b.firstName} ${b.lastName}</div><div class="daily-room">${b.roomName} · ${b.guests} gost${b.guests>1?'a':''}</div></div><div class="daily-nights">${b.nights} noći<br><strong>${b.total}€</strong></div></div>`).join('')
-    : '<div class="daily-empty">Nema dolazaka danas.</div>';
-
-  document.getElementById('departuresToday').innerHTML = dep.length
-    ? dep.map(b=>`<div class="daily-item dep"><div><div class="daily-name">${b.firstName} ${b.lastName}</div><div class="daily-room">${b.roomName}</div></div><div class="daily-nights">odlazak</div></div>`).join('')
-    : '<div class="daily-empty">Nema odlazaka danas.</div>';
-
-  document.getElementById('roomStatusToday').innerHTML = ROOMS.map(r => {
-    const bk = bks.find(b=>b.roomId===r.id&&coversDate(b.checkin,b.checkout,now));
-    const ov = getOverrides().find(o=>o.roomId===r.id&&ovCoversDate(o.from,o.to,now));
-    if(bk){
-      const rem = daysBetween(ts, bk.checkout);
-      return `<tr><td><strong>${r.name}</strong></td><td><span class="sbadge sc">Zauzeto</span></td><td>${bk.firstName} ${bk.lastName}</td><td>${fmtD(bk.checkin)}</td><td>${fmtD(bk.checkout)}</td><td>${bk.guests}</td><td>${rem} noći</td></tr>`;
-    } else if(ov){
-      return `<tr><td><strong>${r.name}</strong></td><td><span class="sbadge sx">Blokirano</span></td><td colspan="4" style="color:#888;font-style:italic">${ov.note||'Ručna blokada'} · do ${fmtD(ov.to)}</td><td>—</td></tr>`;
-    } else {
-      return `<tr><td><strong>${r.name}</strong></td><td><span class="sbadge sc" style="background:#e6ffe6;color:#004400;border-color:#006600">Slobodno</span></td><td colspan="5" style="color:#888">—</td></tr>`;
-    }
+    <div class="stat-card"><div class="stat-card-label">Prihod ovaj mj.</div><div class="stat-card-value">${revenue}</div><div class="stat-card-sub">EUR</div></div>`;
+  const arr=bks.filter(b=>b.checkin===ts);
+  const dep=bks.filter(b=>b.checkout===ts);
+  document.getElementById('arrivalsToday').innerHTML=arr.length?arr.map(b=>`<div class="daily-item a"><div><div class="daily-name">${b.firstName} ${b.lastName}</div><div class="daily-room">${b.roomName} · ${b.adults||b.guests||2} odrasli</div></div><div style="text-align:right"><div style="font-size:0.9rem;color:#555">${b.nights} noći</div><div style="font-weight:bold">${b.total}€</div></div></div>`).join(''):'<div class="daily-empty">Nema dolazaka danas.</div>';
+  document.getElementById('departuresToday').innerHTML=dep.length?dep.map(b=>`<div class="daily-item d"><div><div class="daily-name">${b.firstName} ${b.lastName}</div><div class="daily-room">${b.roomName}</div></div><div style="font-size:0.9rem;color:#555">odlazak</div></div>`).join(''):'<div class="daily-empty">Nema odlazaka danas.</div>';
+  document.getElementById('roomStatusToday').innerHTML=ROOMS_META.map(r=>{
+    const bk=bks.find(b=>b.roomId===r.id&&coversDate(b.checkin,b.checkout,now));
+    const ov=ovs.find(o=>o.roomId===r.id&&ovCoversDate(o.from,o.to,now));
+    if(bk){const rem=daysBetween(ts,bk.checkout);return`<tr><td><strong>${r.name}</strong></td><td><span class="sbadge sc">Zauzeto</span></td><td>${bk.firstName} ${bk.lastName}</td><td>${fmtD(bk.checkin)}</td><td>${fmtD(bk.checkout)}</td><td>${bk.adults||bk.guests||2}</td><td>${rem} noći</td></tr>`;}
+    if(ov){return`<tr><td><strong>${r.name}</strong></td><td><span class="sbadge sx">Blokirano</span></td><td colspan="4" style="color:#888;font-style:italic">${ov.note||'Ručna blokada'} · do ${fmtD(ov.to)}</td><td>—</td></tr>`;}
+    return`<tr><td><strong>${r.name}</strong></td><td><span class="sbadge" style="background:#e6ffe6;color:#004400;border-color:#006600">Slobodno</span></td><td colspan="5" style="color:#888">—</td></tr>`;
   }).join('');
-
-  const upcoming = [];
-  for(let i=0;i<7;i++){
-    const d=new Date(now); d.setDate(d.getDate()+i);
-    const ds=d.toISOString().split('T')[0];
-    ROOMS.forEach(r=>{
-      const bk=bks.find(b=>b.roomId===r.id&&(b.checkin===ds||b.checkout===ds));
-      const ov=getOverrides().find(o=>o.roomId===r.id&&(o.from===ds||o.to===ds));
-      if(bk&&bk.checkin===ds) upcoming.push({date:ds,room:r.name,guest:`${bk.firstName} ${bk.lastName}`,type:'✈️ Dolazak',color:'#006600'});
-      if(bk&&bk.checkout===ds) upcoming.push({date:ds,room:r.name,guest:`${bk.firstName} ${bk.lastName}`,type:'🧳 Odlazak',color:'#cc6600'});
-      if(ov&&ov.from===ds) upcoming.push({date:ds,room:r.name,guest:ov.note||'Blokada',type:'🔒 Blokada počinje',color:'#cc0000'});
-    });
-  }
-  document.getElementById('upcomingEvents').innerHTML = upcoming.length
-    ? upcoming.map(e=>`<tr><td>${fmtD(e.date)}</td><td>${e.room}</td><td>${e.guest}</td><td><strong style="color:${e.color}">${e.type}</strong></td></tr>`).join('')
-    : '<tr class="empty-row"><td colspan="4">Nema nadolazećih događaja.</td></tr>';
+  const upcoming=[];
+  for(let i=0;i<7;i++){const d=new Date(now);d.setDate(d.getDate()+i);const ds=d.toISOString().split('T')[0];ROOMS_META.forEach(r=>{const bk=bks.find(b=>b.roomId===r.id&&(b.checkin===ds||b.checkout===ds));const ov=ovs.find(o=>o.roomId===r.id&&(o.from===ds||o.to===ds));if(bk&&bk.checkin===ds)upcoming.push({date:ds,room:r.name,guest:`${bk.firstName} ${bk.lastName}`,type:'✈️ Dolazak',c:'#006600'});if(bk&&bk.checkout===ds)upcoming.push({date:ds,room:r.name,guest:`${bk.firstName} ${bk.lastName}`,type:'🧳 Odlazak',c:'#cc6600'});if(ov&&ov.from===ds)upcoming.push({date:ds,room:r.name,guest:ov.note||'Blokada',type:'🔒 Blokada',c:'#cc0000'});});}
+  document.getElementById('upcomingEvents').innerHTML=upcoming.length?upcoming.map(e=>`<tr><td>${fmtD(e.date)}</td><td>${e.room}</td><td>${e.guest}</td><td><strong style="color:${e.c}">${e.type}</strong></td></tr>`).join(''):'<tr class="empty-row"><td colspan="4">Nema nadolazećih događaja.</td></tr>';
 }
 
-// ══════════════════
-//  TIMELINE
-// ══════════════════
-let calOffset = 0;
+// ══════════════════════════════════
+//  OVERRIDES
+// ══════════════════════════════════
+function getOverrides(){try{return JSON.parse(localStorage.getItem('vh_overrides')||'[]');}catch(e){return[];}}
+function saveOverrides(o){localStorage.setItem('vh_overrides',JSON.stringify(o));}
+
+function coversDate(checkin,checkout,date){
+  const s=new Date(checkin);s.setHours(0,0,0,0);const e=new Date(checkout);e.setHours(0,0,0,0);const d=new Date(date);d.setHours(0,0,0,0);return d>=s&&d<e;
+}
+function ovCoversDate(from,to,date){
+  const s=new Date(from);s.setHours(0,0,0,0);const e=new Date(to);e.setHours(0,0,0,0);const d=new Date(date);d.setHours(0,0,0,0);return d>=s&&d<=e;
+}
+
+function addOverride(){
+  const roomId=document.getElementById('mbCalRoom').value;
+  const from=document.getElementById('ovFrom').value;
+  const to=document.getElementById('ovTo').value;
+  const note=document.getElementById('ovNote').value.trim();
+  const notice=document.getElementById('ovNotice');
+  if(!from||!to){showNotice(notice,'Odaberite datume.','error');return;}
+  if(from>to){showNotice(notice,'Datum od mora biti prije datuma do.','error');return;}
+  const ovs=getOverrides();
+  ovs.push({id:'OV-'+Date.now(),roomId,from,to,note,createdAt:cetIso()});
+  saveOverrides(ovs);
+  showNotice(notice,'✓ Blokada dodana!','success');
+  document.getElementById('ovFrom').value=document.getElementById('ovTo').value=document.getElementById('ovNote').value='';
+  renderOvList();renderMbCal();renderTimeline();
+}
+
+function deleteOverride(id){
+  saveOverrides(getOverrides().filter(o=>o.id!==id));
+  renderOvList();renderMbCal();renderTimeline();
+}
+
+function renderOvList(){
+  const ovs=getOverrides();
+  const list=document.getElementById('ovList');
+  if(!list)return;
+  list.innerHTML=ovs.length?ovs.slice().reverse().map(o=>{
+    const r=ROOMS_META.find(x=>x.id===o.roomId);
+    return`<div class="ov-item"><div><div class="ov-room">${r?r.name:o.roomId}</div><div class="ov-dates">${fmtD(o.from)} – ${fmtD(o.to)} · ${daysBetween(o.from,o.to)+1} dana${o.note?` · ${o.note}`:''}</div></div><button class="ov-free-btn" onclick="deleteOverride('${o.id}')">🔓 Oslobodi</button></div>`;
+  }).join(''):'<div class="no-items">Nema aktivnih blokada.</div>';
+}
+
+function showFreePanel(){
+  const panel=document.getElementById('freePanelBox');
+  panel.style.display=panel.style.display==='none'?'block':'none';
+  renderCancelList();
+}
+
+function renderCancelList(){
+  const list=document.getElementById('cancelList');
+  if(!list)return;
+  let bks=getBookings().filter(b=>b.status!=='cancelled');
+  const roomId=document.getElementById('mbCalRoom').value;
+  if(roomId)bks=bks.filter(b=>b.roomId===roomId);
+  list.innerHTML=bks.length?bks.map(b=>`<div class="ov-item bk-item"><div><div class="ov-room">${b.roomName} · <strong>${b.firstName} ${b.lastName}</strong></div><div class="ov-dates">${fmtD(b.checkin)} – ${fmtD(b.checkout)} · ${b.nights} noći · ${b.total} EUR</div></div><button class="ov-del-btn" onclick="cancelBooking('${b.id}')">✗ Otkaži</button></div>`).join(''):'<div class="no-items">Nema aktivnih rezervacija.</div>';
+}
+
+async function cancelBooking(id){
+  if(!confirm('Otkazati ovu rezervaciju?'))return;
+  const b=getBookings();const i=b.findIndex(x=>x.id===id);
+  if(i>-1){b[i].status='cancelled';await saveBookings(b);}
+  renderCancelList();renderMbCal();renderTimeline();
+}
+
+// ══════════════════════════════════
+//  TIMELINE (calendar page)
+// ══════════════════════════════════
+let calOffset=0;
+let tlMode='view'; // view | block | free
+let tlSelStart=null, tlSelEnd=null;
+
+function setMode(m){
+  tlMode=m;
+  tlSelStart=null;tlSelEnd=null;
+  ['modeView','modeBlock','modeFree'].forEach(id=>document.getElementById(id).className='tl-mode-btn');
+  if(m==='view')document.getElementById('modeView').classList.add('active-manual');
+  if(m==='block')document.getElementById('modeBlock').classList.add('active-block');
+  if(m==='free')document.getElementById('modeFree').classList.add('active-free');
+  document.getElementById('tlStatus').textContent=m==='view'?'Klikni na rezervaciju za detalje':m==='block'?'Klikni početni dan, zatim završni – za blokadu':'Klikni na rezervaciju ili blokadu za oslobađanje';
+  renderTimeline();
+}
+
 function renderTimeline(){
-  const now = new Date(); now.setHours(0,0,0,0);
-  const base = new Date(now.getFullYear(), now.getMonth()+calOffset, 1);
-  const year = base.getFullYear(), month = base.getMonth();
-  const dim = new Date(year, month+1, 0).getDate();
-  const ts = now.toISOString().split('T')[0];
-  document.getElementById('tlMonthLabel').textContent = `${MONTHS[month]} ${year}`;
+  const now=new Date();now.setHours(0,0,0,0);
+  const base=new Date(now.getFullYear(),now.getMonth()+calOffset,1);
+  const year=base.getFullYear(),month=base.getMonth();
+  const dim=new Date(year,month+1,0).getDate();
+  const ts=todayStr();
+  document.getElementById('tlMonthLabel').textContent=`${MONTHS[month]} ${year}`;
+  const bks=getBookings().filter(b=>b.status!=='cancelled');
+  const ovs=getOverrides();
 
-  const bks = getBookings().filter(isActive);
-  const ovs = getOverrides();
-
-  let hdr = '<th class="tl-room-col">Soba</th>';
+  let hdr='<th class="tl-room-col">Soba / Dan</th>';
   for(let d=1;d<=dim;d++){
-    const date=new Date(year,month,d);
-    const dow=date.getDay();
-    const dStr=date.toISOString().split('T')[0];
-    const cls=dStr===ts?'today-h':(dow===0||dow===6?'weekend':'');
-    hdr+=`<th class="tl-day-header ${cls}">${d}</th>`;
+    const dt=new Date(year,month,d);const dow=dt.getDay();
+    const dStr=dt.toISOString().split('T')[0];
+    const cls=dStr===ts?'today-h':(dow===0||dow===6?'wknd':'');
+    hdr+=`<th class="tl-day-hdr ${cls}" title="${dStr}">${d}<br><span style="font-size:0.6rem">${['N','P','U','S','Č','P','S'][dow]}</span></th>`;
   }
 
   let rows='';
-  ROOMS.forEach(r=>{
-    rows+=`<tr><td class="tl-room-name">${r.id}<span class="tl-room-type">${r.type}</span></td>`;
+  ROOMS_META.forEach(r=>{
+    rows+=`<tr><td class="tl-room-name">${r.id}<span class="tl-room-sub">${r.type}</span></td>`;
     for(let d=1;d<=dim;d++){
-      const date=new Date(year,month,d); date.setHours(0,0,0,0);
-      const dStr=date.toISOString().split('T')[0];
-      const bk=bks.find(b=>b.roomId===r.id&&coversDate(b.checkin,b.checkout,date));
-      const ov=ovs.find(o=>o.roomId===r.id&&ovCoversDate(o.from,o.to,date));
-      const isTodayCol=dStr===ts;
-      let cls=isTodayCol?'today-col':'';
+      const dt=new Date(year,month,d);dt.setHours(0,0,0,0);
+      const dStr=dt.toISOString().split('T')[0];
+      const bk=bks.find(b=>b.roomId===r.id&&coversDate(b.checkin,b.checkout,dt));
+      const ov=ovs.find(o=>o.roomId===r.id&&ovCoversDate(o.from,o.to,dt));
+      const isToday=dStr===ts;
+      const isSel=tlSelStart&&(dStr===tlSelStart||(tlSelEnd&&dStr>=tlSelStart&&dStr<=tlSelEnd));
+      let cls=isToday?'today-c':'';
       let lbl='';
+
       if(bk){
         const isStart=bk.checkin===dStr;
-        cls+=isStart?' booked-start':' booked';
+        cls+=isStart?' bk-s':' bk';
         if(isStart)lbl=`${bk.firstName} ${bk.lastName}`;
-        rows+=`<td class="tl-cell ${cls}" title="${bk.firstName} ${bk.lastName} | ${fmtD(bk.checkin)}–${fmtD(bk.checkout)}" onclick="showModal('${bk.id}')"><div class="tl-label">${lbl}</div></td>`;
+        rows+=`<td class="tl-cell ${cls}" title="${bk.firstName} ${bk.lastName} | ${fmtD(bk.checkin)}–${fmtD(bk.checkout)}" onclick="tlCellClick('${r.id}','${dStr}','booking','${bk.id}')"><div class="tl-lbl">${lbl}</div></td>`;
       } else if(ov){
         const isStart=ov.from===dStr;
-        cls+=isStart?' manual-start':' manual';
+        cls+=isStart?' bl-s':' bl';
         if(isStart)lbl=ov.note||'Blokirano';
-        rows+=`<td class="tl-cell ${cls}" title="Blokada: ${ov.note||''} | ${fmtD(ov.from)}–${fmtD(ov.to)}"><div class="tl-label">${lbl}</div></td>`;
+        rows+=`<td class="tl-cell ${cls}" title="Blokada: ${ov.note||''} | ${fmtD(ov.from)}–${fmtD(ov.to)}" onclick="tlCellClick('${r.id}','${dStr}','override','${ov.id}')"><div class="tl-lbl">${lbl}</div></td>`;
       } else {
-        rows+=`<td class="tl-cell ${cls}"></td>`;
+        if(isSel) cls+=' sel';
+        rows+=`<td class="tl-cell ${cls}" onclick="tlCellClick('${r.id}','${dStr}','free','')"></td>`;
       }
     }
     rows+='</tr>';
@@ -925,154 +986,123 @@ function renderTimeline(){
   document.getElementById('timelineTable').innerHTML=`<div style="overflow-x:auto"><table class="tl-table"><thead><tr>${hdr}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
-// ══════════════════
-//  BOOKINGS
-// ══════════════════
-let currentFilter='all';
-function setFilter(f,btn){
-  currentFilter=f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderBookings();
-}
-function renderBookings(){
-  let bks=getBookings();
-  if(currentFilter!=='all') bks=bks.filter(b=>b.status===currentFilter);
-  bks=bks.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  document.getElementById('bookingsCount').textContent=`${bks.length} rezervacija`;
-  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
-  const sc={pending:'sp',confirmed:'sc',cancelled:'sx'};
-  document.getElementById('bookingsBody').innerHTML=bks.length
-    ? bks.map(b=>`<tr style="cursor:pointer" onclick="showModal('${b.id}')">
-        <td style="font-size:0.8rem;color:#888">${b.id}</td>
-        <td><strong>${b.roomName}</strong></td>
-        <td>${b.checkin}</td><td>${b.checkout}</td>
-        <td>${b.nights}</td><td><strong>${b.total}</strong></td>
-        <td>${b.firstName}</td><td>${b.lastName}</td>
-        <td>${b.email}</td><td>${b.phone}</td><td>${b.guests}</td>
-        <td>${b.country||'—'}</td>
-        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${b.note||'—'}</td>
-        <td><span class="sbadge ${sc[b.status]}">${sl[b.status]}</span></td>
-        <td onclick="event.stopPropagation()">
-          ${b.status!=='confirmed'?`<button class="act-btn ab-c" onclick="chStatus('${b.id}','confirmed')">✓ Potvrdi</button>`:''}
-          ${b.status!=='cancelled'?`<button class="act-btn ab-x" onclick="chStatus('${b.id}','cancelled')">✗ Otkaži</button>`:''}
-        </td>
-      </tr>`).join('')
-    : '<tr class="empty-row"><td colspan="15">Nema rezervacija.</td></tr>';
-}
-async function chStatus(id,status){
-  const b=getBookings();const i=b.findIndex(x=>x.id===id);
-  if(i>-1){b[i].status=status;await saveBookings(b);}
-  renderBookings(); renderTimeline();
+function tlCellClick(roomId,dateStr,type,id){
+  const roomSel=document.getElementById('tlRoomSel').value;
+  if(tlMode==='view'){
+    if(type==='booking') showModal(id);
+    else if(type==='override'){const ov=getOverrides().find(o=>o.id===id);if(ov){const r=ROOMS_META.find(x=>x.id===ov.roomId);document.getElementById('modalTitle').textContent=`Blokada: ${r?r.name:ov.roomId}`;document.getElementById('modalBody').innerHTML=`<div class="modal-row"><span class="modal-key">Soba</span><span class="modal-val">${r?r.name:ov.roomId}</span></div><div class="modal-row"><span class="modal-key">Od</span><span class="modal-val">${fmtD(ov.from)}</span></div><div class="modal-row"><span class="modal-key">Do</span><span class="modal-val">${fmtD(ov.to)}</span></div><div class="modal-row"><span class="modal-key">Razlog</span><span class="modal-val">${ov.note||'—'}</span></div><div style="margin-top:1rem"><button class="btn btn-green" style="width:100%" onclick="deleteOverride('${ov.id}');closeModal();renderTimeline()">🔓 Oslobodi blokadu</button></div>`;document.getElementById('modalBg').classList.add('visible');}}
+    return;
+  }
+  if(tlMode==='free'){
+    if(type==='booking'&&confirm('Otkazati ovu rezervaciju?'))cancelBooking(id);
+    else if(type==='override')deleteOverride(id);
+    renderTimeline();return;
+  }
+  if(tlMode==='block'&&roomId===roomSel){
+    if(!tlSelStart){tlSelStart=dateStr;document.getElementById('tlStatus').textContent=`Odabran početak: ${fmtD(dateStr)} – klikni datum završetka`;renderTimeline();}
+    else{
+      tlSelEnd=dateStr;
+      if(tlSelEnd<tlSelStart){tlSelEnd=null;document.getElementById('tlStatus').textContent='Završni datum mora biti nakon početnog!';return;}
+      const note=document.getElementById('tlNote').value.trim();
+      const ovs=getOverrides();ovs.push({id:'OV-'+Date.now(),roomId:roomSel,from:tlSelStart,to:tlSelEnd,note,createdAt:cetIso()});
+      saveOverrides(ovs);tlSelStart=null;tlSelEnd=null;
+      document.getElementById('tlStatus').textContent=`✓ Blokada dodana (${ROOMS_META.find(r=>r.id===roomSel)?.name})`;
+      renderTimeline();renderOvList();
+    }
+  }
 }
 
-// ══════════════════
-//  MODAL
-// ══════════════════
-function showModal(id){
-  const b=getBookings().find(x=>x.id===id);
-  if(!b)return;
-  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
-  document.getElementById('modalTitle').textContent=`${b.roomName} · ${b.firstName} ${b.lastName}`;
-  document.getElementById('modalBody').innerHTML=`
-    <div class="modal-row"><span class="modal-key">Status</span><span class="modal-val">${sl[b.status]}</span></div>
-    <div class="modal-row"><span class="modal-key">Soba</span><span class="modal-val">${b.roomName}</span></div>
-    <div class="modal-row"><span class="modal-key">Dolazak</span><span class="modal-val">${fmtD(b.checkin)}</span></div>
-    <div class="modal-row"><span class="modal-key">Odlazak</span><span class="modal-val">${fmtD(b.checkout)}</span></div>
-    <div class="modal-row"><span class="modal-key">Noći</span><span class="modal-val">${b.nights}</span></div>
-    <div class="modal-row"><span class="modal-key">Ukupno</span><span class="modal-val"><strong>${b.total} EUR</strong></span></div>
-    <div class="modal-row"><span class="modal-key">Ime i prezime</span><span class="modal-val">${b.firstName} ${b.lastName}</span></div>
-    <div class="modal-row"><span class="modal-key">Email</span><span class="modal-val">${b.email}</span></div>
-    <div class="modal-row"><span class="modal-key">Telefon</span><span class="modal-val">${b.phone}</span></div>
-    <div class="modal-row"><span class="modal-key">Gosti</span><span class="modal-val">${b.guests}</span></div>
-    <div class="modal-row"><span class="modal-key">Država</span><span class="modal-val">${b.country||'—'}</span></div>
-    <div class="modal-row"><span class="modal-key">Napomena</span><span class="modal-val">${b.note||'—'}</span></div>
-    <div class="modal-actions">
-      ${b.status!=='confirmed'?`<button class="act-btn ab-c" style="flex:1;padding:0.6rem;font-size:1rem" onclick="chStatus('${b.id}','confirmed');closeModal()">✓ Potvrdi</button>`:''}
-      ${b.status!=='cancelled'?`<button class="act-btn ab-x" style="flex:1;padding:0.6rem;font-size:1rem" onclick="chStatus('${b.id}','cancelled');closeModal()">✗ Otkaži</button>`:''}
-    </div>`;
-  document.getElementById('modalBg').classList.add('visible');
-}
-function closeModal(){ document.getElementById('modalBg').classList.remove('visible'); }
+// ══════════════════════════════════
+//  MANUAL CAL (manual page)
+// ══════════════════════════════════
+let mbCalYear,mbCalMonth,mbSelStart=null,mbSelEnd=null,mbPickEnd=false;
+function initMbCal(){const n=new Date();mbCalYear=n.getFullYear();mbCalMonth=n.getMonth();}
+initMbCal();
 
-// ══════════════════
-//  OVERRIDES
-// ══════════════════
-function addOverride(){
-  const roomId=document.getElementById('ovRoom').value;
-  const from=document.getElementById('ovFrom').value;
-  const to=document.getElementById('ovTo').value;
-  const note=document.getElementById('ovNote').value.trim();
-  const notice=document.getElementById('ovNotice');
-  if(!from||!to){showNotice(notice,'Odaberite datume.','error');return;}
-  if(from>to){showNotice(notice,'Datum "od" mora biti prije datuma "do".','error');return;}
-  const ovs=getOverrides();
-  ovs.push({id:'OV-'+Date.now(),roomId,from,to,note,createdAt:new Date().toISOString()});
-  saveOverrides(ovs);
-  showNotice(notice,'Blokada dodana!','success');
-  document.getElementById('ovFrom').value=document.getElementById('ovTo').value=document.getElementById('ovNote').value='';
-  document.getElementById('ovFrom').value=todayStr();
-  renderOverrideLists(); renderTimeline();
-}
+function mbCalPrev(){mbCalMonth--;if(mbCalMonth<0){mbCalMonth=11;mbCalYear--;}renderMbCal();}
+function mbCalNext(){mbCalMonth++;if(mbCalMonth>11){mbCalMonth=0;mbCalYear++;}renderMbCal();}
 
-function deleteOverride(id){
-  saveOverrides(getOverrides().filter(o=>o.id!==id));
-  renderOverrideLists(); renderTimeline();
+function renderMbCal(){
+  const roomId=document.getElementById('mbCalRoom').value;
+  document.getElementById('mbCalLbl').textContent=`${MONTHS[mbCalMonth]} ${mbCalYear}`;
+  const nameRow=document.getElementById('mbCalDayNames');
+  nameRow.innerHTML=DAYS_SHORT.map(d=>`<div style="text-align:center;font-size:0.78rem;font-weight:bold;color:#555;padding:0.3rem 0">${d}</div>`).join('');
+  const grid=document.getElementById('mbCalGrid');
+  grid.innerHTML='';
+  const offset=(new Date(mbCalYear,mbCalMonth,1).getDay()+6)%7;
+  for(let i=0;i<offset;i++){const e=document.createElement('div');grid.appendChild(e);}
+  const dim=new Date(mbCalYear,mbCalMonth+1,0).getDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  const bks=getBookings().filter(b=>b.roomId===roomId&&b.status!=='cancelled');
+  const ovs=getOverrides().filter(o=>o.roomId===roomId);
+
+  for(let d=1;d<=dim;d++){
+    const date=new Date(mbCalYear,mbCalMonth,d);
+    const dStr=date.toISOString().split('T')[0];
+    const el=document.createElement('div');
+    el.textContent=d;
+    el.style.cssText='aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:0.88rem;border-radius:4px;cursor:pointer;border:1px solid #ddd;font-weight:bold;transition:all 0.1s';
+
+    const bk=bks.find(b=>coversDate(b.checkin,b.checkout,date));
+    const ov=ovs.find(o=>ovCoversDate(o.from,o.to,date));
+    const isSel=mbSelStart&&(dStr===mbSelStart.toISOString().split('T')[0]||(mbSelEnd&&date>=mbSelStart&&date<=mbSelEnd));
+    const isToday=date.getTime()===today.getTime();
+
+    if(date<today){el.style.color='#ccc';el.style.cursor='default';}
+    else if(bk){el.style.background='#5bb8d4';el.style.borderColor='#2a6b7c';el.style.color='#fff';el.title=`${bk.firstName} ${bk.lastName} | ${fmtD(bk.checkin)}–${fmtD(bk.checkout)}`;}
+    else if(ov){el.style.background='#ffcccc';el.style.borderColor='#cc0000';el.title=ov.note||'Blokirano';}
+    else if(isSel){el.style.background='#ffd700';el.style.borderColor='#cc9900';}
+    else if(isToday){el.style.borderColor='#2a6b7c';el.style.color='#2a6b7c';}
+    else{el.addEventListener('click',()=>onMbDay(date));}
+
+    grid.appendChild(el);
+  }
+  renderCancelList();
 }
 
-function renderOverrideLists(){
-  const ovs=getOverrides();
-  const makeItem=(o,showFreeBtn)=>{
-    const room=ROOMS.find(r=>r.id===o.roomId);
-    return `<div class="ov-item">
-      <div>
-        <div class="ov-room">${room?room.name:o.roomId}</div>
-        <div class="ov-dates">${fmtD(o.from)} – ${fmtD(o.to)} · ${daysBetween(o.from,o.to)+1} dana</div>
-        ${o.note?`<div class="ov-note">${o.note}</div>`:''}
-      </div>
-      ${showFreeBtn
-        ? `<button class="ov-free-btn" onclick="deleteOverride('${o.id}');renderOverrideLists();renderFreeBookings()">🔓 Oslobodi</button>`
-        : `<button class="ov-del" onclick="deleteOverride('${o.id}')">Obriši</button>`
-      }
-    </div>`;
-  };
-  const blockList=document.getElementById('blockList');
-  blockList.innerHTML=ovs.length?ovs.slice().reverse().map(o=>makeItem(o,false)).join(''):'<div class="no-items">Nema aktivnih blokada.</div>';
-  const freeList=document.getElementById('freeBlockList');
-  if(freeList) freeList.innerHTML=ovs.length?ovs.slice().reverse().map(o=>makeItem(o,true)).join(''):'<div class="no-items">Nema aktivnih blokada.</div>';
+function onMbDay(date){
+  if(!mbPickEnd||!mbSelStart){mbSelStart=date;mbSelEnd=null;mbPickEnd=true;
+    document.getElementById('mbFrom').value=date.toISOString().split('T')[0];
+    document.getElementById('mbTo').value='';
+  } else {
+    if(date<=mbSelStart){mbSelStart=date;mbSelEnd=null;document.getElementById('mbFrom').value=date.toISOString().split('T')[0];document.getElementById('mbTo').value='';}
+    else{mbSelEnd=date;mbPickEnd=false;
+      document.getElementById('mbFrom').value=mbSelStart.toISOString().split('T')[0];
+      document.getElementById('mbTo').value=mbSelEnd.toISOString().split('T')[0];
+      document.getElementById('ovFrom').value=mbSelStart.toISOString().split('T')[0];
+      document.getElementById('ovTo').value=mbSelEnd.toISOString().split('T')[0];
+      updateMbSummary();
+    }
+  }
+  renderMbCal();
 }
 
-function renderFreeBookings(){
-  const roomFilter=(document.getElementById('freeRoom')||{}).value||'';
-  const dateFilter=(document.getElementById('freeDate')||{}).value||'';
-  let bks=getBookings().filter(b=>b.status!=='cancelled');
-  if(roomFilter) bks=bks.filter(b=>b.roomId===roomFilter);
-  if(dateFilter) bks=bks.filter(b=>b.checkout>=dateFilter);
-  bks=bks.sort((a,b)=>a.checkin.localeCompare(b.checkin));
-  const list=document.getElementById('freeBookingList');
-  if(!list)return;
-  list.innerHTML=bks.length
-    ? bks.map(b=>`<div class="ov-item booking-item">
-        <div>
-          <div class="ov-room">${b.roomName} · <strong>${b.firstName} ${b.lastName}</strong></div>
-          <div class="ov-dates">${fmtD(b.checkin)} – ${fmtD(b.checkout)} · ${b.nights} noći · ${b.total} EUR</div>
-          <div class="ov-note">${b.status==='confirmed'?'Potvrđeno':'Na čekanju'} · ${b.email} · ${b.phone}</div>
-        </div>
-        <button class="ov-del" onclick="freeBooking('${b.id}')">✗ Otkaži</button>
-      </div>`).join('')
-    : '<div class="no-items">Nema aktivnih rezervacija.</div>';
+function syncMbDates(){
+  const f=document.getElementById('mbFrom').value;
+  const t=document.getElementById('mbTo').value;
+  if(f){mbSelStart=new Date(f);mbPickEnd=true;}
+  if(f&&t&&f<t){mbSelEnd=new Date(t);mbPickEnd=false;updateMbSummary();}
+  renderMbCal();
 }
 
-async function freeBooking(id){
-  if(!confirm('Otkazati ovu rezervaciju? Soba će postati slobodna.'))return;
-  const b=getBookings();const i=b.findIndex(x=>x.id===id);
-  if(i>-1){b[i].status='cancelled';await saveBookings(b);}
-  renderFreeBookings(); renderOverrideLists(); renderTimeline();
+function updateMbSummary(){
+  const f=document.getElementById('mbFrom').value;
+  const t=document.getElementById('mbTo').value;
+  const roomId=document.getElementById('mbRoom').value;
+  const adults=parseInt(document.getElementById('mbAdults').value)||2;
+  if(!f||!t||f>=t){document.getElementById('mbPriceSummary').style.display='none';return;}
+  const nights=daysBetween(f,t);
+  const prices=getPrices();const rp=prices[roomId]||DEFAULT_PRICES[roomId];
+  const extra=Math.max(0,adults-rp.base);
+  let total=0;let d=new Date(f);const end=new Date(t);
+  while(d<end){const ds=d.toISOString().split('T')[0];const p=isSeason(ds)?rp.season:rp.offseason;total+=p+extra*(rp.extraPerson||0);d.setDate(d.getDate()+1);}
+  const sumEl=document.getElementById('mbPriceSummary');
+  sumEl.innerHTML=`<strong>${ROOMS_META.find(r=>r.id===roomId)?.name}</strong> · ${nights} noći · ${adults} odrasli · <strong>${total} EUR</strong>`;
+  sumEl.style.display='block';
+  const info=document.getElementById('mbSelectedInfo');
+  if(info){info.textContent=`Odabrano: ${fmtD(new Date(f))} – ${fmtD(new Date(t))} · ${nights} noći`;info.classList.add('visible');}
 }
 
-// ══════════════════
-//  MANUAL BOOKING
-// ══════════════════
 async function addManualBooking(){
   const roomId=document.getElementById('mbRoom').value;
   const fn=document.getElementById('mbFN').value.trim();
@@ -1081,145 +1111,360 @@ async function addManualBooking(){
   const em=document.getElementById('mbEM').value.trim();
   const from=document.getElementById('mbFrom').value;
   const to=document.getElementById('mbTo').value;
-  const guests=document.getElementById('mbGuests').value;
+  const adults=parseInt(document.getElementById('mbAdults').value)||2;
+  const country=document.getElementById('mbCountry').value.trim();
   const note=document.getElementById('mbNote').value.trim();
   const notice=document.getElementById('mbNotice');
   if(!fn||!ln||!from||!to){showNotice(notice,'Ispunite ime, prezime i datume.','error');return;}
   if(from>=to){showNotice(notice,'Datum odlaska mora biti nakon dolaska.','error');return;}
-  const room=ROOMS.find(r=>r.id===roomId);
+  const room=ROOMS_META.find(r=>r.id===roomId);
   const nights=daysBetween(from,to);
-  const bk={
-    id:'VH-M-'+Date.now(),roomId,
-    roomName:`${room.type} ${room.id}`,
-    checkin:from,checkout:to,nights,
-    total:nights*room.price,
-    firstName:fn,lastName:ln,email:em||'—',phone:ph||'—',
-    guests,country:'—',note:note||'Ručno dodano',
-    status:'confirmed',createdAt:new Date().toISOString()
-  };
+  const prices=getPrices();const rp=prices[roomId]||DEFAULT_PRICES[roomId];
+  const extra=Math.max(0,adults-rp.base);
+  let total=0;let d=new Date(from);const end=new Date(to);
+  while(d<end){const ds=d.toISOString().split('T')[0];total+=(isSeason(ds)?rp.season:rp.offseason)+extra*(rp.extraPerson||0);d.setDate(d.getDate()+1);}
+  const bk={id:'VH-M-'+Date.now(),roomId,roomName:`${room.type} ${room.id}`,checkin:from,checkout:to,nights,total,adults,firstName:fn,lastName:ln,email:em||'—',phone:ph||'—',country:country||'—',note:note||'Ručno dodano',status:'confirmed',createdAt:cetIso(),createdAtDisplay:cetNow()};
   const bks=getBookings();bks.push(bk);await saveBookings(bks);
-  showNotice(notice,`Rezervacija dodana! ${room.type} ${room.id} · ${fn} ${ln} · ${fmtD(from)}–${fmtD(to)}`,'success');
-  ['mbFN','mbLN','mbPH','mbEM','mbFrom','mbTo','mbNote'].forEach(id=>document.getElementById(id).value='');
-  renderBookings(); renderTimeline();
+  showNotice(notice,`✓ Rezervacija dodana! ${room.type} ${room.id} · ${fn} ${ln} · ${fmtD(new Date(from))}–${fmtD(new Date(to))} · ${total} EUR`,'success');
+  ['mbFN','mbLN','mbPH','mbEM','mbCountry','mbNote'].forEach(id=>document.getElementById(id).value='');
+  mbSelStart=null;mbSelEnd=null;mbPickEnd=false;
+  document.getElementById('mbFrom').value='';document.getElementById('mbTo').value='';
+  document.getElementById('mbPriceSummary').style.display='none';
+  renderMbCal();renderTimeline();renderBookings();
 }
 
-function showNotice(el,msg,type){
-  el.textContent=msg;
-  el.className=`notice ${type} visible`;
-  setTimeout(()=>el.classList.remove('visible'),4000);
+// ══════════════════════════════════
+//  BOOKINGS TABLE
+// ══════════════════════════════════
+let currentFilter='all';
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderBookings();}
+function renderBookings(){
+  let bks=getBookings();
+  if(currentFilter!=='all')bks=bks.filter(b=>b.status===currentFilter);
+  bks=bks.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  document.getElementById('bookingsCount').textContent=`${bks.length} rezervacija`;
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
+  const sc={pending:'sp',confirmed:'sc',cancelled:'sx'};
+  document.getElementById('bookingsBody').innerHTML=bks.length?bks.map(b=>`<tr style="cursor:pointer" onclick="showModal('${b.id}')">
+    <td style="font-size:0.78rem;color:#888">${b.id}</td>
+    <td><strong>${b.roomName}</strong></td><td>${b.checkin}</td><td>${b.checkout}</td>
+    <td>${b.nights}</td><td><strong>${b.total}</strong></td>
+    <td>${b.firstName}</td><td>${b.lastName}</td><td>${b.email}</td><td>${b.phone}</td>
+    <td>${b.adults||b.guests||'—'}</td>
+    <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${b.note||'—'}</td>
+    <td style="font-size:0.82rem">${b.createdAtDisplay||b.createdAt||'—'}</td>
+    <td><span class="sbadge ${sc[b.status]}">${sl[b.status]}</span></td>
+    <td onclick="event.stopPropagation()">
+      ${b.status!=='confirmed'?`<button class="act-btn ab-c" onclick="chStatus('${b.id}','confirmed')">✓</button>`:''}
+      ${b.status!=='cancelled'?`<button class="act-btn ab-x" onclick="chStatus('${b.id}','cancelled')">✗</button>`:''}
+    </td>
+  </tr>`).join(''):'<tr class="empty-row"><td colspan="15">Nema rezervacija.</td></tr>';
 }
 
-// ══════════════════
-//  EXPORT
-// ══════════════════
-function exportCSV(){
+async function chStatus(id,status){
+  const b=getBookings();const i=b.findIndex(x=>x.id===id);
+  if(i>-1){b[i].status=status;await saveBookings(b);}
+  renderBookings();renderTimeline();
+}
+
+// ══════════════════════════════════
+//  MODAL
+// ══════════════════════════════════
+function showModal(id){
+  const b=getBookings().find(x=>x.id===id);if(!b)return;
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
+  document.getElementById('modalTitle').textContent=`${b.roomName} · ${b.firstName} ${b.lastName}`;
+  document.getElementById('modalBody').innerHTML=`
+    <div class="modal-row"><span class="modal-key">Status</span><span class="modal-val">${sl[b.status]||b.status}</span></div>
+    <div class="modal-row"><span class="modal-key">Soba</span><span class="modal-val">${b.roomName}</span></div>
+    <div class="modal-row"><span class="modal-key">Dolazak</span><span class="modal-val">${fmtD(b.checkin)}</span></div>
+    <div class="modal-row"><span class="modal-key">Odlazak</span><span c    <div class="modal-row"><span class="modal-key">Odlazak</span><span class="modal-val">${fmtD(b.checkout)}</span></div>
+    <div class="modal-row"><span class="modal-key">Noći</span><span class="modal-val">${b.nights}</span></div>
+    <div class="modal-row"><span class="modal-key">Ukupno</span><span class="modal-val"><strong>${b.total} EUR</strong></span></div>
+    <div class="modal-row"><span class="modal-key">Odrasli</span><span class="modal-val">${b.adults||b.guests||'—'}</span></div>
+    <div class="modal-row"><span class="modal-key">Email</span><span class="modal-val">${b.email}</span></div>
+    <div class="modal-row"><span class="modal-key">Telefon</span><span class="modal-val">${b.phone}</span></div>
+    <div class="modal-row"><span class="modal-key">Država</span><span class="modal-val">${b.country||'—'}</span></div>
+    <div class="modal-row"><span class="modal-key">Napomena</span><span class="modal-val">${b.note||'—'}</span></div>
+    <div class="modal-row"><span class="modal-key">Rezervirano</span><span class="modal-val">${b.createdAtDisplay||b.createdAt||'—'}</span></div>
+    <div style="display:flex;gap:0.6rem;margin-top:1.2rem">
+      ${b.status!=='confirmed'?`<button class="btn btn-green" style="flex:1" onclick="chStatus('${b.id}','confirmed');closeModal()">✓ Potvrdi</button>`:''}
+      ${b.status!=='cancelled'?`<button class="btn btn-red" style="flex:1" onclick="chStatus('${b.id}','cancelled');closeModal()">✗ Otkaži</button>`:''}
+    </div>`;
+  document.getElementById('modalBg').classList.add('visible');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('visible');}
+
+// ══════════════════════════════════
+//  PRICES PAGE
+// ══════════════════════════════════
+function renderPrices(){
+  const prices=getPrices();
+  document.getElementById('pricesGrid').innerHTML=ROOMS_META.map(r=>{
+    const p=prices[r.id]||DEFAULT_PRICES[r.id];
+    return`<div class="price-card">
+      <div class="price-card-top">
+        <div class="price-card-room">${r.type}</div>
+        <div class="price-card-name">${r.id} <span style="font-size:0.9rem;color:#aaa">· ${r.capacity} osobe max</span></div>
+      </div>
+      <div class="price-card-body">
+        <p style="font-size:0.85rem;font-weight:bold;color:#555;margin-bottom:0.8rem;text-transform:uppercase">Bazna cijena (za ${p.base} osobe)</p>
+        <div class="price-row">
+          <div class="price-field"><label>Van sezone (€/noć)</label><input class="price-input" type="number" id="p_off_${r.id}" value="${p.offseason}" min="0"/></div>
+          <div class="price-field"><label>Sezona VII-VIII (€/noć)</label><input class="price-input" type="number" id="p_sea_${r.id}" value="${p.season}" min="0"/></div>
+        </div>
+        <hr class="price-divider"/>
+        <p style="font-size:0.85rem;font-weight:bold;color:#555;margin-bottom:0.8rem;text-transform:uppercase">Dodatak po osobi</p>
+        <div class="price-row">
+          <div class="price-field"><label>Bazni broj osoba</label><input class="price-input" type="number" id="p_base_${r.id}" value="${p.base}" min="1" max="5"/></div>
+          <div class="price-field"><label>Dodatak/os. (€/noć)</label><input class="price-input" type="number" id="p_extra_${r.id}" value="${p.extraPerson||0}" min="0"/></div>
+        </div>
+        <p style="font-size:0.82rem;color:#888;margin-bottom:1rem">Djeca do 3 god. su besplatna.</p>
+        <button class="price-save-btn" onclick="saveRoomPrice('${r.id}')">💾 Spremi cijene za ${r.name}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function saveRoomPrice(roomId){
+  const prices=getPrices();
+  prices[roomId]={
+    base:parseInt(document.getElementById('p_base_'+roomId).value)||2,
+    offseason:parseInt(document.getElementById('p_off_'+roomId).value)||0,
+    season:parseInt(document.getElementById('p_sea_'+roomId).value)||0,
+    extraPerson:parseInt(document.getElementById('p_extra_'+roomId).value)||0,
+  };
+  savePricesLocal(prices);
+  const notice=document.getElementById('priceNotice');
+  showNotice(notice,'✓ Cijene snimljene! Primjenjuju se na web stranici.','success');
+}
+
+// ══════════════════════════════════
+//  FINANCIJE
+// ══════════════════════════════════
+const MONTHS_HR=['Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj','Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'];
+const MONTHS_SHORT=['Sij','Velj','Ožu','Tra','Svi','Lip','Srp','Kol','Ruj','Lis','Stu','Pro'];
+
+function populateYearSelector(){
+  const sel=document.getElementById('finYear');
+  if(!sel)return;
   const bks=getBookings();
-  if(!bks.length){alert('Nema rezervacija.');return;}
-  const h=['ID','Soba','Dolazak','Odlazak','Noci','EUR','Ime','Prezime','Email','Telefon','Gosti','Drzava','Napomena','Status','Kreirano'];
-  const rows=bks.map(b=>[b.id,b.roomName,b.checkin,b.checkout,b.nights,b.total,b.firstName,b.lastName,b.email,b.phone,b.guests,b.country||'',b.note||'',b.status,b.createdAt].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const years=new Set();
+  const now=new Date().getFullYear();
+  years.add(now);years.add(now-1);
+  bks.forEach(b=>{if(b.checkin)years.add(new Date(b.checkin).getFullYear());});
+  const sorted=Array.from(years).sort((a,b)=>b-a);
+  sel.innerHTML=sorted.map(y=>`<option value="${y}"${y===now?' selected':''}>${y}</option>`).join('');
+}
+
+function isSeason(dateStr){const m=new Date(dateStr).getMonth()+1;return m===7||m===8;}
+
+function renderFinancije(){
+  const sel=document.getElementById('finYear');if(!sel)return;
+  const year=parseInt(sel.value);
+  const bks=getBookings().filter(b=>b.status!=='cancelled'&&new Date(b.checkin).getFullYear()===year);
+  const totalEur=bks.reduce((s,b)=>s+b.total,0);
+  const totalNights=bks.reduce((s,b)=>s+b.nights,0);
+  const totalRes=bks.length;
+  const confirmed=bks.filter(b=>b.status==='confirmed').length;
+  const avgStay=totalRes>0?(totalNights/totalRes).toFixed(1):0;
+  const totalDaysYear=365;
+  const totalRoomDays=ROOMS_META.length*totalDaysYear;
+  const occRate=totalRoomDays>0?((totalNights/totalRoomDays)*100).toFixed(1):0;
+
+  document.getElementById('finTotalCards').innerHTML=`
+    <div class="fin-card green"><div class="fin-card-label">Ukupni prihod ${year}</div><div class="fin-card-value">${totalEur.toLocaleString('hr-HR')}</div><div class="fin-card-sub">EUR</div></div>
+    <div class="fin-card blue"><div class="fin-card-label">Rezervacija</div><div class="fin-card-value">${totalRes}</div><div class="fin-card-sub">${confirmed} potvrđene</div></div>
+    <div class="fin-card"><div class="fin-card-label">Ukupno noći</div><div class="fin-card-value">${totalNights}</div><div class="fin-card-sub">prosj. boravak ${avgStay} noći</div></div>
+    <div class="fin-card orange"><div class="fin-card-label">Popunjenost</div><div class="fin-card-value">${occRate}%</div><div class="fin-card-sub">sve sobe zajedno</div></div>`;
+
+  const monthly=Array.from({length:12},(_,i)=>({month:i,eur:0,nights:0,res:0,season:0,offseason:0}));
+  bks.forEach(b=>{const m=new Date(b.checkin).getMonth();monthly[m].eur+=b.total;monthly[m].nights+=b.nights;monthly[m].res++;if(isSeason(b.checkin))monthly[m].season+=b.total;else monthly[m].offseason+=b.total;});
+
+  const maxEur=Math.max(...monthly.map(m=>m.eur),1);
+  document.getElementById('finChart').innerHTML=monthly.map((m,i)=>{
+    const pct=(m.eur/maxEur*100).toFixed(1);
+    const color=(i===6||i===7)?'#cc6600':'#2a6b7c';
+    return`<div class="chart-bar-col"><div class="chart-bar" style="height:${Math.max(pct,m.eur>0?3:0)}%;background:${color}" title="${MONTHS_HR[i]}: ${m.eur} EUR">${m.eur>0?`<div class="chart-bar-val">${m.eur}€</div>`:''}</div></div>`;
+  }).join('');
+  document.getElementById('finChartLabels').innerHTML=monthly.map((m,i)=>`<div style="flex:1;text-align:center;font-size:0.65rem;font-weight:bold;color:${(i===6||i===7)?'#cc6600':'#555'}">${MONTHS_SHORT[i]}</div>`).join('');
+
+  document.getElementById('finMonthGrid').innerHTML=monthly.map((m,i)=>`
+    <div class="month-card" onclick="showMonthDetail(${i},${year})" id="mc_${i}">
+      <div class="month-card-name">${MONTHS_HR[i]}</div>
+      <div class="month-card-eur">${m.eur} €</div>
+      <div class="month-card-sub">${m.res} rezervacija · ${m.nights} noći</div>
+    </div>`).join('');
+
+  const roomData=ROOMS_META.map(r=>{
+    const rb=bks.filter(b=>b.roomId===r.id);
+    const rEur=rb.reduce((s,b)=>s+b.total,0);
+    const rNights=rb.reduce((s,b)=>s+b.nights,0);
+    const rRes=rb.length;
+    const rOcc=((rNights/totalDaysYear)*100).toFixed(1);
+    const rAvg=rRes>0?(rEur/rRes).toFixed(0):0;
+    const rSeason=rb.filter(b=>isSeason(b.checkin)).reduce((s,b)=>s+b.total,0);
+    const rOff=rEur-rSeason;
+    return{r,rEur,rNights,rRes,rOcc,rAvg,rSeason,rOff};
+  });
+
+  document.getElementById('finRoomGrid').innerHTML=roomData.map(({r,rEur,rNights,rRes,rOcc,rAvg,rSeason,rOff})=>`
+    <div class="room-fin-card">
+      <div class="room-fin-top"><div class="room-fin-name">${r.name}</div></div>
+      <div class="room-fin-body">
+        <div class="room-fin-row"><span>Ukupno prihod</span><span><strong>${rEur} EUR</strong></span></div>
+        <div class="room-fin-row"><span>Sezona (VII-VIII)</span><span>${rSeason} EUR</span></div>
+        <div class="room-fin-row"><span>Van sezone</span><span>${rOff} EUR</span></div>
+        <div class="room-fin-row"><span>Rezervacija</span><span>${rRes}</span></div>
+        <div class="room-fin-row"><span>Noći</span><span>${rNights}</span></div>
+        <div class="room-fin-row"><span>Prosj. po rez.</span><span>${rAvg} EUR</span></div>
+        <div class="room-fin-row" style="border-top:2px solid #111"><span>Popunjenost</span><span><strong>${rOcc}%</strong></span></div>
+        <div class="occ-bar"><div class="occ-bar-fill" style="width:${Math.min(rOcc,100)}%"></div></div>
+      </div>
+    </div>`).join('');
+
+  let totalRow={rez:0,noci:0,off:0,sea:0,eur:0};
+  document.getElementById('finYearTable').innerHTML=roomData.map(({r,rEur,rNights,rRes,rOcc,rAvg,rSeason,rOff})=>{
+    totalRow.rez+=rRes;totalRow.noci+=rNights;totalRow.off+=rOff;totalRow.sea+=rSeason;totalRow.eur+=rEur;
+    const avgLen=rRes>0?(rNights/rRes).toFixed(1):0;
+    return`<tr><td><strong>${r.name}</strong></td><td>${rRes}</td><td>${rNights}</td><td>${rOff} €</td><td>${rSeason} €</td><td><strong>${rEur} €</strong></td><td>${avgLen} noći</td><td>${rOcc}%</td></tr>`;
+  }).join('')+`<tr style="background:#eee;font-weight:bold"><td>UKUPNO</td><td>${totalRow.rez}</td><td>${totalRow.noci}</td><td>${totalRow.off} €</td><td>${totalRow.sea} €</td><td><strong>${totalRow.eur} €</strong></td><td>—</td><td>${occRate}%</td></tr>`;
+}
+
+let activeMonth=null;
+function showMonthDetail(month,year){
+  if(activeMonth===month){activeMonth=null;document.getElementById('finMonthDetail').style.display='none';document.querySelectorAll('.month-card').forEach(c=>c.classList.remove('active-month'));return;}
+  activeMonth=month;
+  document.querySelectorAll('.month-card').forEach((c,i)=>c.classList.toggle('active-month',i===month));
+  const bks=getBookings().filter(b=>b.status!=='cancelled'&&new Date(b.checkin).getFullYear()===year&&new Date(b.checkin).getMonth()===month);
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
+  const sc={pending:'sp',confirmed:'sc',cancelled:'sx'};
+  document.getElementById('finMonthDetailTitle').textContent=`${MONTHS_HR[month]} ${year} – ${bks.length} rezervacija · ${bks.reduce((s,b)=>s+b.total,0)} EUR`;
+  document.getElementById('finMonthDetailBody').innerHTML=bks.length?bks.map(b=>`<tr><td><strong>${b.roomName}</strong></td><td>${b.firstName} ${b.lastName}</td><td>${b.checkin}</td><td>${b.checkout}</td><td>${b.nights}</td><td><strong>${b.total} €</strong></td><td><span class="sbadge ${sc[b.status]}">${sl[b.status]}</span></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#888;font-style:italic;padding:1.5rem">Nema rezervacija.</td></tr>';
+  document.getElementById('finMonthDetail').style.display='block';
+  document.getElementById('finMonthDetail').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function exportFinExcel(){
+  const sel=document.getElementById('finYear');if(!sel)return;
+  const year=parseInt(sel.value);
+  const bks=getBookings().filter(b=>b.status!=='cancelled'&&new Date(b.checkin).getFullYear()===year);
+  if(!bks.length){alert('Nema rezervacija za '+year+'.');return;}
+  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
+  const wb=XLSX.utils.book_new();
+  const rows=bks.map(b=>({'Soba':b.roomName,'Gost':`${b.firstName} ${b.lastName}`,'Email':b.email,'Telefon':b.phone,'Dolazak':b.checkin,'Odlazak':b.checkout,'Noći':b.nights,'EUR':b.total,'Sezona':isSeason(b.checkin)?'Da':'Ne','Status':sl[b.status]||b.status,'Rezervirano':b.createdAtDisplay||b.createdAt||''}));
+  const ws1=XLSX.utils.json_to_sheet(rows);ws1['!cols']=[{wch:14},{wch:22},{wch:28},{wch:16},{wch:12},{wch:12},{wch:8},{wch:10},{wch:8},{wch:14},{wch:22}];
+  XLSX.utils.book_append_sheet(wb,ws1,'Rezervacije '+year);
+  const monthly=Array.from({length:12},(_,i)=>({Mjesec:MONTHS_HR[i],Rezervacija:0,'Noći':0,'Van sezone €':0,'Sezona €':0,'Ukupno €':0}));
+  bks.forEach(b=>{const m=new Date(b.checkin).getMonth();monthly[m]['Rezervacija']++;monthly[m]['Noći']+=b.nights;if(isSeason(b.checkin))monthly[m]['Sezona €']+=b.total;else monthly[m]['Van sezone €']+=b.total;monthly[m]['Ukupno €']+=b.total;});
+  const ws2=XLSX.utils.json_to_sheet(monthly);ws2['!cols']=[{wch:14},{wch:12},{wch:8},{wch:14},{wch:12},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws2,'Po mjesecima');
+  const roomRows=ROOMS_META.map(r=>{const rb=bks.filter(b=>b.roomId===r.id);const rEur=rb.reduce((s,b)=>s+b.total,0);const rNights=rb.reduce((s,b)=>s+b.nights,0);const rSea=rb.filter(b=>isSeason(b.checkin)).reduce((s,b)=>s+b.total,0);return{'Soba':r.name,'Rezervacija':rb.length,'Noći':rNights,'Van sezone €':rEur-rSea,'Sezona €':rSea,'Ukupno €':rEur,'Prosj. rez. €':rb.length>0?Math.round(rEur/rb.length):0,'Popunjenost %':((rNights/365)*100).toFixed(1)};});
+  const ws3=XLSX.utils.json_to_sheet(roomRows);ws3['!cols']=[{wch:14},{wch:12},{wch:8},{wch:14},{wch:12},{wch:12},{wch:16},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws3,'Po sobi');
+  XLSX.writeFile(wb,'villa-helena-obracun-'+year+'.xlsx');
+}
+
+// ══════════════════════════════════
+//  SETTINGS PAGE
+// ══════════════════════════════════
+function renderSettings(){
+  document.getElementById('patInput').value=GH_TOKEN?'•'.repeat(20):'';
+  document.getElementById('repoInput').value=GH_REPO;
+  document.getElementById('fileInput').value=GH_FILE;
+  const status=document.getElementById('patStatus');
+  status.textContent=GH_TOKEN?'✓ Token je postavljen':'⚠️ Token nije postavljen – rezervacije se čuvaju samo lokalno';
+  status.className='settings-status '+(GH_TOKEN?'ok':'warn');
+}
+
+function savePAT(){
+  const val=document.getElementById('patInput').value.trim();
+  if(!val||val.includes('•')){alert('Unesite pravi token');return;}
+  GH_TOKEN=val;localStorage.setItem('vh_gh_token',val);
+  const status=document.getElementById('patStatus');
+  status.textContent='✓ Token snimljen!';status.className='settings-status ok';
+}
+
+async function testPAT(){
+  const status=document.getElementById('patStatus');
+  status.textContent='⏳ Testiranje...';status.className='settings-status';
+  try{
+    const res=await fetch('https://api.github.com/repos/'+GH_REPO,{headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+    if(res.ok){status.textContent='✓ Konekcija uspješna!';status.className='settings-status ok';}
+    else{status.textContent='✗ Greška: '+res.status;status.className='settings-status err';}
+  }catch(e){status.textContent='✗ Greška konekcije';status.className='settings-status err';}
+}
+
+function saveRepoSettings(){
+  GH_REPO=document.getElementById('repoInput').value.trim();
+  GH_FILE=document.getElementById('fileInput').value.trim();
+  localStorage.setItem('vh_gh_repo',GH_REPO);
+  localStorage.setItem('vh_gh_file',GH_FILE);
+  const status=document.getElementById('repoStatus');
+  status.textContent='✓ Snimljeno!';status.className='settings-status ok';
+}
+
+async function forceSyncFromGH(){
+  const status=document.getElementById('syncStatus');
+  status.textContent='⏳ Učitavanje...';status.className='settings-status';
+  await loadBookings();
+  status.textContent='✓ Učitano '+ALL_BOOKINGS.length+' rezervacija ('+cetNow()+')';
+  status.className='settings-status ok';
+}
+
+async function forceSyncToGH(){
+  const status=document.getElementById('syncStatus');
+  status.textContent='⏳ Snimanje...';status.className='settings-status';
+  const ok=await ghWrite(ALL_BOOKINGS);
+  status.textContent=ok?'✓ Snimljeno '+ALL_BOOKINGS.length+' rezervacija ('+cetNow()+')':'✗ Greška pri snimanju';
+  status.className='settings-status '+(ok?'ok':'err');
+}
+
+// ══════════════════════════════════
+//  NOTICE
+// ══════════════════════════════════
+function showNotice(el,msg,type){
+  el.textContent=msg;el.className='notice '+type+' visible';
+  setTimeout(()=>el.classList.remove('visible'),5000);
+}
+
+// ══════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════
+function exportCSV(){
+  const bks=getBookings();if(!bks.length){alert('Nema rezervacija.');return;}
+  const h=['ID','Soba','Dolazak','Odlazak','Noci','EUR','Ime','Prezime','Email','Telefon','Odrasli','Napomena','Datum rezervacije','Status'];
+  const rows=bks.map(b=>[b.id,b.roomName,b.checkin,b.checkout,b.nights,b.total,b.firstName,b.lastName,b.email,b.phone,b.adults||b.guests||'',b.note||'',b.createdAtDisplay||b.createdAt||'',b.status].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
   const csv=[h.join(','),...rows].join('\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;
-  a.download=`villa-helena-${todayStr()}.csv`;
-  a.click();URL.revokeObjectURL(url);
+  const a=document.createElement('a');a.href=url;a.download='villa-helena-'+todayStr()+'.csv';a.click();URL.revokeObjectURL(url);
 }
 
 function exportExcel(){
-  const bks=getBookings();
-  if(!bks.length){alert('Nema rezervacija.');return;}
-
+  const bks=getBookings();if(!bks.length){alert('Nema rezervacija.');return;}
   const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
-
-  // Napravi podatke za tablicu
-  const rows = bks.map(b=>({
-    'ID': b.id,
-    'Soba': b.roomName,
-    'Dolazak': b.checkin,
-    'Odlazak': b.checkout,
-    'Broj noći': b.nights,
-    'Ukupno (EUR)': b.total,
-    'Ime': b.firstName,
-    'Prezime': b.lastName,
-    'Email': b.email,
-    'Telefon': b.phone,
-    'Broj gostiju': Number(b.guests),
-    'Država': b.country||'',
-    'Napomena': b.note||'',
-    'Status': sl[b.status]||b.status,
-    'Kreirano': b.createdAt ? new Date(b.createdAt).toLocaleString('hr-HR') : ''
-  }));
-
-  // Napravi workbook
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(rows);
-
-  // Postavi širine kolona
-  ws['!cols'] = [
-    {wch:16},{wch:14},{wch:12},{wch:12},{wch:10},{wch:14},
-    {wch:14},{wch:14},{wch:28},{wch:16},{wch:12},
-    {wch:12},{wch:24},{wch:14},{wch:22}
-  ];
-
-  // Dodaj sheet u workbook
-  XLSX.utils.book_append_sheet(wb, ws, 'Rezervacije');
-
-  // Napravi drugi sheet – samo aktivne rezervacije
-  const aktivne = bks.filter(b=>b.status!=='cancelled');
-  if(aktivne.length){
-    const rowsA = aktivne.map(b=>({
-      'Soba': b.roomName,
-      'Dolazak': b.checkin,
-      'Odlazak': b.checkout,
-      'Noći': b.nights,
-      'EUR': b.total,
-      'Gost': `${b.firstName} ${b.lastName}`,
-      'Email': b.email,
-      'Telefon': b.phone,
-      'Gosti': Number(b.guests),
-      'Status': sl[b.status]||b.status
-    }));
-    const wsA = XLSX.utils.json_to_sheet(rowsA);
-    wsA['!cols']=[{wch:14},{wch:12},{wch:12},{wch:8},{wch:10},{wch:22},{wch:28},{wch:16},{wch:8},{wch:14}];
-    XLSX.utils.book_append_sheet(wb, wsA, 'Aktivne rezervacije');
-  }
-
-  // Napravi treći sheet – prihodi po sobi
-  const prihodi = {};
-  bks.filter(b=>b.status!=='cancelled').forEach(b=>{
-    if(!prihodi[b.roomName]) prihodi[b.roomName]={soba:b.roomName,brojRez:0,ukupnoNoci:0,ukupnoEUR:0};
-    prihodi[b.roomName].brojRez++;
-    prihodi[b.roomName].ukupnoNoci+=b.nights;
-    prihodi[b.roomName].ukupnoEUR+=b.total;
-  });
-  const rowsP = Object.values(prihodi).map(p=>({
-    'Soba': p.soba,
-    'Broj rezervacija': p.brojRez,
-    'Ukupno noći': p.ukupnoNoci,
-    'Ukupno EUR': p.ukupnoEUR
-  }));
-  if(rowsP.length){
-    const wsP = XLSX.utils.json_to_sheet(rowsP);
-    wsP['!cols']=[{wch:16},{wch:18},{wch:14},{wch:14}];
-    XLSX.utils.book_append_sheet(wb, wsP, 'Prihodi po sobi');
-  }
-
-  // Download
-  XLSX.writeFile(wb, `villa-helena-rezervacije-${todayStr()}.xlsx`);
+  const rows=bks.map(b=>({'ID':b.id,'Soba':b.roomName,'Dolazak':b.checkin,'Odlazak':b.checkout,'Noći':b.nights,'EUR':b.total,'Ime':b.firstName,'Prezime':b.lastName,'Email':b.email,'Telefon':b.phone,'Odrasli':b.adults||b.guests||'','Napomena':b.note||'','Datum rezervacije':b.createdAtDisplay||b.createdAt||'','Status':sl[b.status]||b.status}));
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[{wch:16},{wch:14},{wch:12},{wch:12},{wch:8},{wch:10},{wch:14},{wch:14},{wch:28},{wch:16},{wch:10},{wch:24},{wch:22},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws,'Sve rezervacije');
+  const akt=bks.filter(b=>b.status!=='cancelled');
+  if(akt.length){const rA=akt.map(b=>({'Soba':b.roomName,'Dolazak':b.checkin,'Odlazak':b.checkout,'Noći':b.nights,'EUR':b.total,'Gost':b.firstName+' '+b.lastName,'Email':b.email,'Telefon':b.phone,'Status':sl[b.status]}));const wsA=XLSX.utils.json_to_sheet(rA);XLSX.utils.book_append_sheet(wb,wsA,'Aktivne');}
+  XLSX.writeFile(wb,'villa-helena-'+todayStr()+'.xlsx');
 }
 
-// ══════════════════
+// ══════════════════════════════════
 //  INIT
-// ══════════════════
+// ══════════════════════════════════
 async function initApp(){
-  const d=todayStr();
-  ['ovFrom','ovTo','mbFrom','freeDate'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.value=d;
-  });
-  // Učitaj rezervacije s GitHuba
+  loadConfig();
   await loadBookings();
   renderDashboard();
+  const d=todayStr();
+  ['ovFrom','ovTo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=d;});
+  renderMbCal();
+  renderOvList();
+  renderSettings();
 }
 </script>
 </body>
