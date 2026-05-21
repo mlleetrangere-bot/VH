@@ -399,7 +399,15 @@
             "hole_number": 1,
             "par": 3,
             "si": 13,
-            "length_m": 128
+            "length_m": 128,
+            "front": {
+              "lat": 51.223812,
+              "lon": 6.772814
+            },
+            "mid": {
+              "lat": 51.223812,
+              "lon": 6.772814
+            }
           },
           {
             "hole_number": 2,
