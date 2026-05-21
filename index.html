@@ -542,13 +542,9 @@ footer a{color:#aaddff;text-decoration:underline}
 // ══════════════════════════════════════════
 //  CONFIG – zamijeni token u settings.js
 // ══════════════════════════════════════════
-// ══════════════════════════════════════════════════════
-//  ⚠️  OVDJE UPIŠI SVOJ GITHUB TOKEN
-//  Otvori ovaj fajl u Notepadu, nađi ovaj redak i
-//  zamijeni UPIŠI_TOKEN_OVDJE sa stvarnim tokenom.
-//  Token nikad ne dijeli javno!
-// ══════════════════════════════════════════════════════
-let GH_TOKEN = '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';
+// Token se čita iz localStorage – postavi ga jednom u Admin panelu (Postavke)
+// i automatski vrijedi i za index stranicu jer su na istoj domeni.
+let GH_TOKEN = localStorage.getItem('vh_gh_token') || '';
 const GH_REPO = 'mlleetrangere-bot/VH';
 const GH_FILE = 'rezervacije.json';
 let ghFileSha = null;
@@ -1127,48 +1123,88 @@ async function submitBooking(){
   }
   if(!fn||!ln||!em||!ph){ err.textContent=t('fill_all'); err.classList.add('visible'); return; }
 
-  // Final availability check
-  const bksCheck=getBookings().filter(b=>b.status!=='cancelled');
-  if(bksCheck.some(b=>b.roomId===selRoomId&&!(selCheckout<=b.checkin||selCheckin>=b.checkout))){
-    err.textContent=t('conflict'); err.classList.add('visible'); return;
-  }
-
   // Collect child ages
-  const ages = Array.from({length:gChildren},(_,i)=>parseInt(document.getElementById('cAge'+i)?.value||5));
-  const freeKids = ages.filter(a=>a<3).length;
-  const payKids = ages.filter(a=>a>=3).length;
-
-  // Recalculate with correct paying guests
-  const paying = gAdults + payKids;
+  const ages=Array.from({length:gChildren},(_,i)=>parseInt(document.getElementById('cAge'+i)?.value||5));
+  const payKids=ages.filter(a=>a>=3).length;
+  const freeKids=ages.filter(a=>a<3).length;
+  const paying=gAdults+payKids;
   const room=ROOMS.find(r=>r.id===selRoomId);
   const calc=calcTotal(selRoomId,selCheckin,selCheckout,paying);
+  const tl=room.type==='apt'?'Apartman':'Soba';
 
-  let noteText = no;
+  let ageStr='';
   if(gChildren>0){
-    const ageStr = ages.map((a,i)=>`dijete ${i+1}: ${a} god.${a<3?' (besplatno)':''}`).join(', ');
-    noteText = (no?no+'
-':'')+ageStr;
+    ageStr=ages.map((a,i)=>`Dijete ${i+1}: ${a} god.${a<3?' (besplatno)':''}`).join(' | ');
   }
 
+  // 1. Pošalji email putem Formspree
+  const FORMSPREE_ID='xnjrdodd';
+  try{
+    document.getElementById('submitBtn').disabled=true;
+    document.getElementById('submitBtn').textContent='Šalje se...';
+
+    const res=await fetch(`https://formspree.io/f/${FORMSPREE_ID}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:`Nova rezervacija – ${tl} ${selRoomId} | ${fn} ${ln}`,
+        Soba:`${tl} ${selRoomId}`,
+        Dolazak:selCheckin,
+        Odlazak:selCheckout,
+        'Broj noći':calc.nights,
+        'Ukupna cijena':`${calc.total} EUR`,
+        Ime:fn,
+        Prezime:ln,
+        Email:em,
+        Telefon:ph,
+        Država:co,
+        Odrasli:gAdults,
+        Djeca:gChildren,
+        'Dob djece':ageStr||'—',
+        Napomena:no||'—',
+        'Datum rezervacije':cetNow(),
+        'ID rezervacije':'VH-'+Date.now(),
+      })
+    });
+
+    if(!res.ok){
+      const data=await res.json();
+      throw new Error(data.error||'Greška');
+    }
+  }catch(e){
+    err.textContent='Greška pri slanju. Molimo kontaktirajte nas direktno na villahelena.cro@gmail.com';
+    err.classList.add('visible');
+    document.getElementById('submitBtn').disabled=false;
+    document.getElementById('submitBtn').textContent=t('send_request');
+    return;
+  }
+
+  // 2. Spremi lokalno u localStorage (za admin pregled)
   const bk={
     id:'VH-'+Date.now(),
     roomId:selRoomId,
-    roomName:`${room.type==='apt'?'Apartman':'Soba'} ${room.id}`,
+    roomName:`${tl} ${room.id}`,
     checkin:selCheckin, checkout:selCheckout,
     nights:calc.nights, total:calc.total,
     adults:gAdults, children:gChildren, childAges:ages,
     firstName:fn, lastName:ln, email:em, phone:ph,
-    country:co, note:noteText,
+    country:co, note:(no?no+'
+':'')+ageStr,
     status:'pending',
     createdAt:cetIso(), createdAtDisplay:cetNow()
   };
+  const bks=getBookings(); bks.push(bk);
+  localStorage.setItem('vh_bookings',JSON.stringify(bks));
 
-  const bks=getBookings(); bks.push(bk); await saveBookings(bks);
+  // 3. Pokušaj i GitHub (ako je token dostupan)
+  const tok=localStorage.getItem('vh_gh_token')||'';
+  if(tok) await ghWrite(bks);
+
+  // Uspjeh!
   suc.textContent=t('success_msg'); suc.classList.add('visible');
-  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('submitBtn').textContent=t('send_request');
 
   setTimeout(()=>{
-    // Reset everything
     selRoomId=null; selCheckin=''; selCheckout=''; selNights=0;
     gAdults=2; gChildren=0;
     document.getElementById('adultsVal').textContent='2';

@@ -627,6 +627,22 @@ body{font-family:Arial,Helvetica,sans-serif;background:#f0f0f0;color:#111;font-s
         <div class="settings-status" id="repoStatus"></div>
       </div>
 
+      <!-- Formspree -->
+      <div class="settings-section">
+        <div class="settings-title">📧 Formspree – email obavijesti</div>
+        <div class="settings-desc">
+          Svaka rezervacija gosta automatski šalje email na <strong>villahelena.cro@gmail.com</strong>.<br>
+          Formspree ID: <strong>xnjrdodd</strong> · Endpoint: <strong>https://formspree.io/f/xnjrdodd</strong>
+        </div>
+        <div style="background:#e6ffe6;border:2px solid #006600;border-radius:6px;padding:1rem 1.2rem;font-size:0.95rem;color:#004400;font-weight:bold">
+          ✓ Aktivno – sve rezervacije s index.html i ručni unosi šalju email obavijest
+        </div>
+        <p style="font-size:0.85rem;color:#888;margin-top:0.8rem">
+          Upravljaj formama na <a href="https://formspree.io" target="_blank" style="color:#2a6b7c">formspree.io</a> – 
+          tamo vidiš sve primljene poruke, možeš postaviti auto-reply gostu i sl.
+        </p>
+      </div>
+
       <!-- Social links -->
       <div class="settings-section">
         <div class="settings-title">📱 Društvene mreže</div>
@@ -1125,7 +1141,30 @@ async function addManualBooking(){
   while(d<end){const ds=d.toISOString().split('T')[0];total+=(isSeason(ds)?rp.season:rp.offseason)+extra*(rp.extraPerson||0);d.setDate(d.getDate()+1);}
   const bk={id:'VH-M-'+Date.now(),roomId,roomName:`${room.type} ${room.id}`,checkin:from,checkout:to,nights,total,adults,firstName:fn,lastName:ln,email:em||'—',phone:ph||'—',country:country||'—',note:note||'Ručno dodano',status:'confirmed',createdAt:cetIso(),createdAtDisplay:cetNow()};
   const bks=getBookings();bks.push(bk);await saveBookings(bks);
-  showNotice(notice,`✓ Rezervacija dodana! ${room.type} ${room.id} · ${fn} ${ln} · ${fmtD(new Date(from))}–${fmtD(new Date(to))} · ${total} EUR`,'success');
+
+  // Pošalji email obavijest putem Formspree
+  try{
+    await fetch('https://formspree.io/f/xnjrdodd',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:`Ručna rezervacija – ${room.type} ${room.id} | ${fn} ${ln}`,
+        Soba:`${room.type} ${room.id}`,
+        Dolazak:fmtD(new Date(from)),
+        Odlazak:fmtD(new Date(to)),
+        'Broj noći':nights,
+        'Ukupna cijena':`${total} EUR`,
+        Ime:fn, Prezime:ln,
+        Email:em||'—', Telefon:ph||'—',
+        Odrasli:adults,
+        Napomena:note||'—',
+        'Vrsta':'RUČNO DODANO – vlasnik',
+        'Datum unosa':cetNow(),
+      })
+    });
+  }catch(e){ console.log('Formspree error (non-critical):', e); }
+
+  showNotice(notice,`✓ Rezervacija dodana i email poslan! ${room.type} ${room.id} · ${fn} ${ln} · ${fmtD(new Date(from))}–${fmtD(new Date(to))} · ${total} EUR`,'success');
   ['mbFN','mbLN','mbPH','mbEM','mbCountry','mbNote'].forEach(id=>document.getElementById(id).value='');
   mbSelStart=null;mbSelEnd=null;mbPickEnd=false;
   document.getElementById('mbFrom').value='';document.getElementById('mbTo').value='';
