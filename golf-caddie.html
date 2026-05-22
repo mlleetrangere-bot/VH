@@ -2444,57 +2444,46 @@ async function loadOfflineCourses() {
   let fileCourses = [];
   let localCourses = [];
 
-  // 1. Čitaj courses.json (statički fajl)
+  // 1. Čitaj courses.json (statički fajl — par, SI, dužine)
   try {
     const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(5000) });
     if (res.ok) fileCourses = await res.json();
   } catch (e) {}
 
-  // 2. Čitaj iz localStorage (course-manager snima ovdje)
+  // 2. Čitaj iz localStorage (course-manager snima ovdje — GPS koordinate)
   try {
     const ls = localStorage.getItem('golf_courses');
     if (ls) localCourses = JSON.parse(ls);
   } catch (e) {}
 
-  // 3. Spoji — localStorage ima prednost jer ima GPS koordinate
-  // Ako isti teren postoji u oba, uzmi onaj iz localStorage (noviji/bogatiji podaci)
-  const merged = [...fileCourses];
-  localCourses.forEach(lc => {
-    const idx = merged.findIndex(fc => fc.id === lc.id || fc.club_name === lc.club_name);
-    if (idx >= 0) {
-      // Spoji GPS koordinate iz localStorage u tee podatke
-      merged[idx] = mergeGpsData(merged[idx], lc);
-    } else {
-      merged.push(lc);
-    }
-  });
+  // 3. Ako localStorage ima podatke, koristi ih kao bazu
+  //    (imaju green_coords s GPS koordinatama)
+  if (localCourses.length > 0) {
+    // Spoji par/SI iz courses.json ako lokalnom nedostaju tee podaci
+    const merged = localCourses.map(lc => {
+      const fc = fileCourses.find(f => f.id === lc.id || f.club_name === lc.club_name);
+      if (!fc) return lc;
+      // Uzmi green_coords iz localStorage (ima GPS)
+      // Uzmi tees iz file ili localStorage (koji god ima više podataka)
+      return {
+        ...fc,
+        ...lc,
+        green_coords: lc.green_coords || fc.green_coords || [],
+        tees: lc.tees?.length > 0 ? lc.tees : fc.tees || []
+      };
+    });
+    // Dodaj terene koji su samo u file ali ne u localStorage
+    fileCourses.forEach(fc => {
+      if (!merged.find(m => m.id === fc.id || m.club_name === fc.club_name)) {
+        merged.push(fc);
+      }
+    });
+    state.offlineCourses = merged;
+  } else {
+    state.offlineCourses = fileCourses;
+  }
 
-  state.offlineCourses = merged.length > 0 ? merged : localCourses;
   return state.offlineCourses;
-}
-
-// Spoji GPS koordinate iz localStorage terena u file teren
-function mergeGpsData(fileCourse, localCourse) {
-  if (!localCourse.tees) return fileCourse;
-  const result = JSON.parse(JSON.stringify(fileCourse)); // deep copy
-
-  localCourse.tees.forEach(localTee => {
-    const fileTee = result.tees?.find(t => t.tee_name === localTee.tee_name);
-    if (fileTee && localTee.holes) {
-      localTee.holes.forEach((lh, i) => {
-        if (fileTee.holes && fileTee.holes[i]) {
-          // Kopiraj GPS koordinate ako postoje
-          if (lh.front) fileTee.holes[i].front = lh.front;
-          if (lh.mid)   fileTee.holes[i].mid   = lh.mid;
-          if (lh.back)  fileTee.holes[i].back  = lh.back;
-        }
-      });
-    } else if (!fileTee && result.tees) {
-      // Tee postoji samo u localStorage — dodaj ga
-      result.tees.push(localTee);
-    }
-  });
-  return result;
 }
 
 async function populateCourseDropdown() {
