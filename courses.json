@@ -21,19 +21,7 @@
             "hole_number": 1,
             "par": 4,
             "si": 11,
-            "length_m": 347,
-            "front": {
-              "lat": 51.2259376,
-              "lon": 6.7916729
-            },
-            "mid": {
-              "lat": 51.2259376,
-              "lon": 6.7916729
-            },
-            "back": {
-              "lat": 51.2259376,
-              "lon": 6.7916729
-            }
+            "length_m": 347
           },
           {
             "hole_number": 2,
@@ -375,6 +363,116 @@
           }
         ]
       }
+    ],
+    "green_coords": [
+      {
+        "hole_number": 1,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 2,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 3,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 4,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 5,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 6,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 7,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 8,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 9,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 10,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 11,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 12,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 13,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 14,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 15,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 16,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 17,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 18,
+        "front": null,
+        "mid": null,
+        "back": null
+      }
     ]
   },
   {
@@ -399,15 +497,7 @@
             "hole_number": 1,
             "par": 3,
             "si": 13,
-            "length_m": 128,
-            "front": {
-              "lat": 51.223812,
-              "lon": 6.772814
-            },
-            "mid": {
-              "lat": 51.223812,
-              "lon": 6.772814
-            }
+            "length_m": 128
           },
           {
             "hole_number": 2,
@@ -586,6 +676,62 @@
             "length_m": 60
           }
         ]
+      }
+    ],
+    "green_coords": [
+      {
+        "hole_number": 1,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 2,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 3,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 4,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 5,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 6,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 7,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 8,
+        "front": null,
+        "mid": null,
+        "back": null
+      },
+      {
+        "hole_number": 9,
+        "front": null,
+        "mid": null,
+        "back": null
       }
     ]
   }

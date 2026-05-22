@@ -690,7 +690,21 @@ let state = {
 
 // ── LOAD courses.json ─────────────────────────────────────────────
 async function loadCourses() {
-  // 1. Pokušaj učitati s Avalon servera
+  // 1. UVIJEK prvo provjeri localStorage — ima GPS koordinate
+  const local = localStorage.getItem('golf_courses');
+  if (local) {
+    try {
+      const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        state.courses = parsed;
+        setStatus(`Učitano ${parsed.length} terena iz browsera`);
+        renderSidebar();
+        return;
+      }
+    } catch(e) {}
+  }
+
+  // 2. Avalon server (ako konfiguriran)
   if (BACKEND_URL) {
     try {
       const res = await fetch(`${BACKEND_URL}?action=load_courses&t=${Date.now()}`);
@@ -698,6 +712,7 @@ async function loadCourses() {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
           state.courses = data;
+          localStorage.setItem('golf_courses', JSON.stringify(data));
           setStatus(`Učitano ${data.length} terena s Avalon servera`);
           renderSidebar();
           return;
@@ -706,15 +721,17 @@ async function loadCourses() {
     } catch(e) {}
   }
 
-  // 2. Pokušaj učitati courses.json (statički fajl)
+  // 3. courses.json statički fajl (inicijalni podaci bez GPS)
   try {
     const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         state.courses = data;
-        // Spremi i u localStorage
-        localStorage.setItem('golf_courses', JSON.stringify(data));
+        // NE prepiši localStorage ako već postoji — samo ako je prazan
+        if (!localStorage.getItem('golf_courses')) {
+          localStorage.setItem('golf_courses', JSON.stringify(data));
+        }
         setStatus(`Učitano ${data.length} terena iz courses.json`);
         renderSidebar();
         return;
@@ -722,20 +739,8 @@ async function loadCourses() {
     }
   } catch(e) {}
 
-  // 3. Fallback — localStorage
-  const local = localStorage.getItem('golf_courses');
-  if (local) {
-    try {
-      state.courses = JSON.parse(local);
-      setStatus(`Učitano ${state.courses.length} terena iz browsera`);
-    } catch(e) {
-      state.courses = [];
-      setStatus('Nema terena — dodaj novi klikom na +');
-    }
-  } else {
-    state.courses = [];
-    setStatus('Nema terena — dodaj novi klikom na +');
-  }
+  state.courses = [];
+  setStatus('Nema terena — dodaj novi klikom na +');
   renderSidebar();
 }
 
@@ -758,15 +763,8 @@ function renderSidebar() {
 }
 
 function countGpsCaptured(course) {
-  let count = 0;
-  const tees = course.tees || [];
-  if (tees.length === 0) return 0;
-  const tee = tees[state.activeTeeIdx] || tees[0];
-  if (!tee?.holes) return 0;
-  tee.holes.forEach(h => {
-    if (h.front && h.mid && h.back) count++;
-  });
-  return count;
+  const coords = course.green_coords || [];
+  return coords.filter(h => h.front && h.mid && h.back).length;
 }
 
 // ── COURSE EDITOR ─────────────────────────────────────────────────
@@ -789,6 +787,15 @@ function renderEditor() {
 
   const tees = course.tees || [];
   const activeTee = tees[state.activeTeeIdx];
+  const numHoles = course.holes || 18;
+
+  // Osiguraj da postoji green_coords na razini terena
+  if (!course.green_coords || course.green_coords.length < numHoles) {
+    course.green_coords = Array.from({length: numHoles}, (_, i) => ({
+      hole_number: i+1, front: null, mid: null, back: null
+    }));
+    autoSave();
+  }
 
   let html = '';
 
@@ -800,15 +807,60 @@ function renderEditor() {
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
     <div><label style="font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px;">Broj rupa</label>
-    <input class="input" type="number" value="${course.holes||18}" min="9" max="18"
+    <input class="input" type="number" value="${numHoles}" min="9" max="18"
       oninput="state.courses[${state.activeCourseIdx}].holes=parseInt(this.value)||18;renderEditor();"></div>
     <div><label style="font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px;">Grad</label>
     <input class="input" value="${escHtml(course.location?.city||'')}"
       oninput="if(!state.courses[${state.activeCourseIdx}].location)state.courses[${state.activeCourseIdx}].location={};state.courses[${state.activeCourseIdx}].location.city=this.value;"></div>
   </div>`;
 
-  // ── Tee odabir
-  html += `<div class="section-label">Tee odabir</div>
+  // ── GPS KOORDINATE GREENA (neovisno o tee-u!)
+  html += `<div class="section-label">📍 GPS koordinate greena</div>
+  <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;padding:8px;background:var(--surface2);border-radius:8px;">
+    Green je uvijek na istom mjestu — koordinate vrijede za sve tee opcije.
+  </div>
+  <div class="holes-grid">`;
+
+  for (let i = 0; i < numHoles; i++) {
+    const gc = course.green_coords[i] || { hole_number: i+1 };
+    const hasFront = gc.front?.lat;
+    const hasMid   = gc.mid?.lat;
+    const hasBack  = gc.back?.lat;
+    const allCap   = hasFront && hasMid && hasBack;
+    const isActive = i === state.captureHoleIdx && state.capturing;
+
+    html += `<div class="hole-card${allCap?' all-captured':''}${isActive?' active-hole':''}" id="hcard-${i}">
+      <div class="hole-card-header">
+        <span class="hole-num">RUPA ${i+1}</span>
+        <span style="font-size:11px;color:${allCap?'var(--green)':'var(--text3)'};">${allCap?'✓ OK':'nije snimljeno'}</span>
+      </div>
+      <div class="gps-points">
+        <div class="gps-point">
+          <span class="gps-point-label">F</span>
+          <span class="gps-point-val ${hasFront?'ok':'empty'}">${hasFront?fmtCoord(gc.front):'—'}</span>
+          ${hasFront?`<button class="gps-clear" onclick="clearGps(${i},'front')">×</button>`:''}
+        </div>
+        <div class="gps-point">
+          <span class="gps-point-label">M</span>
+          <span class="gps-point-val ${hasMid?'ok':'empty'}">${hasMid?fmtCoord(gc.mid):'—'}</span>
+          ${hasMid?`<button class="gps-clear" onclick="clearGps(${i},'mid')">×</button>`:''}
+        </div>
+        <div class="gps-point">
+          <span class="gps-point-label">B</span>
+          <span class="gps-point-val ${hasBack?'ok':'empty'}">${hasBack?fmtCoord(gc.back):'—'}</span>
+          ${hasBack?`<button class="gps-clear" onclick="clearGps(${i},'back')">×</button>`:''}
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="width:100%;margin-top:8px;font-size:12px;"
+        onclick="startGpsCaptureForHole(${i})">
+        ${allCap?'✓ Ponovi':'📍 Snimi GPS'}
+      </button>
+    </div>`;
+  }
+  html += '</div>';
+
+  // ── Tee odabir (par, SI, dužine — ne GPS!)
+  html += `<div class="section-label" style="margin-top:20px;">Tee postavke (par, SI, dužine)</div>
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
     ${tees.map((t,i)=>`<button class="btn ${i===state.activeTeeIdx?'btn-green':'btn-ghost'}" onclick="state.activeTeeIdx=${i};renderEditor();">${escHtml(t.tee_name||('Tee '+(i+1)))}</button>`).join('')}
     <button class="btn btn-ghost" onclick="addTee()">+ Tee</button>
@@ -825,56 +877,22 @@ function renderEditor() {
       <div><label style="font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:5px;">Slope</label>
       <input class="input" type="number" value="${activeTee.slope_rating||113}" style="font-size:13px;"
         oninput="state.courses[${state.activeCourseIdx}].tees[${state.activeTeeIdx}].slope_rating=parseInt(this.value);"></div>
-    </div>`;
-
-    // ── Rupe
-    html += `<div class="section-label">Rupe i GPS koordinate</div>
+    </div>
     <div class="holes-grid">`;
 
-    const holes = activeTee.holes || [];
-    const numHoles = course.holes || 18;
-
+    const teeHoles = activeTee.holes || [];
     for (let i = 0; i < numHoles; i++) {
-      const h = holes[i] || { hole_number: i+1, par: 4, si: i+1 };
-      const hasFront = h.front && h.front.lat;
-      const hasMid   = h.mid && h.mid.lat;
-      const hasBack  = h.back && h.back.lat;
-      const allCap   = hasFront && hasMid && hasBack;
-      const isActive = i === state.captureHoleIdx && state.capturing;
-
-      html += `<div class="hole-card${allCap?' all-captured':''}${isActive?' active-hole':''}" id="hcard-${i}">
+      const h = teeHoles[i] || { hole_number: i+1, par: 4, si: i+1 };
+      html += `<div class="hole-card" style="padding:10px 12px;">
         <div class="hole-card-header">
-          <span class="hole-num">RUPA ${h.hole_number}</span>
+          <span class="hole-num">RUPA ${i+1}</span>
           <div class="par-wrap">
             <span class="par-label-sm">PAR</span>
-            <input class="par-input" type="number" min="3" max="6" value="${h.par||4}"
-              onchange="setHolePar(${i},this.value)">
+            <input class="par-input" type="number" min="3" max="6" value="${h.par||4}" onchange="setHolePar(${i},this.value)">
             <span class="par-label-sm" style="margin-left:4px;">SI</span>
-            <input class="par-input" type="number" min="1" max="18" value="${h.si||i+1}"
-              onchange="setHoleSI(${i},this.value)">
+            <input class="par-input" type="number" min="1" max="${numHoles}" value="${h.si||i+1}" onchange="setHoleSI(${i},this.value)">
           </div>
         </div>
-        <div class="gps-points">
-          <div class="gps-point">
-            <span class="gps-point-label">F</span>
-            <span class="gps-point-val ${hasFront?'ok':'empty'}">${hasFront?fmtCoord(h.front):'nije snimljeno'}</span>
-            ${hasFront?`<button class="gps-clear" onclick="clearGps(${i},'front')" title="Obriši">×</button>`:''}
-          </div>
-          <div class="gps-point">
-            <span class="gps-point-label">M</span>
-            <span class="gps-point-val ${hasMid?'ok':'empty'}">${hasMid?fmtCoord(h.mid):'nije snimljeno'}</span>
-            ${hasMid?`<button class="gps-clear" onclick="clearGps(${i},'mid')" title="Obriši">×</button>`:''}
-          </div>
-          <div class="gps-point">
-            <span class="gps-point-label">B</span>
-            <span class="gps-point-val ${hasBack?'ok':'empty'}">${hasBack?fmtCoord(h.back):'nije snimljeno'}</span>
-            ${hasBack?`<button class="gps-clear" onclick="clearGps(${i},'back')" title="Obriši">×</button>`:''}
-          </div>
-        </div>
-        <button class="btn btn-ghost" style="width:100%;margin-top:8px;font-size:12px;"
-          onclick="startGpsCaptureForHole(${i})">
-          ${allCap?'✓ Ponovi snimanje':'📍 Snimi GPS'}
-        </button>
       </div>`;
     }
     html += '</div>';
@@ -884,6 +902,15 @@ function renderEditor() {
 }
 
 // ── HOLE DATA ─────────────────────────────────────────────────────
+function ensureGreenCoord(holeIdx) {
+  const course = state.courses[state.activeCourseIdx];
+  if (!course.green_coords) course.green_coords = [];
+  while (course.green_coords.length <= holeIdx) {
+    const n = course.green_coords.length + 1;
+    course.green_coords.push({ hole_number: n, front: null, mid: null, back: null });
+  }
+}
+
 function ensureHoleExists(holeIdx) {
   const course = state.courses[state.activeCourseIdx];
   const tee = course.tees[state.activeTeeIdx];
@@ -897,11 +924,22 @@ function ensureHoleExists(holeIdx) {
 function setHolePar(idx, val) {
   ensureHoleExists(idx);
   state.courses[state.activeCourseIdx].tees[state.activeTeeIdx].holes[idx].par = parseInt(val) || 4;
+  autoSave();
 }
 
 function setHoleSI(idx, val) {
   ensureHoleExists(idx);
   state.courses[state.activeCourseIdx].tees[state.activeTeeIdx].holes[idx].si = parseInt(val) || idx+1;
+  autoSave();
+}
+
+function clearGps(holeIdx, point) {
+  ensureGreenCoord(holeIdx);
+  state.courses[state.activeCourseIdx].green_coords[holeIdx][point] = null;
+  autoSave();
+  renderEditor();
+  renderSidebar();
+  showToast(`${point.toUpperCase()} obrisan`, 'red');
 }
 
 function clearGps(holeIdx, point) {
@@ -996,9 +1034,11 @@ function capturePoint() {
   const pts = ['front','mid','back'];
   const pt = pts[state.captureStep];
 
-  ensureHoleExists(state.captureHoleIdx);
-  const h = state.courses[state.activeCourseIdx].tees[state.activeTeeIdx].holes[state.captureHoleIdx];
-  h[pt] = { lat: state.gpsPos.lat, lon: state.gpsPos.lon };
+  ensureGreenCoord(state.captureHoleIdx);
+  state.courses[state.activeCourseIdx].green_coords[state.captureHoleIdx][pt] = {
+    lat: state.gpsPos.lat, lon: state.gpsPos.lon
+  };
+  autoSave(); // Auto-spremi odmah nakon svake GPS točke
 
   showToast(`${pt.toUpperCase()} snimljeno ✓`, 'green');
 
@@ -1146,7 +1186,7 @@ function confirmDelete() {
 async function saveToLocal() {
   localStorage.setItem('golf_courses', JSON.stringify(state.courses));
   showToast('Snimljeno u browser ✓', 'green');
-  setStatus('Snimljeno lokalno');
+  setStatus(`Snimljeno lokalno — ${state.courses.length} terena`);
 }
 
 async function saveToAvalon() {
@@ -1168,6 +1208,12 @@ async function saveToAvalon() {
     showToast(`Avalon greška: ${e.message}`, 'red');
     setStatus(`Greška: ${e.message}`);
   }
+}
+
+// Auto-spremi nakon svake promjene
+function autoSave() {
+  localStorage.setItem('golf_courses', JSON.stringify(state.courses));
+  setStatus(`Auto-snimljeno — ${new Date().toLocaleTimeString('hr')}`);
 }
 
 async function exportJson() {
@@ -1294,25 +1340,8 @@ function showToast(msg, type='') {
 const BACKEND_URL = null;
 
 async function syncCoursesToGithub(silent = false) {
-  // Spremi lokalno
-  localStorage.setItem('golfCourses_cm', JSON.stringify(state.courses));
-  setStatus('Snimljeno lokalno ✓');
-  if (!silent) showToast('Tereni snimljeni lokalno ✓', 'green');
-
-  // Avalon PHP — aktivira se kad se postavi BACKEND_URL
-  if (BACKEND_URL) {
-    try {
-      await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save_courses', data: state.courses })
-      });
-      if (!silent) showToast('Snimljeno na server ✓', 'green');
-    } catch(e) {
-      if (!silent) showToast('Server greška — snimljeno lokalno', 'red');
-    }
-  }
-  return true;
+  await saveToLocal();
+  if (BACKEND_URL) await saveToAvalon();
 }
 
 // ── INIT ─────────────────────────────────────────────────────────

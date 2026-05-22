@@ -1673,6 +1673,9 @@ function startRound() {
       state.par = Array(course.holes).fill(4);
       state.si  = Array.from({length:course.holes},(_,i)=>i+1);
     }
+    // GPS koordinate greena — iz green_coords (neovisno o tee-u)
+    state.courseGps = course.green_coords || null;
+
   } else {
     // Ručni unos
     const name = document.getElementById('course-name').value.trim();
@@ -1689,6 +1692,7 @@ function startRound() {
     if (!state.si || state.si.length < state.numHoles) {
       state.si = Array.from({length:state.numHoles},(_,i)=>i+1);
     }
+    state.courseGps = null;
   }
 
   state.currentHole = 0;
@@ -3042,6 +3046,7 @@ function wStartRound() {
   wState.strokes = [Array(course.holes).fill(0)];
   wState.putts   = [Array(course.holes).fill(0)];
   wState.currentHole = 0;
+  wState.courseGps = course.green_coords || null;
   wShowScreen('play');
 }
 
@@ -3170,9 +3175,7 @@ function wStartGPS() {
 
 function wUpdateDistances() {
   const pos = wState.gpsPos;
-  const course = wState.courses[wState.selectedCourseIdx];
-  const tee = course?.tees?.find(t => t.tee_name === wState.players[0].teeName) || course?.tees?.[0];
-  const hole = tee?.holes?.[wState.currentHole];
+  const hole = wState.courseGps?.[wState.currentHole];
 
   ['f','m','b'].forEach(k => {
     const el = document.getElementById(`w-dist-${k}`);
@@ -3183,10 +3186,7 @@ function wUpdateDistances() {
   const pts = { f: hole.front, m: hole.mid, b: hole.back };
   Object.entries(pts).forEach(([k, pt]) => {
     const el = document.getElementById(`w-dist-${k}`);
-    if (el && pt?.lat) {
-      const d = haversine(pos.lat, pos.lon, pt.lat, pt.lon);
-      el.textContent = d;
-    }
+    if (el && pt?.lat) el.textContent = haversine(pos.lat, pos.lon, pt.lat, pt.lon);
   });
 }
 
