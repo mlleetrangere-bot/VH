@@ -1706,6 +1706,7 @@ function startRound() {
   });
 
   startGPS();
+  startDistanceRefresh();
   showScreen('play');
 }
 
@@ -1737,19 +1738,45 @@ function startGPS() {
   }
   updateGpsStatus('searching', 'Tražim GPS...');
   if (state.gpsWatchId) navigator.geolocation.clearWatch(state.gpsWatchId);
-  state.gpsWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      state.gpsActive = true;
-      updateGpsStatus('active', `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
-      if (state.currentScreen === 'play') updateDistances();
-    },
-    err => {
-      state.gpsActive = false;
-      updateGpsStatus('error', 'GPS greška — distances nedostupne');
-    },
-    { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
-  );
+  if (state.gpsPollId) clearInterval(state.gpsPollId);
+
+  const onSuccess = pos => {
+    state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    state.gpsActive = true;
+    const acc = Math.round(pos.coords.accuracy);
+    updateGpsStatus('active', `GPS ✓ ±${acc}m`);
+    if (state.currentScreen === 'play') updateDistances();
+  };
+
+  const onError = err => {
+    state.gpsActive = false;
+    const msgs = ['', 'Dozvoli GPS u browseru', 'GPS signal slab', 'GPS timeout'];
+    updateGpsStatus('error', msgs[err.code] || 'GPS greška');
+  };
+
+  const opts = { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 };
+
+  // watchPosition — kontinuirano prati
+  state.gpsWatchId = navigator.geolocation.watchPosition(onSuccess, onError, opts);
+
+  // Polling svakih 3s kao fallback (posebno korisno na mobitelima gdje watchPosition "zamrzne")
+  state.gpsPollId = setInterval(() => {
+    navigator.geolocation.getCurrentPosition(onSuccess, () => {}, {
+      enableHighAccuracy: true, maximumAge: 3000, timeout: 5000
+    });
+  }, 3000);
+}
+
+// Pokreni polling distance refresh svakih 2s dok je igra aktivna
+function startDistanceRefresh() {
+  if (state.distRefreshId) clearInterval(state.distRefreshId);
+  state.distRefreshId = setInterval(() => {
+    if (state.currentScreen === 'play' && state.gpsPos) updateDistances();
+  }, 2000);
+}
+
+function stopDistanceRefresh() {
+  if (state.distRefreshId) { clearInterval(state.distRefreshId); state.distRefreshId = null; }
 }
 
 function updateGpsStatus(status, text) {
@@ -1775,15 +1802,20 @@ function updateDistances() {
   const b = document.getElementById('dist-back');
   if (!f) return;
 
-  if (!pos || !state.courseGps) {
+  if (!pos) {
     f.textContent = '—'; m.textContent = '—'; b.textContent = '—';
     return;
   }
+
+  if (!state.courseGps || !state.courseGps[state.currentHole]) {
+    f.textContent = 'n/a'; m.textContent = 'n/a'; b.textContent = 'n/a';
+    return;
+  }
+
   const hole = state.courseGps[state.currentHole];
-  if (!hole) { f.textContent = '—'; m.textContent = '—'; b.textContent = '—'; return; }
-  if (hole.front) f.textContent = haversine(pos.lat, pos.lon, hole.front.lat, hole.front.lon);
-  if (hole.mid)   m.textContent = haversine(pos.lat, pos.lon, hole.mid.lat, hole.mid.lon);
-  if (hole.back)  b.textContent = haversine(pos.lat, pos.lon, hole.back.lat, hole.back.lon);
+  f.textContent = hole.front?.lat ? haversine(pos.lat, pos.lon, hole.front.lat, hole.front.lon) : '—';
+  m.textContent = hole.mid?.lat   ? haversine(pos.lat, pos.lon, hole.mid.lat,   hole.mid.lon)   : '—';
+  b.textContent = hole.back?.lat  ? haversine(pos.lat, pos.lon, hole.back.lat,  hole.back.lon)  : '—';
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2078,7 +2110,9 @@ function finishRound() {
 
   // Reset
   if (state.gpsWatchId) navigator.geolocation.clearWatch(state.gpsWatchId);
+  if (state.gpsPollId) { clearInterval(state.gpsPollId); state.gpsPollId = null; }
   state.gpsWatchId = null;
+  stopDistanceRefresh();
   state.players = [];
   state.strokes = [];
   state.putts   = [];
