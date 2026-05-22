@@ -973,6 +973,7 @@ input[type=number] { -moz-appearance: textfield; }
           <div class="dist-block-unit">m</div>
         </div>
       </div>
+      <div id="dist-debug" style="text-align:center;font-size:11px;color:#444;font-family:monospace;padding:2px 0;"></div>
     </div>
 
     <div class="players-scores" id="players-scores"></div>
@@ -1807,15 +1808,28 @@ function updateDistances() {
     return;
   }
 
-  if (!state.courseGps || !state.courseGps[state.currentHole]) {
-    f.textContent = 'n/a'; m.textContent = 'n/a'; b.textContent = 'n/a';
+  if (!state.courseGps) {
+    f.textContent = 'GPS?'; m.textContent = 'GPS?'; b.textContent = 'GPS?';
+    // Debug — pokaži što ima u courseGps
+    const dbg = document.getElementById('dist-debug');
+    if (dbg) dbg.textContent = 'courseGps: null';
     return;
   }
 
   const hole = state.courseGps[state.currentHole];
+  if (!hole) {
+    f.textContent = 'r?'; m.textContent = 'r?'; b.textContent = 'r?';
+    const dbg = document.getElementById('dist-debug');
+    if (dbg) dbg.textContent = `courseGps[${state.currentHole}]: null, len=${state.courseGps.length}`;
+    return;
+  }
+
   f.textContent = hole.front?.lat ? haversine(pos.lat, pos.lon, hole.front.lat, hole.front.lon) : '—';
   m.textContent = hole.mid?.lat   ? haversine(pos.lat, pos.lon, hole.mid.lat,   hole.mid.lon)   : '—';
   b.textContent = hole.back?.lat  ? haversine(pos.lat, pos.lon, hole.back.lat,  hole.back.lon)  : '—';
+
+  const dbg = document.getElementById('dist-debug');
+  if (dbg) dbg.textContent = `F:${hole.front?.lat?'✓':'×'} M:${hole.mid?.lat?'✓':'×'} B:${hole.back?.lat?'✓':'×'}`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
