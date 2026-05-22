@@ -1769,6 +1769,10 @@ function initNewRound() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// NOTIFIKACIJE — distance vidljive na lock screenu
+// ═══════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════
 // WAKE LOCK — sprječava gašenje ekrana tijekom igre
 // ═══════════════════════════════════════════════════════════════════
 
@@ -1788,9 +1792,37 @@ function releaseWakeLock() {
   if (wakeLock) { wakeLock.release(); wakeLock = null; }
 }
 
+// Kad se ekran otključa — ponovo pokreni GPS i osvježi distance
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && state.currentScreen === 'play') {
+    // Ponovo zatraži wake lock
     acquireWakeLock();
+    // Ponovo pokreni GPS polling (može se ugasiti kad je ekran zaključan)
+    if (state.gpsPollId) clearInterval(state.gpsPollId);
+    state.gpsPollId = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+          state.gpsActive = true;
+          updateGpsStatus('active', `GPS ✓ ±${Math.round(pos.coords.accuracy)}m`);
+          updateDistances();
+        },
+        () => {},
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 8000 }
+      );
+    }, 3000);
+    // Odmah osvježi jednom
+    if (state.gpsPos) updateDistances();
+    // Forsiraj novi GPS fix
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        updateGpsStatus('active', `GPS ✓ ±${Math.round(pos.coords.accuracy)}m`);
+        updateDistances();
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+    );
   }
 });
 
@@ -1799,23 +1831,36 @@ document.addEventListener('visibilitychange', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 async function requestNotificationPermission() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') await Notification.requestPermission();
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') {
+    showToast('Notifikacije blokirane u Chrome postavkama', 'red');
+    return false;
+  }
+  const result = await Notification.requestPermission();
+  if (result === 'granted') {
+    showToast('Notifikacije odobrene ✓', 'green');
+    return true;
+  }
+  return false;
 }
 
 function sendDistanceNotification(hole, front, mid, back) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  if (state._lastNotification) state._lastNotification.close();
-  const f = front !== '—' ? `${front}m` : '—';
-  const m = mid   !== '—' ? `${mid}m`   : '—';
-  const b = back  !== '—' ? `${back}m`  : '—';
-  state._lastNotification = new Notification(`⛳ Rupa ${hole + 1} — Par ${state.par[hole] || 4}`, {
-    body: `BACK: ${b}   MID: ${m}   FRONT: ${f}`,
-    tag: 'golf-dist',
-    silent: true,
-    renotify: true,
-  });
-  setTimeout(() => state._lastNotification?.close(), 25000);
+  try {
+    if (state._lastNotification) { state._lastNotification.close(); state._lastNotification = null; }
+    const b = back  && back  !== '—' ? `${back}m`  : '—';
+    const m = mid   && mid   !== '—' ? `${mid}m`   : '—';
+    const f = front && front !== '—' ? `${front}m` : '—';
+    const notif = new Notification(`⛳ Rupa ${hole + 1}  Par ${state.par[hole] || 4}`, {
+      body: `▲ BACK ${b}   ● MID ${m}   ▼ FRONT ${f}`,
+      tag: 'golf-dist',
+      silent: true,
+      renotify: true,
+      requireInteraction: false,
+    });
+    state._lastNotification = notif;
+  } catch(e) {}
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2146,12 +2191,12 @@ function renderScorecardTable() {
       displayColor = s > 0 ? diffColor(s - par) : 'var(--text3)';
     }
 
-    return `<div class="sc-row${i===state.currentHole?' current':''}" style="grid-template-columns:${cols}" onclick="goToHole(${i})">
-      <span class="sc-hole" style="color:${i===state.currentHole?'var(--gold)':'var(--text2)'}">${i+1}</span>
-      <span class="sc-par">${par}</span>
-      <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">${si}</span>
-      <span style="font-size:11px;color:var(--gold);font-family:var(--font-mono);">${extraDots}</span>
-      <span style="font-family:var(--font-mono);text-align:right;color:${displayColor};font-weight:600;">${displayVal}</span>
+    return `<div class="sc-row${i===state.currentHole?' current':''}" style="grid-template-columns:${cols}">
+      <span class="sc-hole" style="color:${i===state.currentHole?'var(--gold)':'var(--text2)'};cursor:pointer" onclick="goToHole(${i})">${i+1}</span>
+      <span class="sc-par" onclick="goToHole(${i})" style="cursor:pointer">${par}</span>
+      <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);" onclick="goToHole(${i})">${si}</span>
+      <span style="font-size:11px;color:var(--gold);font-family:var(--font-mono);" onclick="goToHole(${i})">${extraDots}</span>
+      <span style="font-family:var(--font-mono);text-align:right;color:${displayColor};font-weight:600;cursor:pointer" onclick="editActiveHole(${i})">${displayVal} ✏️</span>
     </div>`;
   }).join('');
 
@@ -2182,6 +2227,13 @@ function renderScorecardTable() {
 function goToHole(idx) {
   state.currentHole = idx;
   showScreen('play');
+}
+
+function editActiveHole(holeIdx) {
+  // Idi na tu rupu u play ekranu za direktno uređivanje
+  state.currentHole = holeIdx;
+  showScreen('play');
+  showToast(`Rupa ${holeIdx+1} — uredi rezultat`, 'green');
 }
 
 let _finishingRound = false;
@@ -2276,35 +2328,119 @@ function renderHistory() {
 
 function openRoundDetail(idx) {
   state.selectedRoundIdx = idx;
+  renderRoundDetailModal(idx);
+  openModal('modal-round-detail');
+}
+
+function renderRoundDetailModal(idx) {
   const r = state.history[idx];
   document.getElementById('modal-round-title').textContent = r.courseName;
   document.getElementById('modal-round-meta').textContent = `${fmtDate(r.date)} · ${r.numHoles} rupa`;
   document.getElementById('modal-delete-btn').onclick = () => deleteRound(idx);
 
-  // Scorecard per player
-  const cols = r.players.length > 1 ? `32px 1fr ${r.players.map(()=>'38px').join(' ')} 44px` : '32px 1fr 44px 44px';
+  const cols = r.players.length > 1
+    ? `32px 1fr ${r.players.map(()=>'38px').join(' ')} 44px`
+    : '32px 1fr 44px 44px';
+
   let html = `<div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">`;
-  html += `<div class="sc-row header" style="grid-template-columns:${cols}"><span>#</span><span>PAR</span>${r.players.length>1?r.players.map(p=>`<span style="color:${p.color}">${p.avatar}</span>`).join(''):'<span>UD.</span>'}<span style="text-align:right">+/−</span></div>`;
+  html += `<div class="sc-row header" style="grid-template-columns:${cols}">
+    <span>#</span><span>PAR</span>
+    ${r.players.length>1 ? r.players.map(p=>`<span style="color:${p.color}">${p.avatar}</span>`).join('') : '<span>UD.</span>'}
+    <span style="text-align:right">+/−</span>
+  </div>`;
 
   r.par.forEach((par, i) => {
     const diffs = r.players.map(p => p.strokes[i] > 0 ? p.strokes[i] - par : null);
-    html += `<div class="sc-row" style="grid-template-columns:${cols};cursor:default">
+    html += `<div class="sc-row" style="grid-template-columns:${cols};cursor:pointer" onclick="editHistoryHole(${idx},${i})">
       <span class="sc-hole">${i+1}</span>
       <span class="sc-par">${par}</span>
-      ${r.players.length>1 ? r.players.map(p=>`<span style="color:${p.strokes[i]>0?diffColor(p.strokes[i]-par):'var(--text3)'};font-family:var(--font-mono);font-size:13px;">${p.strokes[i]||'—'}</span>`).join('') : `<span style="font-family:var(--font-mono)">${r.players[0]?.strokes[i]||'—'}</span>`}
+      ${r.players.length>1
+        ? r.players.map(p=>`<span style="color:${p.strokes[i]>0?diffColor(p.strokes[i]-par):'var(--text3)'};font-family:var(--font-mono);font-size:13px;">${p.strokes[i]||'—'}</span>`).join('')
+        : `<span style="font-family:var(--font-mono)">${r.players[0]?.strokes[i]||'—'}</span>`}
       <span class="sc-diff ${diffClass(diffs[0])}">${fmtDiff(diffs[0])}</span>
     </div>`;
   });
 
+  const totals = r.players.map(p => p.strokes.reduce((a,b)=>a+b,0));
   html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default">
     <span style="color:var(--green)">∑</span>
     <span class="sc-par">${r.par.reduce((a,b)=>a+b,0)}</span>
-    ${r.players.length>1 ? r.players.map(p=>`<span style="font-family:var(--font-mono);color:var(--text)">${p.totalStrokes}</span>`).join('') : `<span style="font-family:var(--font-mono)">${r.players[0]?.totalStrokes}</span>`}
+    ${r.players.length>1 ? r.players.map((p,pi)=>`<span style="font-family:var(--font-mono);color:var(--text)">${totals[pi]}</span>`).join('') : `<span style="font-family:var(--font-mono)">${totals[0]}</span>`}
     <span class="sc-diff ${diffClass(r.players[0]?.totalDiff)}" style="font-size:14px">${fmtDiff(r.players[0]?.totalDiff)}</span>
   </div></div>`;
 
+  html += `<div style="margin-top:10px;font-size:12px;color:var(--text3);font-family:var(--font-mono);text-align:center;">
+    Klikni na rupu za uređivanje
+  </div>`;
+
   document.getElementById('modal-round-content').innerHTML = html;
-  openModal('modal-round-detail');
+}
+
+function editHistoryHole(roundIdx, holeIdx) {
+  const r = state.history[roundIdx];
+  const par = r.par[holeIdx];
+
+  let html = `<div style="padding:4px 0 12px;font-size:14px;color:var(--text3);font-family:var(--font-mono);">
+    Rupa ${holeIdx+1} · Par ${par}
+  </div>`;
+
+  r.players.forEach((p, pi) => {
+    const s  = p.strokes[holeIdx] || 0;
+    const pu = (p.putts || [])[holeIdx] || 0;
+    html += `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;">${p.avatar} ${escHtml(p.name)}</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <span style="font-size:13px;color:var(--text3);font-family:var(--font-mono);width:60px;">UDARCI</span>
+        <button onclick="adjHistoryStroke(${roundIdx},${holeIdx},${pi},-1)" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface3);color:var(--text);font-size:20px;cursor:pointer;">−</button>
+        <span id="hs-${pi}" style="font-size:28px;font-weight:700;color:var(--text);font-family:var(--font-mono);width:36px;text-align:center;">${s||'—'}</span>
+        <button onclick="adjHistoryStroke(${roundIdx},${holeIdx},${pi},1)" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface3);color:var(--text);font-size:20px;cursor:pointer;">+</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:13px;color:var(--text3);font-family:var(--font-mono);width:60px;">PUTT</span>
+        <button onclick="adjHistoryPutt(${roundIdx},${holeIdx},${pi},-1)" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface3);color:var(--text);font-size:20px;cursor:pointer;">−</button>
+        <span id="hp-${pi}" style="font-size:28px;font-weight:700;color:var(--blue);font-family:var(--font-mono);width:36px;text-align:center;">${pu||'0'}</span>
+        <button onclick="adjHistoryPutt(${roundIdx},${holeIdx},${pi},1)" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface3);color:var(--text);font-size:20px;cursor:pointer;">+</button>
+      </div>
+    </div>`;
+  });
+
+  html += `<button class="btn btn-primary btn-md btn-full" style="margin-top:6px;"
+    onclick="saveHistoryHoleEdit(${roundIdx},${holeIdx})">✓ Spremi</button>`;
+
+  document.getElementById('modal-round-content').innerHTML = html;
+  state._editingHole = holeIdx;
+}
+
+function adjHistoryStroke(roundIdx, holeIdx, playerIdx, delta) {
+  const p = state.history[roundIdx].players[playerIdx];
+  if (!p.strokes) p.strokes = Array(state.history[roundIdx].numHoles).fill(0);
+  p.strokes[holeIdx] = Math.max(0, (p.strokes[holeIdx]||0) + delta);
+  const el = document.getElementById(`hs-${playerIdx}`);
+  if (el) el.textContent = p.strokes[holeIdx] || '—';
+}
+
+function adjHistoryPutt(roundIdx, holeIdx, playerIdx, delta) {
+  const p = state.history[roundIdx].players[playerIdx];
+  if (!p.putts) p.putts = Array(state.history[roundIdx].numHoles).fill(0);
+  p.putts[holeIdx] = Math.max(0, (p.putts[holeIdx]||0) + delta);
+  const el = document.getElementById(`hp-${playerIdx}`);
+  if (el) el.textContent = p.putts[holeIdx] || '0';
+}
+
+function saveHistoryHoleEdit(roundIdx, holeIdx) {
+  const r = state.history[roundIdx];
+  // Reizračunaj totale
+  r.players.forEach(p => {
+    p.totalStrokes = p.strokes.reduce((a,b)=>a+b,0);
+    p.totalPutts   = (p.putts||[]).reduce((a,b)=>a+b,0);
+    p.totalPar     = r.par.reduce((a,b)=>a+b,0);
+    p.totalDiff    = p.totalStrokes - p.totalPar;
+  });
+  saveHistoryToLocal();
+  showToast(`Rupa ${holeIdx+1} snimljena ✓`, 'green');
+  renderRoundDetailModal(roundIdx);
+  renderHistory();
 }
 
 function deleteRound(idx) {
