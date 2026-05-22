@@ -1027,7 +1027,6 @@ input[type=number] { -moz-appearance: textfield; }
       <div style="width:38px"></div>
       <div class="header-title">POVIJEST</div>
       <div style="display:flex;gap:6px;">
-        <button class="btn btn-sm btn-ghost" onclick="syncHistoryToGithub()">☁️ GitHub</button>
         <button class="btn btn-sm btn-gold" onclick="exportHistory()">⬇ Export</button>
         <button class="btn btn-sm btn-ghost" onclick="document.getElementById('importFile').click()">⬆ Import</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importHistory(this)">
@@ -1143,41 +1142,29 @@ input[type=number] { -moz-appearance: textfield; }
 
     <div class="scroll-content" style="padding:20px 16px 100px;">
 
-      <div class="section-label" style="padding:0 0 8px;">☁️ GITHUB SYNC</div>
-      <div style="font-size:14px;color:#888;font-family:var(--font-mono);margin-bottom:14px;line-height:1.7;">
-        Token se sprema lokalno u browser.<br>
-        GitHub ga nikad ne vidi u kodu.
+      <div class="section-label" style="padding:0 0 8px;">💾 POHRANA PODATAKA</div>
+      <div style="background:#111;border:2px solid #333;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:700;color:#00ff00;margin-bottom:8px;">✓ Lokalni browser</div>
+        <div style="font-size:15px;color:#888;line-height:1.7;">
+          Sve runde su snimljene u ovom browseru.<br>
+          Koristi <b style="color:#ffff00;">⬇ Export</b> za backup.
+        </div>
       </div>
 
-      <div class="input-group">
-        <label class="input-label">GitHub PAT Token</label>
-        <input class="input" id="settings-pat" type="password"
-          placeholder="ghp_xxxxxxxxxxxx"
-          value="${localStorage.getItem('gh_pat')||''}"
-          style="font-family:var(--font-mono);">
+      <div style="background:#111;border:2px solid #333;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:700;color:#888;margin-bottom:8px;">⏳ Avalon hosting (uskoro)</div>
+        <div style="font-size:15px;color:#666;line-height:1.7;">
+          Kada bude spreman, podaci će se automatski sinkronizirati na server — radi na svim uređajima.
+        </div>
       </div>
 
-      <div id="settings-pat-status" style="font-size:14px;font-family:var(--font-mono);margin-bottom:14px;"></div>
+      <div class="section-label" style="padding:16px 0 8px;">📊 STATISTIKE POHRANE</div>
+      <div id="storage-stats" style="background:#111;border:2px solid #333;border-radius:12px;padding:16px;font-family:var(--font-mono);font-size:15px;line-height:2;color:#888;"></div>
 
-      <button class="btn btn-primary btn-lg btn-full" onclick="savePatToken()">
-        💾 Spremi token
+      <div style="height:16px;"></div>
+      <button class="btn btn-ghost btn-md btn-full" onclick="showScreen('history')">
+        📜 Idi na povijest
       </button>
-
-      <button class="btn btn-ghost btn-md btn-full" style="margin-top:10px;" onclick="testGithubToken()">
-        🔍 Testiraj vezu
-      </button>
-
-      <button class="btn btn-red btn-md btn-full" style="margin-top:10px;" onclick="clearPatToken()">
-        🗑 Obriši token
-      </button>
-
-      <div class="section-label" style="padding:20px 0 8px;">ℹ️ INFO</div>
-      <div style="font-size:14px;color:#888;font-family:var(--font-mono);line-height:1.8;">
-        Token generiraj na:<br>
-        github.com/settings/tokens<br><br>
-        Scope: <span style="color:#00ff00;">repo</span><br>
-        Expiration: <span style="color:#00ff00;">No expiration</span>
-      </div>
     </div>
 
     <div class="bottom-nav">
@@ -1517,10 +1504,14 @@ function showScreen(name) {
   if (name === 'history') renderHistory();
   if (name === 'stats') renderStats();
   if (name === 'settings') {
-    const inp = document.getElementById('settings-pat');
-    if (inp) inp.value = localStorage.getItem('gh_pat') || '';
-    const token = localStorage.getItem('gh_pat');
-    setPatStatus(token ? '✓ Token je postavljen' : 'Token nije postavljen', token ? '#00ff00' : '#888');
+    const el = document.getElementById('storage-stats');
+    if (el) {
+      const rounds = state.history.length;
+      const size = Math.round(JSON.stringify(state.history).length / 1024);
+      el.innerHTML = `Rundi: <span style="color:#fff;">${rounds}</span><br>
+        Veličina: <span style="color:#fff;">${size} KB</span><br>
+        Pohrana: <span style="color:#00ff00;">localStorage</span>`;
+    }
   }
 }
 
@@ -2094,7 +2085,7 @@ function finishRound() {
 
   showToast('Runda završena! ✓', 'green');
   showScreen('home');
-  syncHistoryToGithub(true);
+  syncHistoryToServer(true);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3316,177 +3307,60 @@ if (IS_WATCH) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// PAT TOKEN MANAGEMENT
+// PAT — uklonjeno (koristimo localStorage + Avalon PHP uskoro)
 // ═══════════════════════════════════════════════════════════════════
-
-function savePatToken() {
-  const val = document.getElementById('settings-pat').value.trim();
-  if (!val) { showToast('Unesi token!', 'red'); return; }
-  localStorage.setItem('gh_pat', val);
-  showToast('Token spremljen ✓', 'green');
-  setPatStatus('✓ Token je postavljen', '#00ff00');
-}
-
-function clearPatToken() {
-  localStorage.removeItem('gh_pat');
-  document.getElementById('settings-pat').value = '';
-  setPatStatus('Token obrisan', '#ff3333');
-  showToast('Token obrisan', 'red');
-}
-
-async function testGithubToken() {
-  const token = localStorage.getItem('gh_pat');
-  if (!token) { showToast('Nema tokena!', 'red'); return; }
-  setPatStatus('⏳ Testiram...', '#ffff00');
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/mlleetrangere-bot/VH`,
-      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
-    );
-    if (res.ok) {
-      setPatStatus('✓ Token radi ispravno!', '#00ff00');
-      showToast('GitHub veza OK ✓', 'green');
-    } else {
-      const e = await res.json();
-      setPatStatus(`✗ ${e.message}`, '#ff3333');
-      showToast('Token ne radi', 'red');
-    }
-  } catch(e) {
-    setPatStatus('✗ Greška veze', '#ff3333');
-  }
-}
-
-function setPatStatus(msg, color) {
-  const el = document.getElementById('settings-pat-status');
-  if (el) { el.textContent = msg; el.style.color = color; }
-}
+function savePatToken() {}
+function clearPatToken() {}
+function testGithubToken() {}
+function setPatStatus() {}
 
 // ═══════════════════════════════════════════════════════════════════
-// GITHUB API SYNC
+// STORAGE — localStorage sada, Avalon PHP kada bude spreman
 // ═══════════════════════════════════════════════════════════════════
 
-const GITHUB = {
-  owner: 'mlleetrangere-bot',
-  repo:  'VH',
-  branch: 'main',
-  get token() { return localStorage.getItem('gh_pat') || ''; }
-};
+// Avalon PHP backend URL — popuni kad uploadaš na hosting
+// const BACKEND_URL = 'https://tvojdomen.com/golf/api.php';
+const BACKEND_URL = null; // null = koristi samo localStorage
 
-async function githubGetSha(path) {
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}&t=${Date.now()}`,
-      {
-        headers: {
-          'Authorization': `token ${GITHUB.token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Cache-Control': 'no-cache'
-        }
-      }
-    );
-    if (!res.ok) return null;
-    return (await res.json()).sha || null;
-  } catch (e) { return null; }
-}
-
-async function githubPush(path, content, msg) {
-  const sha = await githubGetSha(path);
-  const body = {
-    message: msg,
-    content: btoa(unescape(encodeURIComponent(content))),
-    branch: GITHUB.branch
-  };
-  if (sha) body.sha = sha;
-  const res = await fetch(
-    `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}`,
-    {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${GITHUB.token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
-      },
-      body: JSON.stringify(body)
-    }
-  );
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || `HTTP ${res.status}`);
-  }
-  return true;
-}
-
-async function syncHistoryToGithub(silent = false) {
-  const token = GITHUB.token;
-  if (!token) {
-    if (!silent) showToast('Nema GitHub tokena — idi u Postavke', 'red');
-    return false;
-  }
-  try {
-    // Prvo učitaj postojeće podatke s GitHuba
-    let existingRounds = [];
-    try {
-      const res = await fetch(
-        `https://raw.githubusercontent.com/${GITHUB.owner}/${GITHUB.repo}/${GITHUB.branch}/golf-history.json?t=${Date.now()}`,
-        { cache: 'no-store' }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        existingRounds = data.rounds || [];
-      }
-    } catch(e) {}
-
-    // Spoji — izbjegni duplikate po id
-    const allIds = new Set(existingRounds.map(r => r.id));
-    const newRounds = state.history.filter(r => !allIds.has(r.id));
-    const merged = [...existingRounds, ...newRounds]
-      .sort((a,b) => new Date(a.date) - new Date(b.date));
-
-    // Ažuriraj lokalni state
-    state.history = merged;
-    localStorage.setItem('golfHistory', JSON.stringify(merged));
-
-    // Push na GitHub
-    const content = JSON.stringify({
-      updated: new Date().toISOString(),
-      rounds: merged
-    }, null, 2);
-    await githubPush('golf-history.json', content,
-      `Runda — ${new Date().toLocaleString('hr')}`);
-
-    if (!silent) showToast('Povijest snimljena na GitHub ✓', 'green');
+async function syncHistoryToServer(silent = false) {
+  if (!BACKEND_URL) {
+    // Samo localStorage
+    localStorage.setItem('golfHistory', JSON.stringify(state.history));
+    if (!silent) showToast('Snimljeno lokalno ✓', 'green');
     return true;
-  } catch (e) {
-    if (!silent) showToast(`GitHub greška: ${e.message}`, 'red');
+  }
+  // Avalon PHP sync (aktivira se kad se postavi BACKEND_URL)
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save_history', data: state.history })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!silent) showToast('Snimljeno na server ✓', 'green');
+    return true;
+  } catch(e) {
+    localStorage.setItem('golfHistory', JSON.stringify(state.history));
+    if (!silent) showToast('Server nedostupan — snimljeno lokalno', 'red');
     return false;
   }
 }
 
-// Učitaj povijest s GitHuba pri pokretanju
-async function loadHistoryFromGithub() {
+async function loadHistoryFromServer() {
+  if (!BACKEND_URL) return; // Samo localStorage
   try {
-    const res = await fetch(
-      `https://raw.githubusercontent.com/${GITHUB.owner}/${GITHUB.repo}/${GITHUB.branch}/golf-history.json?t=${Date.now()}`,
-      { cache: 'no-store' }
-    );
+    const res = await fetch(`${BACKEND_URL}?action=load_history&t=${Date.now()}`);
     if (!res.ok) return;
     const data = await res.json();
     const rounds = data.rounds || [];
-    if (rounds.length === 0) return;
-
-    // Spoji s localStorage — izbjegni duplikate
     const localIds = new Set(state.history.map(r => r.id));
     const newRounds = rounds.filter(r => !localIds.has(r.id));
     if (newRounds.length > 0) {
       state.history = [...state.history, ...newRounds]
         .sort((a,b) => new Date(a.date) - new Date(b.date));
       localStorage.setItem('golfHistory', JSON.stringify(state.history));
-      console.log(`Učitano ${newRounds.length} novih rundi s GitHuba`);
     }
-  } catch (e) {
-    console.log('GitHub povijest nije dostupna:', e.message);
-  }
+  } catch(e) {}
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3494,7 +3368,7 @@ async function loadHistoryFromGithub() {
 // ═══════════════════════════════════════════════════════════════════
 
 renderHome();
-loadHistoryFromGithub().then(() => renderHome());
+loadHistoryFromServer();
 </script>
 </body>
 </html>
