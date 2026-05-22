@@ -1027,16 +1027,15 @@ input[type=number] { -moz-appearance: textfield; }
       <div style="width:38px"></div>
       <div class="header-title">POVIJEST</div>
       <div style="display:flex;gap:6px;">
-        <button class="btn btn-sm btn-gold" onclick="exportHistory()">⬇ Export</button>
+        <button class="btn btn-sm btn-ghost" onclick="saveHistoryToAvalon()" title="Spremi na Avalon">☁️</button>
+        <button class="btn btn-sm btn-gold" onclick="exportAllHistory()" title="Export svih podataka">⬇ Export</button>
         <button class="btn btn-sm btn-ghost" onclick="document.getElementById('importFile').click()">⬆ Import</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importHistory(this)">
       </div>
     </div>
 
     <div class="scroll-content">
-      <div style="padding:10px 16px 4px;font-size:12px;color:#555;font-family:var(--font-mono);text-align:center;">
-        Podaci su u localStorage. Export = backup na mobitel.
-      </div>
+      <div id="storage-status-bar" style="padding:8px 16px 0;font-size:13px;color:#555;font-family:var(--font-mono);text-align:center;"></div>
       <div id="history-list" style="padding-top:8px;"></div>
       <div style="padding:0 16px 16px;">
         <button class="btn btn-red btn-md btn-full" onclick="clearHistory()">🗑 Obriši sve</button>
@@ -2160,57 +2159,6 @@ function deleteRound(idx) {
   showToast('Runda obrisana', 'red');
 }
 
-function clearHistory() {
-  if (!confirm('Obrisati cijelu povijest?')) return;
-  state.history = [];
-  localStorage.setItem('golfHistory', JSON.stringify([]));
-  renderHistory();
-  showToast('Povijest obrisana', 'red');
-}
-
-function exportHistory() {
-  if (state.history.length === 0) { showToast('Nema podataka za export', 'red'); return; }
-  const data = {
-    exported: new Date().toISOString(),
-    version: '1.0',
-    rounds: state.history
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `golf-povijest-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  showToast(`${state.history.length} rundi exportirano ✓`, 'green');
-}
-
-function importHistory(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      // Podržava i direktni array i objekt s rounds poljem
-      const rounds = Array.isArray(data) ? data : (data.rounds || []);
-      if (rounds.length === 0) { showToast('Nema podataka u fajlu', 'red'); return; }
-
-      // Spoji s postojećim — izbjegni duplikate po id-u
-      const existingIds = new Set(state.history.map(r => r.id));
-      const newRounds = rounds.filter(r => !existingIds.has(r.id));
-
-      state.history = [...state.history, ...newRounds];
-      state.history.sort((a,b) => new Date(a.date) - new Date(b.date));
-      localStorage.setItem('golfHistory', JSON.stringify(state.history));
-
-      renderHistory();
-      showToast(`${newRounds.length} novih rundi uvezeno ✓`, 'green');
-    } catch (err) {
-      showToast('Greška čitanja fajla', 'red');
-    }
-    input.value = '';
-  };
-  reader.readAsText(file);
-}
 
 // ═══════════════════════════════════════════════════════════════════
 // STATISTIKE
@@ -3315,21 +3263,29 @@ function testGithubToken() {}
 function setPatStatus() {}
 
 // ═══════════════════════════════════════════════════════════════════
-// STORAGE — localStorage sada, Avalon PHP kada bude spreman
+// STORAGE — localStorage + Avalon PHP
 // ═══════════════════════════════════════════════════════════════════
 
-// Avalon PHP backend URL — popuni kad uploadaš na hosting
+// Postavi URL kad uploadaš na Avalon hosting:
 // const BACKEND_URL = 'https://tvojdomen.com/golf/api.php';
-const BACKEND_URL = null; // null = koristi samo localStorage
+const BACKEND_URL = null;
 
-async function syncHistoryToServer(silent = false) {
+function setStorageStatus(msg, color) {
+  const el = document.getElementById('storage-status-bar');
+  if (el) { el.textContent = msg; el.style.color = color || '#555'; }
+}
+
+// ── SPREMI U BROWSER ──────────────────────────────────────────────
+function saveHistoryToLocal() {
+  localStorage.setItem('golfHistory', JSON.stringify(state.history));
+}
+
+// ── SPREMI NA AVALON ──────────────────────────────────────────────
+async function saveHistoryToAvalon(silent = false) {
   if (!BACKEND_URL) {
-    // Samo localStorage
-    localStorage.setItem('golfHistory', JSON.stringify(state.history));
-    if (!silent) showToast('Snimljeno lokalno ✓', 'green');
-    return true;
+    if (!silent) showToast('Avalon nije konfiguriran', 'red');
+    return false;
   }
-  // Avalon PHP sync (aktivira se kad se postavi BACKEND_URL)
   try {
     const res = await fetch(BACKEND_URL, {
       method: 'POST',
@@ -3337,30 +3293,122 @@ async function syncHistoryToServer(silent = false) {
       body: JSON.stringify({ action: 'save_history', data: state.history })
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    if (!silent) showToast('Snimljeno na server ✓', 'green');
+    if (!silent) showToast('Snimljeno na Avalon ✓', 'green');
     return true;
   } catch(e) {
-    localStorage.setItem('golfHistory', JSON.stringify(state.history));
-    if (!silent) showToast('Server nedostupan — snimljeno lokalno', 'red');
+    if (!silent) showToast(`Avalon greška: ${e.message}`, 'red');
     return false;
   }
 }
 
+// ── SPREMI SVUGDJE (poziva se nakon završene runde) ───────────────
+async function syncHistoryToServer(silent = false) {
+  saveHistoryToLocal();
+  if (BACKEND_URL) await saveHistoryToAvalon(silent);
+  else if (!silent) showToast('Snimljeno u browser ✓', 'green');
+}
+
+// ── UČITAJ (pri pokretanju) ───────────────────────────────────────
 async function loadHistoryFromServer() {
-  if (!BACKEND_URL) return; // Samo localStorage
-  try {
-    const res = await fetch(`${BACKEND_URL}?action=load_history&t=${Date.now()}`);
-    if (!res.ok) return;
-    const data = await res.json();
-    const rounds = data.rounds || [];
-    const localIds = new Set(state.history.map(r => r.id));
-    const newRounds = rounds.filter(r => !localIds.has(r.id));
-    if (newRounds.length > 0) {
+  // 1. Pokušaj Avalon
+  if (BACKEND_URL) {
+    try {
+      const res = await fetch(`${BACKEND_URL}?action=load_history&t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        const rounds = data.rounds || (Array.isArray(data) ? data : []);
+        const localIds = new Set(state.history.map(r => r.id));
+        const newRounds = rounds.filter(r => !localIds.has(r.id));
+        if (newRounds.length > 0) {
+          state.history = [...state.history, ...newRounds]
+            .sort((a,b) => new Date(a.date) - new Date(b.date));
+          saveHistoryToLocal();
+        }
+        setStorageStatus(`${state.history.length} rundi • Avalon + browser`, '#00ff00');
+        return;
+      }
+    } catch(e) {}
+  }
+  // 2. Samo localStorage
+  setStorageStatus(`${state.history.length} rundi • browser`, '#888');
+}
+
+// ── EXPORT SVIH PODATAKA (browser + Avalon) ───────────────────────
+async function exportAllHistory() {
+  setStorageStatus('Učitavam sve podatke...', '#ffff00');
+  let avalonRounds = [];
+
+  // Povuci s Avalona ako je dostupan
+  if (BACKEND_URL) {
+    try {
+      const res = await fetch(`${BACKEND_URL}?action=load_history&t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        avalonRounds = data.rounds || (Array.isArray(data) ? data : []);
+      }
+    } catch(e) {}
+  }
+
+  // Spoji sve — bez duplikata
+  const allIds = new Set(state.history.map(r => r.id));
+  const merged = [...state.history];
+  avalonRounds.forEach(r => {
+    if (!allIds.has(r.id)) { merged.push(r); allIds.add(r.id); }
+  });
+  merged.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  // Ažuriraj lokalni state
+  state.history = merged;
+  saveHistoryToLocal();
+  renderHistory();
+
+  // Download
+  const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), rounds: merged }, null, 2)],
+    { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `golf-povijest-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+
+  setStorageStatus(`${merged.length} rundi exportirano`, '#00ff00');
+  showToast(`${merged.length} rundi exportirano ✓`, 'green');
+}
+
+// ── EXPORT (stara funkcija — zadržana za kompatibilnost) ──────────
+function exportHistory() { exportAllHistory(); }
+
+// ── IMPORT ────────────────────────────────────────────────────────
+function importHistory(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const rounds = Array.isArray(data) ? data : (data.rounds || []);
+      if (rounds.length === 0) { showToast('Nema podataka u fajlu', 'red'); return; }
+      const existingIds = new Set(state.history.map(r => r.id));
+      const newRounds = rounds.filter(r => !existingIds.has(r.id));
       state.history = [...state.history, ...newRounds]
         .sort((a,b) => new Date(a.date) - new Date(b.date));
-      localStorage.setItem('golfHistory', JSON.stringify(state.history));
+      saveHistoryToLocal();
+      renderHistory();
+      showToast(`${newRounds.length} novih rundi uvezeno ✓`, 'green');
+    } catch (err) {
+      showToast('Greška čitanja fajla', 'red');
     }
-  } catch(e) {}
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── OBRIŠI SVE ────────────────────────────────────────────────────
+function clearHistory() {
+  if (!confirm('Obrisati cijelu povijest?')) return;
+  state.history = [];
+  saveHistoryToLocal();
+  renderHistory();
+  showToast('Povijest obrisana', 'red');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3368,7 +3416,7 @@ async function loadHistoryFromServer() {
 // ═══════════════════════════════════════════════════════════════════
 
 renderHome();
-loadHistoryFromServer();
+loadHistoryFromServer().then(() => renderHome());
 </script>
 </body>
 </html>

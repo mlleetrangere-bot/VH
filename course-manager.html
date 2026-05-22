@@ -546,7 +546,10 @@ input[type=number] { -moz-appearance: textfield; }
     <div class="sidebar mobile-open" id="sidebar">
       <div class="sidebar-header">
         <span class="sidebar-title">Tereni</span>
-        <button class="btn-add" onclick="openNewCourseModal()" title="Novi teren">+</button>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-add" onclick="exportAllData()" title="Export svih podataka" style="font-size:14px;">⬇</button>
+          <button class="btn-add" onclick="openNewCourseModal()" title="Novi teren">+</button>
+        </div>
       </div>
       <div class="course-list" id="courseList">
         <div class="empty-courses">Učitavam courses.json...<br>ili dodaj novi teren klikom +</div>
@@ -567,8 +570,10 @@ input[type=number] { -moz-appearance: textfield; }
         <div class="topbar">
           <div class="topbar-title" id="editorTitle">Teren</div>
           <div class="topbar-actions">
-            <button class="btn btn-gold" onclick="startGpsCapture()">📍 Snimi GPS</button>
-            <button class="btn btn-green" onclick="exportJson()">💾 Spremi</button>
+            <button class="btn btn-ghost" onclick="saveToLocal()" title="Spremi u browser">💾 Browser</button>
+            <button class="btn btn-ghost" onclick="saveToAvalon()" title="Spremi na Avalon">☁️ Avalon</button>
+            <button class="btn btn-gold" onclick="startGpsCapture()">📍 GPS</button>
+            <button class="btn btn-green" onclick="exportJson()">↓ Export</button>
             <button class="btn btn-red" onclick="deleteCourse()">🗑</button>
           </div>
         </div>
@@ -685,16 +690,51 @@ let state = {
 
 // ── LOAD courses.json ─────────────────────────────────────────────
 async function loadCourses() {
+  // 1. Pokušaj učitati s Avalon servera
+  if (BACKEND_URL) {
+    try {
+      const res = await fetch(`${BACKEND_URL}?action=load_courses&t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          state.courses = data;
+          setStatus(`Učitano ${data.length} terena s Avalon servera`);
+          renderSidebar();
+          return;
+        }
+      }
+    } catch(e) {}
+  }
+
+  // 2. Pokušaj učitati courses.json (statički fajl)
   try {
     const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store' });
     if (res.ok) {
-      state.courses = await res.json();
-      setStatus(`Učitano ${state.courses.length} terena iz courses.json`);
-    } else {
-      setStatus('courses.json nije pronađen — dodaj novi teren');
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        state.courses = data;
+        // Spremi i u localStorage
+        localStorage.setItem('golf_courses', JSON.stringify(data));
+        setStatus(`Učitano ${data.length} terena iz courses.json`);
+        renderSidebar();
+        return;
+      }
     }
-  } catch (e) {
-    setStatus('Greška učitavanja — provjeri je li courses.json na serveru');
+  } catch(e) {}
+
+  // 3. Fallback — localStorage
+  const local = localStorage.getItem('golf_courses');
+  if (local) {
+    try {
+      state.courses = JSON.parse(local);
+      setStatus(`Učitano ${state.courses.length} terena iz browsera`);
+    } catch(e) {
+      state.courses = [];
+      setStatus('Nema terena — dodaj novi klikom na +');
+    }
+  } else {
+    state.courses = [];
+    setStatus('Nema terena — dodaj novi klikom na +');
   }
   renderSidebar();
 }
@@ -1102,11 +1142,86 @@ function confirmDelete() {
   showToast('Teren obrisan', 'red');
 }
 
-// ── EXPORT ────────────────────────────────────────────────────────
-function exportJson() {
+// ── SPREMI — lokalno + Avalon ─────────────────────────────────────
+async function saveToLocal() {
+  localStorage.setItem('golf_courses', JSON.stringify(state.courses));
+  showToast('Snimljeno u browser ✓', 'green');
+  setStatus('Snimljeno lokalno');
+}
+
+async function saveToAvalon() {
+  if (!BACKEND_URL) {
+    showToast('Avalon nije konfiguriran', 'red');
+    return;
+  }
+  setStatus('Snimam na Avalon...');
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save_courses', data: state.courses })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    showToast('Snimljeno na Avalon ✓', 'green');
+    setStatus('Snimljeno na Avalon');
+  } catch(e) {
+    showToast(`Avalon greška: ${e.message}`, 'red');
+    setStatus(`Greška: ${e.message}`);
+  }
+}
+
+async function exportJson() {
+  // Spremi lokalno
+  await saveToLocal();
+  // Spremi na Avalon ako je konfiguriran
+  if (BACKEND_URL) await saveToAvalon();
+  // Otvori export modal
   const json = JSON.stringify(state.courses, null, 2);
   document.getElementById('jsonOutput').value = json;
   openModal('modalSave');
+}
+
+// ── EXPORT SVIH PODATAKA (lokalno + Avalon) ───────────────────────
+async function exportAllData() {
+  setStatus('Učitavam sve podatke...');
+
+  // Lokalni podaci
+  const localCourses = JSON.parse(localStorage.getItem('golf_courses') || '[]');
+
+  // Avalon podaci
+  let avalonCourses = [];
+  if (BACKEND_URL) {
+    try {
+      const res = await fetch(`${BACKEND_URL}?action=load_courses&t=${Date.now()}`);
+      if (res.ok) avalonCourses = await res.json();
+    } catch(e) {}
+  }
+
+  // Spoji sve — izbjegni duplikate po id
+  const allIds = new Set();
+  const merged = [];
+  [...state.courses, ...localCourses, ...avalonCourses].forEach(c => {
+    if (!allIds.has(c.id)) {
+      allIds.add(c.id);
+      merged.push(c);
+    }
+  });
+
+  // Ažuriraj state
+  state.courses = merged;
+  localStorage.setItem('golf_courses', JSON.stringify(merged));
+  renderSidebar();
+
+  // Download
+  const json = JSON.stringify(merged, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `courses-export-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+
+  setStatus(`Exportirano ${merged.length} terena`);
+  showToast(`${merged.length} terena exportirano ✓`, 'green');
 }
 
 function copyJson() {
@@ -1119,7 +1234,7 @@ function downloadJson() {
   const blob = new Blob([json], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'courses.json';
+  a.download = `courses-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   showToast('courses.json preuzet', 'green');
 }
