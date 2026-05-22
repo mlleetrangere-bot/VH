@@ -291,9 +291,8 @@ footer a{color:#aaddff;text-decoration:underline}
   <ul class="nav-links">
     <li><a onclick="scrollTo('#sadrzaji')" data-i18n="nav_am">Sadržaji</a></li>
     <li><a onclick="scrollTo('#smjestaji')" data-i18n="nav_rooms">Smještaji</a></li>
-    <li><a onclick="scrollTo('#cijene')" data-i18n="nav_prices">Cijene</a></li>
+    <li><a onclick="scrollTo('#cijene')" data-i18n="nav_prices">Cijene i rezervacija</a></li>
     <li><a onclick="scrollTo('#lokacija')" data-i18n="nav_loc">Lokacija</a></li>
-    <li><a onclick="scrollTo('#rezervacija')" data-i18n="nav_book">Rezervacija</a></li>
     <li><a onclick="scrollTo('#kontakt')" data-i18n="nav_contact">Kontakt</a></li>
   </ul>
   <div class="lang-group">
@@ -349,67 +348,77 @@ footer a{color:#aaddff;text-decoration:underline}
 </section>
 
 <!-- CIJENE I REZERVACIJA -->
-<section class="price-calc-bg" id="cijene">
+<!-- REZERVACIJA I CIJENE -->
+<section id="cijene" id="rezervacija" style="padding:4rem 2rem;border-bottom:2px solid #ddd">
   <div class="container">
-    <p class="sec-label" data-i18n="prices_label">Transparentne cijene</p>
-    <h2 class="sec-title" data-i18n="prices_title">Provjeri dostupnost i cijenu</h2>
+    <p class="sec-label" data-i18n="prices_label">Rezervacija i cijene</p>
+    <h2 class="sec-title">Rezervirajte smještaj</h2>
 
-    <!-- KORAK 1: Pretraga -->
+    <!-- ═══ KORAK 1: PRETRAGA ═══ -->
     <div id="step1">
-      <div style="background:#fff;border:2px solid #111;border-radius:6px;padding:2rem;margin-top:2rem">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;align-items:end">
 
-          <div style="display:flex;flex-direction:column;gap:0.4rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="checkin_date">Datum dolaska</label>
-            <input type="date" id="calcCheckin" style="border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.05rem;color:#111;outline:none;width:100%" onchange="onSearchChange()"/>
+      <!-- Search box -->
+      <div style="background:#fff;border:2px solid #111;border-radius:6px;padding:2rem;margin-top:1.5rem">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+          <div style="display:flex;flex-direction:column;gap:0.5rem">
+            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="checkin_date">📅 Datum dolaska</label>
+            <input type="date" id="calcCheckin"
+              style="border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.05rem;color:#111;outline:none;width:100%"
+              onchange="onSearchChange()"/>
           </div>
-
-          <div style="display:flex;flex-direction:column;gap:0.4rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="checkout_date">Datum odlaska</label>
-            <input type="date" id="calcCheckout" style="border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.05rem;color:#111;outline:none;width:100%" onchange="onSearchChange()"/>
+          <div style="display:flex;flex-direction:column;gap:0.5rem">
+            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="checkout_date">📅 Datum odlaska</label>
+            <input type="date" id="calcCheckout"
+              style="border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.05rem;color:#111;outline:none;width:100%"
+              onchange="onSearchChange()"/>
           </div>
-
-          <div style="display:flex;flex-direction:column;gap:0.4rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="adults">Odrasli</label>
-            <div style="display:flex;align-items:center;gap:0.8rem">
-              <button onclick="changeG('a',-1)" style="width:42px;height:42px;background:#111;color:#fff;border:none;font-size:1.4rem;font-weight:bold;cursor:pointer;border-radius:4px;flex-shrink:0">−</button>
-              <span id="adultsVal" style="font-size:1.4rem;font-weight:bold;color:#111;min-width:32px;text-align:center">2</span>
-              <button onclick="changeG('a',1)" style="width:42px;height:42px;background:#111;color:#fff;border:none;font-size:1.4rem;font-weight:bold;cursor:pointer;border-radius:4px;flex-shrink:0">+</button>
-            </div>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:0.4rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="children">Djeca</label>
-            <div style="display:flex;align-items:center;gap:0.8rem">
-              <button onclick="changeG('c',-1)" style="width:42px;height:42px;background:#111;color:#fff;border:none;font-size:1.4rem;font-weight:bold;cursor:pointer;border-radius:4px;flex-shrink:0">−</button>
-              <span id="childrenVal" style="font-size:1.4rem;font-weight:bold;color:#111;min-width:32px;text-align:center">0</span>
-              <button onclick="changeG('c',1)" style="width:42px;height:42px;background:#111;color:#fff;border:none;font-size:1.4rem;font-weight:bold;cursor:pointer;border-radius:4px;flex-shrink:0">+</button>
-            </div>
-          </div>
-
         </div>
 
-        <!-- Noći badge + greška -->
-        <div id="nightsBadge" style="display:none;background:#111;color:#fff;border-radius:4px;padding:0.5rem 1.2rem;font-weight:bold;font-size:1rem;margin-top:1rem;text-align:center"></div>
-        <div id="searchError" style="display:none;color:#cc0000;font-weight:bold;font-size:0.95rem;margin-top:0.8rem"></div>
-        <p style="font-size:0.85rem;color:#555;margin-top:0.8rem" data-i18n="children_sub">Djeca do 3 godine besplatno · Ne računaju se u kapacitet sobe</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem">
+          <div style="display:flex;flex-direction:column;gap:0.5rem">
+            <label style="font-size:1rem;font-weight:bold;color:#111">👤 <span data-i18n="adults">Odrasli</span></label>
+            <div style="display:flex;align-items:center;gap:1rem">
+              <button type="button" id="btnAdultMinus"
+                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">−</button>
+              <span id="adultsVal" style="font-size:1.5rem;font-weight:bold;color:#111;min-width:36px;text-align:center">2</span>
+              <button type="button" id="btnAdultPlus"
+                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">+</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem">
+            <label style="font-size:1rem;font-weight:bold;color:#111">👶 <span data-i18n="children">Djeca</span></label>
+            <div style="display:flex;align-items:center;gap:1rem">
+              <button type="button" id="btnChildMinus"
+                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">−</button>
+              <span id="childrenVal" style="font-size:1.5rem;font-weight:bold;color:#111;min-width:36px;text-align:center">0</span>
+              <button type="button" id="btnChildPlus"
+                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="nightsBadge" style="display:none;background:#2a6b7c;color:#fff;border-radius:4px;padding:0.5rem 1.2rem;font-weight:bold;font-size:1rem;margin-top:0.5rem;display:inline-block"></div>
+        <p style="font-size:0.85rem;color:#555;margin-top:0.8rem">✓ Djeca do 3 godine besplatno i ne računaju se u kapacitet sobe</p>
       </div>
 
-      <!-- Rezultati cijena -->
+      <!-- Price results -->
       <div id="priceResults" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem;margin-top:1.5rem"></div>
     </div>
 
-    <!-- KORAK 2: Kontakt forma -->
+    <!-- ═══ KORAK 2: KONTAKT FORMA ═══ -->
     <div id="step2" style="display:none">
+
       <!-- Summary bar -->
-      <div id="bookingSummaryBar" style="background:#111;color:#fff;border-radius:6px;padding:1.2rem 1.5rem;margin-top:2rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem">
+      <div style="background:#111;color:#fff;border-radius:6px;padding:1.2rem 1.5rem;margin-top:1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem">
         <div>
           <div id="bsbRoom" style="font-size:1.2rem;font-weight:bold"></div>
           <div id="bsbDetail" style="font-size:0.9rem;opacity:0.75;margin-top:0.2rem"></div>
         </div>
-        <div style="font-size:1.4rem;font-weight:bold;color:#4ecf8a" id="bsbPrice"></div>
+        <div id="bsbPrice" style="font-size:1.4rem;font-weight:bold;color:#4ecf8a"></div>
       </div>
 
+      <!-- Contact form -->
       <div style="background:#fff;border:2px solid #111;border-radius:6px;padding:2rem">
         <div style="font-size:1.2rem;font-weight:bold;color:#111;margin-bottom:1.5rem" data-i18n="your_details">Vaši kontakt podaci</div>
 
@@ -421,18 +430,25 @@ footer a{color:#aaddff;text-decoration:underline}
         <div class="fg"><label data-i18n="phone">Telefon</label><input type="tel" id="fPH" autocomplete="tel"/></div>
         <div class="fg"><label data-i18n="country">Država</label><input type="text" id="fCO" autocomplete="country-name"/></div>
 
-        <!-- Dob djece (prikazuje se samo ako ima djece) -->
+        <!-- Dob djece -->
         <div id="childAgesWrap" style="display:none;background:#f5f5f5;border:2px solid #ddd;border-radius:6px;padding:1.2rem;margin-bottom:1rem">
           <div style="font-size:1rem;font-weight:bold;color:#111;margin-bottom:0.8rem" data-i18n="children_ages">Dob svakog djeteta (u godinama):</div>
           <div id="childAgesInputs" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
           <p style="font-size:0.85rem;color:#006600;font-weight:bold;margin-top:0.8rem">✓ Djeca do 3 godine ne plaćaju</p>
         </div>
 
-        <div class="fg"><label data-i18n="note">Napomena / Posebni zahtjevi</label><textarea id="fNO" style="min-height:80px" placeholder="Posebni zahtjevi, pitanja..."></textarea></div>
+        <div class="fg"><label data-i18n="note">Napomena / Posebni zahtjevi</label>
+          <textarea id="fNO" style="min-height:80px" placeholder="Posebni zahtjevi, pitanja..."></textarea>
+        </div>
 
         <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
-          <button onclick="goBackToSearch()" style="background:#fff;color:#111;border:2px solid #111;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem 1.5rem;border-radius:4px;cursor:pointer">← <span data-i18n="wiz_back">Natrag</span></button>
-          <button onclick="submitBooking()" id="submitBtn" style="flex:1;background:#111;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem;border-radius:4px;transition:background 0.2s" data-i18n="send_request">Pošalji zahtjev za rezervaciju</button>
+          <button type="button" onclick="goBackToSearch()"
+            style="background:#fff;color:#111;border:2px solid #111;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem 1.5rem;border-radius:4px;cursor:pointer">
+            ← <span data-i18n="wiz_back">Natrag</span>
+          </button>
+          <button type="button" onclick="submitBooking()" id="submitBtn"
+            style="flex:1;background:#111;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem;border-radius:4px;transition:background 0.2s"
+            data-i18n="send_request">Pošalji zahtjev za rezervaciju</button>
         </div>
         <div class="notice success" id="successNotice"></div>
         <div class="notice error" id="errorNotice"></div>
@@ -440,66 +456,6 @@ footer a{color:#aaddff;text-decoration:underline}
       </div>
     </div>
 
-  </div>
-</section>
-
-<!-- LOKACIJA --><!-- LOKACIJA -->
-<section class="loc-bg" id="lokacija">
-  <div class="container">
-    <p class="sec-label" data-i18n="loc_label">Lokacija</p>
-    <h2 class="sec-title" data-i18n="loc_title">Vodice, Dalmacija</h2>
-    <p class="sec-desc" data-i18n="loc_desc">Mirni dio Vodica, 10 minuta šetnje do centra i 15 minuta do plaže.</p>
-    <div class="loc-grid">
-      <div class="loc-items">
-        <div class="loc-item"><div class="loc-icon">🏖️</div><div><div class="loc-text-title" data-i18n="loc1t">15 min do plaže</div><div class="loc-text-desc" data-i18n="loc1d">Pješke do kristalno čistog mora</div></div></div>
-        <div class="loc-item"><div class="loc-icon">🏙️</div><div><div class="loc-text-title" data-i18n="loc2t">10 min do centra</div><div class="loc-text-desc" data-i18n="loc2d">Restorani, kafići, trgovine</div></div></div>
-        <div class="loc-item"><div class="loc-icon">🚗</div><div><div class="loc-text-title" data-i18n="loc3t">Šibenik – 15 km</div><div class="loc-text-desc" data-i18n="loc3d">Laka dostupnost gradom</div></div></div>
-        <div class="loc-item"><div class="loc-icon">🌿</div><div><div class="loc-text-title" data-i18n="loc4t">Mirna zona</div><div class="loc-text-desc" data-i18n="loc4d">Daleko od buke, blizu svega</div></div></div>
-      </div>
-      <div class="map-box"><div style="font-size:3rem">📍</div><div style="font-size:1.1rem;font-weight:bold">Villa Helena<br>Vodice, Dalmacija</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- REZERVACIJA – kontakt forma (dolazi iz wizarda) -->
-<section id="rezervacija">
-  <div class="container">
-    <p class="sec-label" data-i18n="book_label">Online rezervacija</p>
-    <h2 class="sec-title" data-i18n="book_title">Unesite kontakt podatke</h2>
-
-    <!-- Summary bar (popunjava se iz wizarda) -->
-    <div class="booking-summary-bar" id="bookingSummaryBar" style="display:none">
-      <div>
-        <div class="bsb-room" id="bsbRoom">—</div>
-        <div class="bsb-detail" id="bsbDetail">—</div>
-      </div>
-      <div class="bsb-price" id="bsbPrice">—</div>
-    </div>
-
-    <div class="booking-wrap">
-      <!-- Ako nije odabrana soba iz wizarda, pokaži uputu -->
-      <div id="bookingNoRoom" style="text-align:center;padding:2rem;color:#555">
-        <div style="font-size:2rem;margin-bottom:0.8rem">☝️</div>
-        <div style="font-size:1.1rem;font-weight:bold;margin-bottom:0.5rem" data-i18n="book_go_calc">Prvo odaberite sobu u kalkulatoru iznad</div>
-        <button class="btn-main" onclick="scrollTo('#cijene')" style="margin-top:1rem" data-i18n="cta_prices">Idi na kalkulator cijena</button>
-      </div>
-
-      <!-- Forma – prikazuje se nakon odabira sobe -->
-      <div id="bookingForm" style="display:none">
-        <div class="form-row">
-          <div class="fg"><label data-i18n="first_name">Ime</label><input type="text" id="fFN" autocomplete="given-name"/></div>
-          <div class="fg"><label data-i18n="last_name">Prezime</label><input type="text" id="fLN" autocomplete="family-name"/></div>
-        </div>
-        <div class="fg"><label>Email</label><input type="email" id="fEM" autocomplete="email"/></div>
-        <div class="fg"><label data-i18n="phone">Telefon</label><input type="tel" id="fPH" autocomplete="tel"/></div>
-        <div class="fg"><label data-i18n="country">Država</label><input type="text" id="fCO" autocomplete="country-name"/></div>
-        <div class="fg"><label data-i18n="note">Napomena</label><textarea id="fNO" placeholder="Posebni zahtjevi, pitanja..."></textarea></div>
-        <button class="submit-btn" id="submitBtn" onclick="submitBooking()" data-i18n="send_request">Pošalji zahtjev za rezervaciju</button>
-        <div class="notice success" id="successNotice"></div>
-        <div class="notice error" id="errorNotice"></div>
-        <p style="font-size:0.85rem;color:#555;margin-top:1rem" data-i18n="book_note">Nakon slanja zahtjeva, kontaktirat ćemo vas za potvrdu u najkraćem roku.</p>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -872,35 +828,48 @@ let gAdults = 2, gChildren = 0;
 let selCheckin = '', selCheckout = '', selNights = 0;
 let selRoomId = null, selTotal = 0, selPerNight = 0;
 
-function changeG(type, delta){
-  if(type==='a'){ gAdults = Math.max(1, Math.min(8, gAdults+delta)); document.getElementById('adultsVal').textContent = gAdults; }
-  if(type==='c'){ gChildren = Math.max(0, Math.min(6, gChildren+delta)); document.getElementById('childrenVal').textContent = gChildren; }
-  onSearchChange();
-}
-
 function onSearchChange(){
   const ci = document.getElementById('calcCheckin').value;
   const co = document.getElementById('calcCheckout').value;
   const badge = document.getElementById('nightsBadge');
-  const err = document.getElementById('searchError');
-  err.style.display = 'none';
+  if(!badge) return;
 
   if(ci && co && ci < co){
     const n = Math.round((new Date(co)-new Date(ci))/86400000);
     selNights = n;
     badge.textContent = n + ' ' + (n===1?'noć':n<5?'noći':'noći');
-    badge.style.display = 'block';
+    badge.style.display = 'inline-block';
     selCheckin = ci; selCheckout = co;
     calcPrices();
   } else {
     badge.style.display = 'none';
-    document.getElementById('priceResults').innerHTML = '';
+    const pr = document.getElementById('priceResults');
+    if(pr) pr.innerHTML = '';
   }
 }
 
-function getPayingGuests(){
-  // adults + children (all counted for capacity check; age entered in step 2)
-  return gAdults;
+// Buttons wired up in initGuestButtons() called from init()
+function initGuestButtons(){
+  document.getElementById('btnAdultMinus').addEventListener('click', function(){
+    gAdults = Math.max(1, gAdults-1);
+    document.getElementById('adultsVal').textContent = gAdults;
+    onSearchChange();
+  });
+  document.getElementById('btnAdultPlus').addEventListener('click', function(){
+    gAdults = Math.min(8, gAdults+1);
+    document.getElementById('adultsVal').textContent = gAdults;
+    onSearchChange();
+  });
+  document.getElementById('btnChildMinus').addEventListener('click', function(){
+    gChildren = Math.max(0, gChildren-1);
+    document.getElementById('childrenVal').textContent = gChildren;
+    onSearchChange();
+  });
+  document.getElementById('btnChildPlus').addEventListener('click', function(){
+    gChildren = Math.min(6, gChildren+1);
+    document.getElementById('childrenVal').textContent = gChildren;
+    onSearchChange();
+  });
 }
 
 // ══════════════════════════════════════════
@@ -1320,6 +1289,8 @@ async function init(){
   calcPrices();
   document.getElementById('calNotice').textContent=t('cal_inst');
   document.getElementById('calNotice').className='notice warning visible';
+  // Wire up guest counter buttons
+  initGuestButtons();
   // Set default checkin to tomorrow
   const td=new Date(); td.setDate(td.getDate()+1);
   document.getElementById('calcCheckin').value=td.toISOString().split('T')[0];
