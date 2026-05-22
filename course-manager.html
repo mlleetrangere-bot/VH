@@ -1185,17 +1185,27 @@ const GITHUB = {
 };
 
 async function githubGetFileSha(path) {
-  const res = await fetch(
-    `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}`,
-    { headers: { 'Authorization': `token ${GITHUB.token}`, 'Accept': 'application/vnd.github.v3+json' } }
-  );
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.sha;
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}&t=${Date.now()}`,
+      {
+        headers: {
+          'Authorization': `token ${GITHUB.token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Cache-Control': 'no-cache'
+        }
+      }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.sha || null;
+  } catch(e) { return null; }
 }
 
 async function githubPushFile(path, content, commitMsg) {
+  // Uvijek dohvati svježi SHA neposredno prije pusha
   const sha = await githubGetFileSha(path);
+
   const body = {
     message: commitMsg,
     content: btoa(unescape(encodeURIComponent(content))),
@@ -1210,7 +1220,8 @@ async function githubPushFile(path, content, commitMsg) {
       headers: {
         'Authorization': `token ${GITHUB.token}`,
         'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
       },
       body: JSON.stringify(body)
     }

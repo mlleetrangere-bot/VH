@@ -3375,11 +3375,17 @@ const GITHUB = {
 async function githubGetSha(path) {
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}`,
-      { headers: { 'Authorization': `token ${GITHUB.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+      `https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${path}?ref=${GITHUB.branch}&t=${Date.now()}`,
+      {
+        headers: {
+          'Authorization': `token ${GITHUB.token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Cache-Control': 'no-cache'
+        }
+      }
     );
     if (!res.ok) return null;
-    return (await res.json()).sha;
+    return (await res.json()).sha || null;
   } catch (e) { return null; }
 }
 
@@ -3398,7 +3404,8 @@ async function githubPush(path, content, msg) {
       headers: {
         'Authorization': `token ${GITHUB.token}`,
         'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
       },
       body: JSON.stringify(body)
     }
