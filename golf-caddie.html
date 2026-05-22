@@ -1710,6 +1710,7 @@ function initNewRound() {
     state.players = [{ name: 'Igrač 1', color: COLORS[0], avatar: AVATARS[0], hcp: 36, gender: 'M', teeName: '' }];
   }
   state.selectedCourseId = null;
+  state.offlineCourses = null; // Reset cache — uzmi svježe podatke s GPS koordinatama
   state.putts = [];
 
   const manualSection = document.getElementById('manual-section');
@@ -2387,13 +2388,61 @@ state.selectedTeeIdx = null;
 
 async function loadOfflineCourses() {
   if (state.offlineCourses) return state.offlineCourses;
+
+  let fileCourses = [];
+  let localCourses = [];
+
+  // 1. Čitaj courses.json (statički fajl)
   try {
-    const res = await fetch('courses.json', { signal: AbortSignal.timeout(5000) });
-    if (res.ok) {
-      state.offlineCourses = await res.json();
-    }
+    const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+    if (res.ok) fileCourses = await res.json();
   } catch (e) {}
-  return state.offlineCourses || [];
+
+  // 2. Čitaj iz localStorage (course-manager snima ovdje)
+  try {
+    const ls = localStorage.getItem('golf_courses');
+    if (ls) localCourses = JSON.parse(ls);
+  } catch (e) {}
+
+  // 3. Spoji — localStorage ima prednost jer ima GPS koordinate
+  // Ako isti teren postoji u oba, uzmi onaj iz localStorage (noviji/bogatiji podaci)
+  const merged = [...fileCourses];
+  localCourses.forEach(lc => {
+    const idx = merged.findIndex(fc => fc.id === lc.id || fc.club_name === lc.club_name);
+    if (idx >= 0) {
+      // Spoji GPS koordinate iz localStorage u tee podatke
+      merged[idx] = mergeGpsData(merged[idx], lc);
+    } else {
+      merged.push(lc);
+    }
+  });
+
+  state.offlineCourses = merged.length > 0 ? merged : localCourses;
+  return state.offlineCourses;
+}
+
+// Spoji GPS koordinate iz localStorage terena u file teren
+function mergeGpsData(fileCourse, localCourse) {
+  if (!localCourse.tees) return fileCourse;
+  const result = JSON.parse(JSON.stringify(fileCourse)); // deep copy
+
+  localCourse.tees.forEach(localTee => {
+    const fileTee = result.tees?.find(t => t.tee_name === localTee.tee_name);
+    if (fileTee && localTee.holes) {
+      localTee.holes.forEach((lh, i) => {
+        if (fileTee.holes && fileTee.holes[i]) {
+          // Kopiraj GPS koordinate ako postoje
+          if (lh.front) fileTee.holes[i].front = lh.front;
+          if (lh.mid)   fileTee.holes[i].mid   = lh.mid;
+          if (lh.back)  fileTee.holes[i].back  = lh.back;
+        }
+      });
+    } else if (!fileTee && result.tees) {
+      // Tee postoji samo u localStorage — dodaj ga
+      result.tees.push(localTee);
+    }
+  });
+  return result;
 }
 
 async function populateCourseDropdown() {
@@ -2833,21 +2882,13 @@ function wShowScreen(name) {
 // ── COURSE LOADING ────────────────────────────────────────────────
 async function wLoadCourses() {
   const el = document.getElementById('w-course-list');
-  if (el) el.innerHTML = '<div style="text-align:center;color:#888;font-size:13px;padding:20px;">⏳ Učitavam terene...</div>';
-  try {
-    const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store' });
-    if (res.ok) {
-      wState.courses = await res.json();
-      // Ako smo na select-course ekranu, osvježi
-      if (wState.screen === 'select-course') wRenderCourseList();
-    } else {
-      wState.courses = [];
-      if (el) el.innerHTML = '<div style="text-align:center;color:#ff3333;font-size:13px;padding:20px;">❌ courses.json nije pronađen.<br>Provjeri GitHub repozitorij.</div>';
-    }
-  } catch (e) {
-    wState.courses = [];
-    if (el) el.innerHTML = '<div style="text-align:center;color:#ff3333;font-size:13px;padding:20px;">❌ Greška učitavanja.<br>Provjeri internet vezu.</div>';
-  }
+  if (el) el.innerHTML = '<div style="text-align:center;color:#888;font-size:28px;padding:24px;">⏳ Učitavam...</div>';
+
+  // Koristi istu logiku kao phone verzija
+  const courses = await loadOfflineCourses();
+  wState.courses = courses;
+
+  if (wState.screen === 'select-course') wRenderCourseList();
 }
 
 async function wLoadHistory() {
@@ -2892,6 +2933,7 @@ function wSelectCourse(idx) {
 }
 
 async function wReloadCourses() {
+  state.offlineCourses = null; // Reset cache
   wState.courses = [];
   await wLoadCourses();
   wShowScreen('select-course');
