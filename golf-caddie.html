@@ -446,23 +446,57 @@ html, body {
 
 /* GPS distances */
 .dist-panel {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 .dist-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: var(--surface2);
   border: 2px solid var(--border2);
-  border-radius: 12px;
-  padding: 12px 8px;
-  text-align: center;
+  border-radius: 14px;
+  padding: 10px 20px;
 }
-.dist-block.mid { border-color: var(--gold); background: #1a1500; }
-.dist-block-label { font-size: 12px; color: var(--text2); font-family: var(--font-mono); letter-spacing: 2px; margin-bottom: 4px; font-weight: 700; }
-.dist-block-val { font-family: var(--font-display); font-size: 34px; letter-spacing: 1px; color: var(--text); line-height: 1; }
-.dist-block.mid .dist-block-val { color: var(--gold); }
-.dist-block-unit { font-size: 13px; color: var(--text3); font-family: var(--font-mono); font-weight: 600; }
+.dist-block.mid {
+  border-color: var(--gold);
+  background: #1a1500;
+  border-width: 3px;
+}
+.dist-block-label {
+  font-size: 18px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  letter-spacing: 3px;
+  font-weight: 700;
+  width: 70px;
+}
+.dist-block.mid .dist-block-label { color: var(--gold); }
+.dist-block-val {
+  font-family: var(--font-mono);
+  font-size: 72px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -2px;
+  flex: 1;
+  text-align: right;
+}
+.dist-block.mid .dist-block-val { color: var(--gold); font-size: 84px; }
+.dist-block-unit {
+  font-size: 20px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  width: 24px;
+  text-align: right;
+  margin-left: 6px;
+  align-self: flex-end;
+  padding-bottom: 10px;
+}
+.dist-block.mid .dist-block-unit { color: var(--gold); }
 
 /* GPS status bar */
 .gps-bar {
@@ -958,8 +992,8 @@ input[type=number] { -moz-appearance: textfield; }
 
       <div class="dist-panel">
         <div class="dist-block">
-          <div class="dist-block-label">FRONT</div>
-          <div class="dist-block-val" id="dist-front">—</div>
+          <div class="dist-block-label">BACK</div>
+          <div class="dist-block-val" id="dist-back">—</div>
           <div class="dist-block-unit">m</div>
         </div>
         <div class="dist-block mid">
@@ -968,12 +1002,12 @@ input[type=number] { -moz-appearance: textfield; }
           <div class="dist-block-unit">m</div>
         </div>
         <div class="dist-block">
-          <div class="dist-block-label">BACK</div>
-          <div class="dist-block-val" id="dist-back">—</div>
+          <div class="dist-block-label">FRONT</div>
+          <div class="dist-block-val" id="dist-front">—</div>
           <div class="dist-block-unit">m</div>
         </div>
       </div>
-      <div id="dist-debug" style="text-align:center;font-size:11px;color:#444;font-family:monospace;padding:2px 0;"></div>
+      <div id="dist-debug" style="text-align:center;font-size:11px;color:#333;font-family:monospace;padding:2px 0;"></div>
     </div>
 
     <div class="players-scores" id="players-scores"></div>
@@ -1708,6 +1742,8 @@ function startRound() {
 
   startGPS();
   startDistanceRefresh();
+  acquireWakeLock();
+  requestNotificationPermission();
   showScreen('play');
 }
 
@@ -1731,6 +1767,60 @@ function initNewRound() {
   renderPlayersList();
   setHcpSystem(state.hcpSystem || 'WHS');
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// WAKE LOCK — sprječava gašenje ekrana tijekom igre
+// ═══════════════════════════════════════════════════════════════════
+
+let wakeLock = null;
+
+async function acquireWakeLock() {
+  if (!('wakeLock' in navigator)) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => {
+      if (state.currentScreen === 'play') setTimeout(acquireWakeLock, 1000);
+    });
+  } catch (e) {}
+}
+
+function releaseWakeLock() {
+  if (wakeLock) { wakeLock.release(); wakeLock = null; }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && state.currentScreen === 'play') {
+    acquireWakeLock();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// NOTIFIKACIJE — distance vidljive na lock screenu
+// ═══════════════════════════════════════════════════════════════════
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') await Notification.requestPermission();
+}
+
+function sendDistanceNotification(hole, front, mid, back) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (state._lastNotification) state._lastNotification.close();
+  const f = front !== '—' ? `${front}m` : '—';
+  const m = mid   !== '—' ? `${mid}m`   : '—';
+  const b = back  !== '—' ? `${back}m`  : '—';
+  state._lastNotification = new Notification(`⛳ Rupa ${hole + 1} — Par ${state.par[hole] || 4}`, {
+    body: `BACK: ${b}   MID: ${m}   FRONT: ${f}`,
+    tag: 'golf-dist',
+    silent: true,
+    renotify: true,
+  });
+  setTimeout(() => state._lastNotification?.close(), 25000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GPS
+// ═══════════════════════════════════════════════════════════════════
 
 function startGPS() {
   if (!navigator.geolocation) {
@@ -1824,12 +1914,22 @@ function updateDistances() {
     return;
   }
 
-  f.textContent = hole.front?.lat ? haversine(pos.lat, pos.lon, hole.front.lat, hole.front.lon) : '—';
-  m.textContent = hole.mid?.lat   ? haversine(pos.lat, pos.lon, hole.mid.lat,   hole.mid.lon)   : '—';
-  b.textContent = hole.back?.lat  ? haversine(pos.lat, pos.lon, hole.back.lat,  hole.back.lon)  : '—';
+  const fVal = hole.front?.lat ? String(haversine(pos.lat, pos.lon, hole.front.lat, hole.front.lon)) : '—';
+  const mVal = hole.mid?.lat   ? String(haversine(pos.lat, pos.lon, hole.mid.lat,   hole.mid.lon))   : '—';
+  const bVal = hole.back?.lat  ? String(haversine(pos.lat, pos.lon, hole.back.lat,  hole.back.lon))  : '—';
+
+  f.textContent = fVal;
+  m.textContent = mVal;
+  b.textContent = bVal;
 
   const dbg = document.getElementById('dist-debug');
   if (dbg) dbg.textContent = `F:${hole.front?.lat?'✓':'×'} M:${hole.mid?.lat?'✓':'×'} B:${hole.back?.lat?'✓':'×'}`;
+
+  // Pošalji notifikaciju na lock screen (osvježava se svakih ~10s)
+  if (!state._notifTimer) {
+    sendDistanceNotification(state.currentHole, fVal, mVal, bVal);
+    state._notifTimer = setTimeout(() => { state._notifTimer = null; }, 10000);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1947,6 +2047,7 @@ function changePutt(playerIdx, delta) {
 function nextHole() {
   if (state.currentHole < state.numHoles - 1) {
     state.currentHole++;
+    state._notifTimer = null; // Odmah pošalji notif za novu rupu
     renderPlay();
   } else {
     showScreen('scorecard');
@@ -1956,6 +2057,7 @@ function nextHole() {
 function prevHole() {
   if (state.currentHole > 0) {
     state.currentHole--;
+    state._notifTimer = null;
     renderPlay();
   }
 }
@@ -2127,6 +2229,7 @@ function finishRound() {
   if (state.gpsPollId) { clearInterval(state.gpsPollId); state.gpsPollId = null; }
   state.gpsWatchId = null;
   stopDistanceRefresh();
+  releaseWakeLock();
   state.players = [];
   state.strokes = [];
   state.putts   = [];
