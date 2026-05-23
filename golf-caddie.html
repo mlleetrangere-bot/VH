@@ -1008,9 +1008,15 @@ input[type=number] { -moz-appearance: textfield; }
         </div>
       </div>
       <div id="dist-debug" style="text-align:center;font-size:11px;color:#333;font-family:monospace;padding:2px 0;"></div>
+
+      <!-- Hazard distances — prikazuju se samo ako postoje koordinate -->
+      <div id="hazard-panel" style="display:none;padding:0 4px 8px;"></div>
     </div>
 
     <div class="players-scores" id="players-scores"></div>
+
+    <!-- Summary dosadašnje igre -->
+    <div id="play-summary" style="padding:8px 16px 4px;"></div>
 
     <div class="hole-nav">
       <button class="btn btn-secondary btn-sm" id="btn-prev-hole" onclick="prevHole()">◀</button>
@@ -1035,14 +1041,8 @@ input[type=number] { -moz-appearance: textfield; }
 
     <div class="scroll-content">
       <div id="scorecard-players-tabs" style="display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;"></div>
-      <!-- View toggle: Bruto / Neto / Stableford -->
-      <div style="display:flex;gap:6px;padding:10px 16px 0;">
-        <button id="sc-view-bruto" class="btn btn-primary btn-sm" style="flex:1;font-size:12px;" onclick="setScorecardView('bruto')">Bruto</button>
-        <button id="sc-view-neto" class="btn btn-secondary btn-sm" style="flex:1;font-size:12px;" onclick="setScorecardView('neto')">Neto</button>
-        <button id="sc-view-stableford" class="btn btn-secondary btn-sm" style="flex:1;font-size:12px;" onclick="setScorecardView('stableford')">Stableford</button>
-      </div>
       <!-- Playing handicap info -->
-      <div id="sc-ph-info" style="padding:8px 16px 0;font-size:11px;font-family:var(--font-mono);color:var(--text3);line-height:1.8;"></div>
+      <div id="sc-ph-info" style="padding:8px 16px 0;font-size:13px;font-family:var(--font-mono);color:var(--text3);line-height:1.8;"></div>
       <div style="height:8px;"></div>
       <div class="scorecard-table" id="scorecard-table"></div>
 
@@ -1444,6 +1444,9 @@ input[type=number] { -moz-appearance: textfield; }
         </div>
       </div>
       <div style="text-align:center;font-size:22px;color:#333;font-family:monospace;margin-bottom:4px;" id="w-gps-status">GPS...</div>
+
+      <!-- Watch hazard distances -->
+      <div id="w-hazard-panel" style="padding:0 var(--wp) 4px;"></div>
 
       <div class="wdiv"></div>
 
@@ -2063,22 +2066,22 @@ function updateDistances() {
 
   if (!pos) {
     f.textContent = '—'; m.textContent = '—'; b.textContent = '—';
+    updateHazardDistances(null, null);
     return;
   }
 
   if (!state.courseGps) {
-    f.textContent = 'GPS?'; m.textContent = 'GPS?'; b.textContent = 'GPS?';
-    // Debug — pokaži što ima u courseGps
+    f.textContent = '—'; m.textContent = '—'; b.textContent = '—';
     const dbg = document.getElementById('dist-debug');
     if (dbg) dbg.textContent = 'courseGps: null';
+    updateHazardDistances(null, null);
     return;
   }
 
   const hole = state.courseGps[state.currentHole];
   if (!hole) {
-    f.textContent = 'r?'; m.textContent = 'r?'; b.textContent = 'r?';
-    const dbg = document.getElementById('dist-debug');
-    if (dbg) dbg.textContent = `courseGps[${state.currentHole}]: null, len=${state.courseGps.length}`;
+    f.textContent = '—'; m.textContent = '—'; b.textContent = '—';
+    updateHazardDistances(null, null);
     return;
   }
 
@@ -2093,11 +2096,59 @@ function updateDistances() {
   const dbg = document.getElementById('dist-debug');
   if (dbg) dbg.textContent = `F:${hole.front?.lat?'✓':'×'} M:${hole.mid?.lat?'✓':'×'} B:${hole.back?.lat?'✓':'×'}`;
 
-  // Pošalji notifikaciju na lock screen (osvježava se svakih ~10s)
+  // Hazardi
+  updateHazardDistances(pos, hole);
+
+  // Notifikacija
   if (!state._notifTimer) {
     sendDistanceNotification(state.currentHole, fVal, mVal, bVal);
     state._notifTimer = setTimeout(() => { state._notifTimer = null; }, 10000);
   }
+}
+
+function updateHazardDistances(pos, hole) {
+  const el = document.getElementById('hazard-panel');
+  if (!el) return;
+  if (!pos || !hole) { el.style.display = 'none'; return; }
+
+  const waters  = (hole.water   || []).filter(w => w?.lat);
+  const bunkers = (hole.bunkers || []).filter(b => b?.lat);
+
+  if (waters.length === 0 && bunkers.length === 0) {
+    el.style.display = 'none';
+    return;
+  }
+
+  el.style.display = 'block';
+  let html = '';
+
+  if (waters.length > 0) {
+    html += `<div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">`;
+    waters.forEach((w, i) => {
+      const d = haversine(pos.lat, pos.lon, w.lat, w.lon);
+      html += `<div style="flex:1;min-width:80px;background:#001a33;border:2px solid #55aaff;border-radius:10px;padding:8px;text-align:center;">
+        <div style="font-size:13px;color:#55aaff;font-family:var(--font-mono);font-weight:700;margin-bottom:2px;">💧 W${i+1}</div>
+        <div style="font-size:28px;font-weight:800;color:#55aaff;font-family:var(--font-mono);line-height:1;">${d}</div>
+        <div style="font-size:12px;color:#334455;font-family:var(--font-mono);">m</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (bunkers.length > 0) {
+    html += `<div style="display:flex;gap:6px;flex-wrap:wrap;">`;
+    bunkers.forEach((bk, i) => {
+      const d = haversine(pos.lat, pos.lon, bk.lat, bk.lon);
+      html += `<div style="flex:1;min-width:80px;background:#1a1400;border:2px solid #ffff00;border-radius:10px;padding:8px;text-align:center;">
+        <div style="font-size:13px;color:#ffff00;font-family:var(--font-mono);font-weight:700;margin-bottom:2px;">🏖 B${i+1}</div>
+        <div style="font-size:28px;font-weight:800;color:#ffff00;font-family:var(--font-mono);line-height:1;">${d}</div>
+        <div style="font-size:12px;color:#443300;font-family:var(--font-mono);">m</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2127,12 +2178,33 @@ function renderPlay() {
   updateDistances();
 }
 
+// Izračunaj default broj udaraca za rupu baziran na HCP igrača
+function defaultStrokesForHole(playerIdx, holeIdx) {
+  const par = state.par[holeIdx] || 4;
+  const si  = state.si?.[holeIdx] || holeIdx + 1;
+  const ph  = state.roundPlayingHcps?.[state.players[playerIdx]?.name] ||
+              calcPlayingHcpForPlayer(state.players[playerIdx]);
+  const numH = state.numHoles || 18;
+  // Extra strokes po rupi prema Playing Handicap
+  const extra = Math.floor(ph / numH) + (si <= (ph % numH) ? 1 : 0);
+  return par + extra;
+}
+
 function renderPlayerScoreCards() {
   const h = state.currentHole;
   const el = document.getElementById('players-scores');
   el.innerHTML = state.players.map((p, pi) => {
-    const s    = state.strokes[pi][h];
-    const pu   = (state.putts[pi] || [])[h] || 0;
+    // Default strokes ako nema unosa
+    let s = state.strokes[pi][h];
+    if (s === 0) {
+      s = 0; // pokazuje 0 — igrač mora unijeti
+    }
+    const suggested = defaultStrokesForHole(pi, h);
+
+    let pu = (state.putts[pi] || [])[h];
+    // Default putts = 2 ako nije bilo unosa
+    if (pu === 0 || pu === undefined) pu = 0;
+
     const par  = state.par[h];
     const diff = s > 0 ? s - par : null;
     const totalS  = state.strokes[pi].reduce((a,b)=>a+b,0);
@@ -2148,33 +2220,44 @@ function renderPlayerScoreCards() {
       diff === 1 ? 'BOGEY' :
       diff === 2 ? 'DBL BOGEY' : `+${diff}`;
 
+    // Mini summary — stableford dosad
+    const sbTotal = state.strokes[pi].reduce((acc, strokes, i) => {
+      if (strokes === 0) return acc;
+      const si_h = state.si?.[i] || i+1;
+      const ph = state.roundPlayingHcps?.[p.name] || calcPlayingHcpForPlayer(p);
+      const extra = Math.floor(ph / state.numHoles) + (si_h <= (ph % state.numHoles) ? 1 : 0);
+      const neto = strokes - extra;
+      const diff_h = neto - state.par[i];
+      const pts = diff_h <= -2 ? 4 : diff_h === -1 ? 3 : diff_h === 0 ? 2 : diff_h === 1 ? 1 : 0;
+      return acc + pts;
+    }, 0);
+
     return `
     <div style="background:#111;border:2px solid #333;border-radius:16px;padding:14px;margin-bottom:10px;">
-
       <!-- Header: ime + ukupno -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="width:32px;height:32px;border-radius:50%;background:#222;border:2px solid ${p.color};display:flex;align-items:center;justify-content:center;font-size:16px;">${p.avatar}</div>
           <span style="font-size:17px;font-weight:700;color:#fff;">${escHtml(p.name)}</span>
         </div>
-        <span style="font-size:16px;font-weight:700;font-family:var(--font-mono);color:${diffColor(totalD)};">
-          ${totalS > 0 ? fmtDiff(totalD) : '—'}
-        </span>
+        <div style="text-align:right;">
+          <div style="font-size:16px;font-weight:700;font-family:var(--font-mono);color:${diffColor(totalD)};">${totalS > 0 ? fmtDiff(totalD) : '—'}</div>
+          <div style="font-size:12px;color:#55aaff;font-family:var(--font-mono);">SB: ${sbTotal}</div>
+        </div>
       </div>
 
-      <!-- Udarci -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <!-- Udarci + hint -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
         <button style="width:62px;height:62px;border-radius:50%;border:2px solid #444;background:#222;font-size:30px;color:#fff;cursor:pointer;flex-shrink:0;"
-          ontouchstart="this.style.background='#330000'" ontouchend="this.style.background='#222'"
           onclick="changeStroke(${pi},-1)">−</button>
         <div style="flex:1;text-align:center;">
-          <div style="font-size:62px;font-weight:700;color:#fff;line-height:1;font-family:var(--font-mono);">${s}</div>
-          <div style="font-size:14px;font-weight:600;color:${diff===null?'#555':diffColor(diff)};margin-top:2px;">${diffLabel||'—'}</div>
+          <div style="font-size:62px;font-weight:700;color:#fff;line-height:1;font-family:var(--font-mono);">${s > 0 ? s : '?'}</div>
+          <div style="font-size:14px;font-weight:600;color:${diff===null?'#555':diffColor(diff)};margin-top:2px;">${diff !== null ? diffLabel : `norma: ${suggested}`}</div>
         </div>
         <button style="width:62px;height:62px;border-radius:50%;border:2px solid #444;background:#222;font-size:30px;color:#fff;cursor:pointer;flex-shrink:0;"
-          ontouchstart="this.style.background='#003300'" ontouchend="this.style.background='#222'"
           onclick="changeStroke(${pi},1)">+</button>
       </div>
+      ${s === 0 ? `<button style="width:100%;padding:8px;background:#1a1a00;border:1px solid #555500;border-radius:8px;color:#aaa;font-size:14px;cursor:pointer;margin-bottom:8px;" onclick="setDefaultStroke(${pi})">Unesi normu (${suggested})</button>` : ''}
 
       <!-- Putteri -->
       <div style="background:#000;border:2px solid #333;border-radius:10px;padding:10px 14px;">
@@ -2183,13 +2266,14 @@ function renderPlayerScoreCards() {
             <button style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#aaa;cursor:pointer;"
               onclick="changePutt(${pi},-1)">−</button>
             <div style="text-align:center;">
-              <div style="font-size:36px;font-weight:700;color:#55aaff;font-family:var(--font-mono);line-height:1;">${pu}</div>
+              <div style="font-size:36px;font-weight:700;color:#55aaff;font-family:var(--font-mono);line-height:1;">${pu > 0 ? pu : '?'}</div>
               <div style="font-size:11px;color:#666;font-family:var(--font-mono);">PUTTER</div>
             </div>
             <button style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#aaa;cursor:pointer;"
               onclick="changePutt(${pi},1)">+</button>
           </div>
           <div style="text-align:right;">
+            ${pu === 0 ? `<button style="background:#001a33;border:1px solid #334455;border-radius:6px;color:#55aaff;font-size:12px;padding:4px 10px;cursor:pointer;" onclick="setDefaultPutt(${pi})">+2</button>` : ''}
             <div style="font-size:13px;color:#555;font-family:var(--font-mono);">ukupno</div>
             <div style="font-size:20px;color:#55aaff;font-family:var(--font-mono);font-weight:700;">${totalPu}</div>
           </div>
@@ -2198,6 +2282,28 @@ function renderPlayerScoreCards() {
     </div>`;
   }).join('');
 }
+
+function setDefaultStroke(pi) {
+  const h = state.currentHole;
+  state.strokes[pi][h] = defaultStrokesForHole(pi, h);
+  saveActiveRound();
+  renderPlayerScoreCards();
+}
+
+function setDefaultPutt(pi) {
+  const h = state.currentHole;
+  if (!state.putts[pi]) state.putts[pi] = Array(state.numHoles).fill(0);
+  state.putts[pi][h] = 2;
+  saveActiveRound();
+  renderPlayerScoreCards();
+}
+
+// Call summary update after score cards render
+const _origRenderPSC = renderPlayerScoreCards;
+renderPlayerScoreCards = function() {
+  _origRenderPSC();
+  renderPlaySummary();
+};
 
 function changeStroke(playerIdx, delta) {
   const h = state.currentHole;
@@ -2212,6 +2318,56 @@ function changePutt(playerIdx, delta) {
   state.putts[playerIdx][h] = Math.max(0, state.putts[playerIdx][h] + delta);
   saveActiveRound();
   renderPlayerScoreCards();
+}
+
+function renderPlaySummary() {
+  const el = document.getElementById('play-summary');
+  if (!el || state.players.length === 0) return;
+
+  const holesPlayed = state.strokes[0].filter(s => s > 0).length;
+  if (holesPlayed === 0) { el.innerHTML = ''; return; }
+
+  const html = state.players.map((p, pi) => {
+    const totalS  = state.strokes[pi].reduce((a,b)=>a+b,0);
+    const totalP  = state.par.slice(0, holesPlayed).reduce((a,b)=>a+b,0);
+    const totalD  = totalS - totalP;
+    const totalPu = (state.putts[pi]||[]).reduce((a,b)=>a+b,0);
+
+    // Stableford total
+    const ph = state.roundPlayingHcps?.[p.name] || calcPlayingHcpForPlayer(p);
+    let sb = 0;
+    state.strokes[pi].forEach((s,i) => {
+      if(s===0) return;
+      const si_h = state.si?.[i]||i+1;
+      const extra = Math.floor(ph/state.numHoles)+(si_h<=(ph%state.numHoles)?1:0);
+      const d = (s-extra) - state.par[i];
+      sb += d<=-2?4:d===-1?3:d===0?2:d===1?1:0;
+    });
+
+    return `<div style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:10px;padding:10px 14px;margin-bottom:6px;">
+      <div style="font-size:14px;color:#888;">${escHtml(p.name.substring(0,8))}</div>
+      <div style="flex:1;display:flex;gap:12px;justify-content:flex-end;font-family:var(--font-mono);">
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:#555;">BRT</div>
+          <div style="font-size:18px;font-weight:700;color:${diffColor(totalD)};">${totalS>0?fmtDiff(totalD):'—'}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:#555;">SB</div>
+          <div style="font-size:18px;font-weight:700;color:#55aaff;">${sb}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:#555;">PUT</div>
+          <div style="font-size:18px;font-weight:700;color:#aaa;">${totalPu}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:#555;">RUP</div>
+          <div style="font-size:18px;font-weight:700;color:#888;">${holesPlayed}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = html;
 }
 
 function nextHole() {
@@ -2254,8 +2410,7 @@ function renderScorecard() {
     ">${p.avatar} ${escHtml(p.name)}</button>
   `).join('');
 
-  // Reset view buttons
-  setScorecardView(state.scorecardView || 'bruto');
+  // Reset view
   renderPhInfo();
   renderScorecardTable();
 }
@@ -2266,87 +2421,73 @@ function selectScorecardPlayer(idx) {
 }
 
 function renderScorecardTable() {
-  const pi = state.activeScorecardPlayer;
+  const pi = state.activeScorecardPlayer || 0;
   const p  = state.players[pi];
-  const strokes = state.strokes[pi];
-  const ph = state.roundPlayingHcps?.[p.name] ?? calcPlayingHcp(p.hcp ?? 36);
-  const view = state.scorecardView;
-
-  // Totali
-  const totalS  = strokes.reduce((a,b)=>a+b,0);
-  const totalP  = state.par.reduce((a,b)=>a+b,0);
-  const totalPts = state.par.reduce((a,_,i) => a + stablefordPoints(strokes[i], state.par[i], ph, state.si[i]||i+1), 0);
-  const totalNeto = state.par.reduce((a,_,i) => {
-    const s = strokes[i]; if (!s) return a;
-    return a + netoScore(s, ph, state.si[i]||i+1);
-  }, 0);
-  const totalNetoDiff = totalNeto - totalP;
+  if (!p) return;
+  const strokes = state.strokes[pi] || [];
+  const ph = state.roundPlayingHcps?.[p.name] ?? calcPlayingHcpForPlayer(p);
 
   renderPhInfo();
 
-  const cols = '28px 28px 28px 1fr 52px';
-  const hdr  = view === 'stableford' ? 'PTS' : view === 'neto' ? 'NETO' : 'UD.';
-
   const table = document.getElementById('scorecard-table');
-  let html = `<div class="sc-row header" style="grid-template-columns:${cols}">
-    <span>#</span><span>PAR</span><span>SI</span><span></span><span style="text-align:right">${hdr}</span>
+  // Kolumne: # | PAR | BRT | NETO | SB | PUT | edit
+  const cols = '28px 28px 36px 36px 32px 28px 28px';
+
+  let html = `<div style="overflow-x:auto;">
+  <div style="min-width:280px;">
+  <div class="sc-row header" style="grid-template-columns:${cols};font-size:11px;">
+    <span>#</span>
+    <span>PAR</span>
+    <span style="color:#fff;">BRT</span>
+    <span style="color:#aaa;">NET</span>
+    <span style="color:#55aaff;">SB</span>
+    <span style="color:#55aaff;">PUT</span>
+    <span></span>
   </div>`;
 
+  let totBrt=0, totP=0, totSb=0, totPut=0, totNet=0;
+
   html += state.par.map((par, i) => {
-    const s   = strokes[i];
-    const si  = state.si[i] || i+1;
-    const ph_ = ph;
-    const pts = stablefordPoints(s, par, ph_, si);
-    const neto= s > 0 ? netoScore(s, ph_, si) : 0;
+    const s   = strokes[i] || 0;
+    const si  = state.si?.[i] || i+1;
+    const pu  = (state.putts[pi]||[])[i] || 0;
+    const extra = Math.floor(ph / state.numHoles) + (si <= (ph % state.numHoles) ? 1 : 0);
+    const neto  = s > 0 ? s - extra : 0;
     const netoDiff = s > 0 ? neto - par : null;
+    const brutoDiff = s > 0 ? s - par : null;
+    const pts = s > 0 ? Math.max(0, 2 - (neto - par)) : 0;
 
-    // Extra stroke indicator
-    const extra = ph_ > 0
-      ? Math.floor(ph_/18) + (si <= (ph_%18) ? 1 : 0)
-      : 0;
-    const extraDots = '•'.repeat(Math.min(extra, 3));
+    totBrt += s; totP += par; totPut += pu;
+    if(s>0) { totNet += neto; totSb += pts; }
 
-    let displayVal, displayColor;
-    if (view === 'stableford') {
-      displayVal  = s > 0 ? pts : '—';
-      displayColor = pts >= 3 ? 'var(--green)' : pts === 2 ? 'var(--text2)' : pts === 1 ? 'var(--red)' : 'var(--text3)';
-    } else if (view === 'neto') {
-      displayVal  = s > 0 ? `${neto}` : '—';
-      displayColor = netoDiff === null ? 'var(--text3)' : diffColor(netoDiff);
-    } else {
-      displayVal  = s > 0 ? `${s}` : '—';
-      displayColor = s > 0 ? diffColor(s - par) : 'var(--text3)';
-    }
+    const brtCol  = brutoDiff===null?'#555':diffColor(brutoDiff);
+    const netoCol = netoDiff===null?'#555':diffColor(netoDiff);
+    const sbCol   = pts>=3?'#00ff00':pts===2?'#aaa':pts===1?'#ff6633':'#555';
+    const isCur   = i===state.currentHole;
 
-    return `<div class="sc-row${i===state.currentHole?' current':''}" style="grid-template-columns:${cols}">
-      <span class="sc-hole" style="color:${i===state.currentHole?'var(--gold)':'var(--text2)'};cursor:pointer" onclick="goToHole(${i})">${i+1}</span>
-      <span class="sc-par" onclick="goToHole(${i})" style="cursor:pointer">${par}</span>
-      <span style="font-size:10px;color:var(--text3);font-family:var(--font-mono);" onclick="goToHole(${i})">${si}</span>
-      <span style="font-size:11px;color:var(--gold);font-family:var(--font-mono);" onclick="goToHole(${i})">${extraDots}</span>
-      <span style="font-family:var(--font-mono);text-align:right;color:${displayColor};font-weight:600;cursor:pointer" onclick="editActiveHole(${i})">${displayVal} ✏️</span>
+    return `<div class="sc-row${isCur?' current':''}" style="grid-template-columns:${cols};cursor:pointer;" onclick="goToHole(${i})">
+      <span class="sc-hole" style="color:${isCur?'#ffff00':'#888'}">${i+1}</span>
+      <span class="sc-par">${par}</span>
+      <span style="font-family:var(--font-mono);font-weight:700;color:${brtCol};">${s||'—'}</span>
+      <span style="font-family:var(--font-mono);color:${netoCol};">${s>0?neto:'—'}</span>
+      <span style="font-family:var(--font-mono);font-weight:700;color:${sbCol};">${s>0?pts:'—'}</span>
+      <span style="font-family:var(--font-mono);color:#55aaff;">${pu||'—'}</span>
+      <span style="font-size:14px;cursor:pointer;" onclick="event.stopPropagation();editActiveHole(${i})">✏️</span>
     </div>`;
   }).join('');
 
-  // Total row
-  let totalDisplay, totalColor;
-  if (view === 'stableford') {
-    totalDisplay = `${totalPts} pts`;
-    totalColor   = totalPts > 36 ? 'var(--green)' : totalPts < 36 ? 'var(--red)' : 'var(--text2)';
-  } else if (view === 'neto') {
-    totalDisplay = `${totalNeto} (${fmtDiff(totalNetoDiff)})`;
-    totalColor   = diffColor(totalNetoDiff);
-  } else {
-    const d = totalS - totalP;
-    totalDisplay = `${totalS} (${fmtDiff(d)})`;
-    totalColor   = diffColor(d);
-  }
-
-  html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default">
-    <span style="color:var(--green)">∑</span>
-    <span class="sc-par">${totalP}</span>
-    <span></span><span></span>
-    <span style="font-family:var(--font-mono);text-align:right;color:${totalColor};font-size:14px;">${totalDisplay}</span>
-  </div>`;
+  const brutoDiffT = totBrt - totP;
+  const netoDiffT  = totNet - totP;
+  html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default;font-size:15px;">
+    <span style="color:var(--green);font-weight:700;">∑</span>
+    <span class="sc-par">${totP}</span>
+    <span style="font-family:var(--font-mono);font-weight:700;color:${diffColor(brutoDiffT)};">${totBrt}</span>
+    <span style="font-family:var(--font-mono);color:${diffColor(netoDiffT)};">${totNet}</span>
+    <span style="font-family:var(--font-mono);font-weight:700;color:#55aaff;">${totSb}</span>
+    <span style="font-family:var(--font-mono);color:#55aaff;">${totPut}</span>
+    <span></span>
+  </div>
+  </div></div>`;
 
   table.innerHTML = html;
 }
@@ -3599,7 +3740,7 @@ function wStartGPS() {
 }
 
 function wUpdateDistances() {
-  const pos = wState.gpsPos;
+  const pos  = wState.gpsPos;
   const hole = wState.courseGps?.[wState.currentHole];
 
   ['f','m','b'].forEach(k => {
@@ -3607,12 +3748,42 @@ function wUpdateDistances() {
     if (el) el.textContent = '—';
   });
 
-  if (!pos || !hole) return;
+  if (!pos || !hole) {
+    const hp = document.getElementById('w-hazard-panel');
+    if (hp) hp.innerHTML = '';
+    return;
+  }
+
   const pts = { f: hole.front, m: hole.mid, b: hole.back };
   Object.entries(pts).forEach(([k, pt]) => {
     const el = document.getElementById(`w-dist-${k}`);
     if (el && pt?.lat) el.textContent = haversine(pos.lat, pos.lon, pt.lat, pt.lon);
   });
+
+  // Hazardi
+  const hp = document.getElementById('w-hazard-panel');
+  if (!hp) return;
+  const waters  = (hole.water   || []).filter(w => w?.lat);
+  const bunkers = (hole.bunkers || []).filter(b => b?.lat);
+  if (waters.length === 0 && bunkers.length === 0) { hp.innerHTML = ''; return; }
+
+  let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">';
+  waters.forEach((w, i) => {
+    html += `<div style="flex:1;background:#001a33;border:2px solid #55aaff;border-radius:10px;padding:6px;text-align:center;">
+      <div style="font-size:var(--wf-xs);color:#55aaff;font-family:monospace;font-weight:700;">💧${i+1}</div>
+      <div style="font-size:var(--wf);font-weight:800;color:#55aaff;font-family:monospace;line-height:1;">${haversine(pos.lat,pos.lon,w.lat,w.lon)}</div>
+      <div style="font-size:20px;color:#334455;font-family:monospace;">m</div>
+    </div>`;
+  });
+  bunkers.forEach((bk, i) => {
+    html += `<div style="flex:1;background:#1a1400;border:2px solid #ffff00;border-radius:10px;padding:6px;text-align:center;">
+      <div style="font-size:var(--wf-xs);color:#ffff00;font-family:monospace;font-weight:700;">🏖${i+1}</div>
+      <div style="font-size:var(--wf);font-weight:800;color:#ffff00;font-family:monospace;line-height:1;">${haversine(pos.lat,pos.lon,bk.lat,bk.lon)}</div>
+      <div style="font-size:20px;color:#443300;font-family:monospace;">m</div>
+    </div>`;
+  });
+  html += '</div>';
+  hp.innerHTML = html;
 }
 
 // ── SCORECARD ─────────────────────────────────────────────────────

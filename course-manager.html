@@ -576,13 +576,16 @@ function renderHolesGrid() {
           ${w?.lat
             ? `<span style="flex:1;font-size:13px;font-family:var(--mono);color:var(--blue);overflow:hidden;text-overflow:ellipsis;">${fmtCoord(w)}</span>
                <button class="gps-del" onclick="clearHazard(${i},'water',${wi})">×</button>`
-            : `<input placeholder="51.162159, 6.715142"
-                 style="flex:1;background:var(--surface3);border:1px solid rgba(85,170,255,.4);border-radius:6px;padding:5px 8px;color:var(--text3);font-family:var(--mono);font-size:13px;outline:none;min-width:0;"
-                 onchange="setManualHazard(${i},'water',${wi},this.value)"
+            : `<input id="inp-w-${i}-${wi}"
+                 placeholder="51.162159, 6.715142"
+                 style="flex:1;background:var(--surface3);border:1px solid rgba(85,170,255,.4);border-radius:6px;padding:8px;color:#fff;font-family:var(--mono);font-size:14px;outline:none;min-width:0;"
                  onfocus="this.style.borderColor='var(--blue)'"
-                 onblur="this.style.borderColor='rgba(85,170,255,.4)'">`
+                 onblur="this.style.borderColor='rgba(85,170,255,.4)'"
+                 onkeydown="if(event.key==='Enter')confirmManualCoord(${i},'water',${wi},this.value)">
+               <button onclick="confirmManualCoord(${i},'water',${wi},document.getElementById('inp-w-${i}-${wi}').value)"
+                 style="background:var(--blue);border:none;border-radius:6px;color:#000;font-size:14px;font-weight:700;padding:8px 12px;cursor:pointer;flex-shrink:0;">✓</button>`
           }
-          <button style="background:none;border:1px solid var(--blue);border-radius:6px;color:var(--blue);font-size:12px;padding:4px 8px;cursor:pointer;flex-shrink:0;" onclick="captureHazard(${i},'water',${wi})">📍</button>
+          <button style="background:none;border:1px solid var(--blue);border-radius:6px;color:var(--blue);font-size:12px;padding:6px 8px;cursor:pointer;flex-shrink:0;" onclick="captureHazard(${i},'water',${wi})">📍</button>
         </div>`;
       }).join('')}
 
@@ -595,13 +598,16 @@ function renderHolesGrid() {
           ${b?.lat
             ? `<span style="flex:1;font-size:13px;font-family:var(--mono);color:var(--gold);overflow:hidden;text-overflow:ellipsis;">${fmtCoord(b)}</span>
                <button class="gps-del" onclick="clearHazard(${i},'bunkers',${bi})">×</button>`
-            : `<input placeholder="51.162159, 6.715142"
-                 style="flex:1;background:var(--surface3);border:1px solid rgba(255,255,0,.4);border-radius:6px;padding:5px 8px;color:var(--text3);font-family:var(--mono);font-size:13px;outline:none;min-width:0;"
-                 onchange="setManualHazard(${i},'bunkers',${bi},this.value)"
+            : `<input id="inp-b-${i}-${bi}"
+                 placeholder="51.162159, 6.715142"
+                 style="flex:1;background:var(--surface3);border:1px solid rgba(255,255,0,.4);border-radius:6px;padding:8px;color:#fff;font-family:var(--mono);font-size:14px;outline:none;min-width:0;"
                  onfocus="this.style.borderColor='var(--gold)'"
-                 onblur="this.style.borderColor='rgba(255,255,0,.4)'">`
+                 onblur="this.style.borderColor='rgba(255,255,0,.4)'"
+                 onkeydown="if(event.key==='Enter')confirmManualCoord(${i},'bunkers',${bi},this.value)">
+               <button onclick="confirmManualCoord(${i},'bunkers',${bi},document.getElementById('inp-b-${i}-${bi}').value)"
+                 style="background:var(--gold);border:none;border-radius:6px;color:#000;font-size:14px;font-weight:700;padding:8px 12px;cursor:pointer;flex-shrink:0;">✓</button>`
           }
-          <button style="background:none;border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-size:12px;padding:4px 8px;cursor:pointer;flex-shrink:0;" onclick="captureHazard(${i},'bunkers',${bi})">📍</button>
+          <button style="background:none;border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-size:12px;padding:6px 8px;cursor:pointer;flex-shrink:0;" onclick="captureHazard(${i},'bunkers',${bi})">📍</button>
         </div>`;
       }).join('')}
 
@@ -612,43 +618,42 @@ function renderHolesGrid() {
 function gpsRow(gc, pt, holeIdx) {
   const has = gc[pt]?.lat;
   const lbl = pt === 'front' ? 'F' : pt === 'mid' ? 'M' : 'B';
+  const col = pt === 'mid' ? 'var(--gold)' : 'var(--text3)';
   return `<div class="gps-row" style="flex-wrap:wrap;gap:6px;">
-    <span class="gps-lbl" style="color:${pt==='mid'?'var(--gold)':'var(--text3)'};">${lbl}</span>
+    <span class="gps-lbl" style="color:${col};">${lbl}</span>
     ${has
       ? `<span class="gps-val ok" style="flex:1;">${fmtCoord(gc[pt])}</span>
          <button class="gps-del" onclick="clearGps(${holeIdx},'${pt}')">×</button>`
-      : `<input placeholder="51.162159, 6.715142"
-           style="flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text3);font-family:var(--mono);font-size:13px;outline:none;min-width:0;"
-           onchange="setManualCoord(${holeIdx},'${pt}',this.value)"
+      : `<input id="inp-green-${holeIdx}-${pt}"
+           placeholder="51.162159, 6.715142"
+           style="flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#fff;font-family:var(--mono);font-size:14px;outline:none;min-width:0;"
            onfocus="this.style.borderColor='var(--gold)'"
-           onblur="this.style.borderColor='var(--border)'">`
+           onblur="this.style.borderColor='var(--border)'"
+           onkeydown="if(event.key==='Enter')confirmManualCoord(${holeIdx},'green','${pt}',this.value)">
+         <button onclick="confirmManualCoord(${holeIdx},'green','${pt}',document.getElementById('inp-green-${holeIdx}-${pt}').value)"
+           style="background:var(--green);border:none;border-radius:6px;color:#000;font-size:14px;font-weight:700;padding:8px 12px;cursor:pointer;flex-shrink:0;">✓</button>`
     }
   </div>`;
 }
 
-function setManualCoord(holeIdx, pt, val) {
-  const parsed = parseGoogleMapsCoord(val);
-  if (!parsed) {
-    toast('Format: 51.162159, 6.715142', 'red');
-    return;
-  }
-  ensureGreenCoords();
-  state.courses[state.activeIdx].green_coords[holeIdx][pt] = parsed;
-  autoSave();
-  renderHolesGrid();
-  toast(`${pt.toUpperCase()} snimljeno ✓`, 'green');
-}
-
-function setManualHazard(holeIdx, type, idx, val) {
+function confirmManualCoord(holeIdx, type, pt, val) {
+  if (!val || !val.trim()) { toast('Unesi koordinate', 'red'); return; }
   const parsed = parseGoogleMapsCoord(val);
   if (!parsed) { toast('Format: 51.162159, 6.715142', 'red'); return; }
   ensureGreenCoords();
-  const h = state.courses[state.activeIdx].green_coords[holeIdx];
-  if (!h[type]) h[type] = [];
-  h[type][idx] = parsed;
+  const gc = state.courses[state.activeIdx].green_coords[holeIdx];
+  if (type === 'green') {
+    gc[pt] = parsed;
+  } else if (type === 'water') {
+    if (!gc.water) gc.water = [];
+    gc.water[parseInt(pt)] = parsed;
+  } else if (type === 'bunkers') {
+    if (!gc.bunkers) gc.bunkers = [];
+    gc.bunkers[parseInt(pt)] = parsed;
+  }
   autoSave();
   renderHolesGrid();
-  toast('Hazard snimljen ✓', 'green');
+  toast('Snimljeno ✓', 'green');
 }
 
 function parseGoogleMapsCoord(val) {
