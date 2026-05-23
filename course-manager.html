@@ -3,430 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#000000">
 <title>Golf Course Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #000000;
-  --bg2: #000000;
-  --surface: #111111;
-  --surface2: #1a1a1a;
-  --surface3: #222222;
-  --border: #444444;
-  --border2: #666666;
-  --green: #00ff00;
-  --green2: #00cc00;
-  --gold: #ffff00;
-  --red: #ff3333;
-  --blue: #55aaff;
-  --text: #ffffff;
-  --text2: #cccccc;
-  --text3: #888888;
-  --mono: 'JetBrains Mono', monospace;
-  --sans: 'Space Grotesk', sans-serif;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-top: env(safe-area-inset-top, 0px);
+  --bg:#000; --surface:#111; --surface2:#1a1a1a; --surface3:#222;
+  --border:#444; --border2:#666;
+  --green:#00ff00; --gold:#ffff00; --red:#ff3333; --blue:#55aaff;
+  --text:#fff; --text2:#ccc; --text3:#888;
+  --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
+  --sb: env(safe-area-inset-bottom,0px); --st: env(safe-area-inset-top,0px);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:18px;overflow:hidden;-webkit-font-smoothing:antialiased}
+.app{height:100dvh;display:flex;flex-direction:column}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* HEADER */
+.hdr{padding:calc(10px + var(--st)) 16px 10px;background:var(--bg);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.hdr-title{font-size:20px;font-weight:800;color:var(--green);flex:1}
+.hdr-title span{color:var(--text3);font-weight:400}
+.gps-pill{font-size:14px;color:var(--text3);font-family:var(--mono);background:var(--surface);padding:6px 12px;border-radius:20px;border:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.gps-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.gps-dot.on{background:var(--green);animation:pulse 1.5s infinite}
+.gps-dot.err{background:var(--red)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,0,.4)}50%{box-shadow:0 0 0 4px rgba(0,255,0,0)}}
 
-html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 18px;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:16px 16px calc(16px + var(--sb))}
+.scroll::-webkit-scrollbar{display:none}
 
-.app { height: 100dvh; display: flex; flex-direction: column; }
+/* SECTIONS */
+.sec{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:var(--mono);font-weight:700;margin:20px 0 12px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── HEADER ── */
-.header {
-  padding: calc(12px + var(--safe-top)) 16px 12px;
-  background: var(--bg2);
-  border-bottom: 2px solid var(--border);
-  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
-}
-.header-logo { font-size: 22px; font-weight: 700; color: var(--green); flex: 1; }
-.header-logo span { color: var(--text2); font-weight: 300; }
-.gps-indicator {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 14px; color: var(--text3); font-family: var(--mono);
-  background: var(--surface); padding: 6px 12px;
-  border-radius: 20px; border: 1px solid var(--border);
-}
-.gps-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
-.gps-dot.active { background: var(--green); animation: pulse 1.5s infinite; }
-.gps-dot.error { background: var(--red); }
-@keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,0,0.4)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(0,255,0,0)} }
+/* INPUTS */
+.inp{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:var(--sans);font-size:18px;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--green)}
+.lbl{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin-bottom:6px;display:block}
+.field{margin-bottom:14px}
 
-/* ── MAIN ── */
-.main { flex: 1; display: flex; overflow: hidden; }
+/* BUTTONS */
+.btn{padding:13px 18px;border-radius:10px;border:2px solid var(--border);font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:all .15s}
+.btn:active{transform:scale(.96)}
+.btn-green{background:var(--green);color:#000;border-color:var(--green)}
+.btn-ghost{background:var(--surface2);color:var(--text);border-color:var(--border)}
+.btn-red{background:rgba(255,51,51,.12);color:var(--red);border-color:rgba(255,51,51,.4)}
+.btn-gold{background:rgba(255,255,0,.1);color:var(--gold);border-color:rgba(255,255,0,.4)}
+.btn-blue{background:rgba(85,170,255,.1);color:var(--blue);border-color:rgba(85,170,255,.4)}
+.btn-full{width:100%;justify-content:center}
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 280px; min-width: 280px;
-  background: var(--bg2); border-right: 2px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden;
-}
-@media (max-width: 700px) {
-  .sidebar { width: 100%; min-width: unset; display: none; }
-  .sidebar.mobile-open { display: flex; position: absolute; inset: 0; z-index: 100; }
-  .content-area { display: none; }
-  .content-area.mobile-open { display: flex; }
-}
+/* COURSE LIST */
+.course-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer}
+.course-card:active{border-color:var(--green)}
+.course-card.sel{border-color:var(--green);background:#001400}
+.cc-name{font-size:20px;font-weight:700;color:var(--text)}
+.course-card.sel .cc-name{color:var(--green)}
+.cc-meta{font-size:14px;color:var(--text3);font-family:var(--mono);margin-top:4px}
 
-.sidebar-header {
-  padding: 16px; border-bottom: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.sidebar-title { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: var(--text3); font-family: var(--mono); font-weight: 700; }
-.btn-add {
-  width: 38px; height: 38px; border-radius: 10px;
-  border: 2px solid var(--border2); background: var(--surface2);
-  color: var(--green); font-size: 24px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; line-height: 1;
-}
+/* HOLE CARD */
+.hole-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.hole-card.gps-ok{border-color:rgba(0,255,0,.4)}
+.hole-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hole-num{font-size:20px;font-weight:800;color:var(--green);font-family:var(--mono)}
+.hole-status{font-size:13px;font-family:var(--mono)}
 
-.course-list { flex: 1; overflow-y: auto; padding: 10px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+/* GPS ROWS */
+.gps-row{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px}
+.gps-lbl{font-size:15px;font-family:var(--mono);color:var(--text3);width:20px;flex-shrink:0;font-weight:700}
+.gps-val{font-size:14px;font-family:var(--mono);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gps-val.ok{color:var(--green)}
+.gps-val.empty{color:var(--text3);font-style:italic}
+.gps-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0 4px;flex-shrink:0}
+.gps-del:active{color:var(--red)}
 
-.course-item {
-  padding: 14px 16px; border-radius: 12px; cursor: pointer;
-  border: 2px solid transparent; margin-bottom: 6px; transition: all 0.15s;
-}
-.course-item:active { background: var(--surface2); }
-.course-item.active { background: var(--surface2); border-color: var(--border); }
-.course-item-name { font-size: 18px; font-weight: 700; color: var(--text); }
-.course-item.active .course-item-name { color: var(--green); }
-.course-item-meta { font-size: 14px; color: var(--text3); font-family: var(--mono); margin-top: 4px; }
+/* HAZARD SECTION */
+.hazard-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.hz-btn{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-size:14px;font-family:var(--mono);color:var(--text3)}
+.hz-btn.has{border-color:var(--blue);color:var(--blue)}
+.hz-btn.water.has{border-color:var(--blue);color:var(--blue)}
+.hz-btn.bunker.has{border-color:var(--gold);color:var(--gold)}
 
-.empty-courses { padding: 28px 16px; text-align: center; color: var(--text3); font-size: 16px; font-family: var(--mono); line-height: 2; }
+/* CAPTURE PANEL */
+.cap-panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:2px solid var(--border2);padding:16px 16px calc(16px + var(--sb));z-index:200;display:none}
+.cap-panel.open{display:block}
+.cap-title{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin-bottom:12px;font-weight:700}
+.cap-steps{display:flex;gap:8px;margin-bottom:14px}
+.cap-step{flex:1;background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer}
+.cap-step.active{border-color:var(--gold);background:rgba(255,255,0,.06)}
+.cap-step.done{border-color:var(--green);background:rgba(0,255,0,.05)}
+.cap-step-lbl{font-size:15px;font-weight:700;color:var(--text2)}
+.cap-step.active .cap-step-lbl{color:var(--gold)}
+.cap-step.done .cap-step-lbl{color:var(--green)}
+.cap-step-sub{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:3px}
+.cap-coords{font-size:13px;font-family:var(--mono);color:var(--text3);text-align:center;margin-bottom:12px}
+.cap-coords.ok{color:var(--green)}
+.cap-actions{display:flex;gap:8px}
+.btn-capture{flex:1;height:58px;border:none;border-radius:12px;background:var(--green);color:#000;font-family:var(--sans);font-size:18px;font-weight:700;cursor:pointer}
+.btn-capture:disabled{background:var(--surface3);color:var(--text3);cursor:not-allowed}
 
-/* ── CONTENT ── */
-.content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.content-scroll {
-  flex: 1; overflow-y: auto; padding: 20px;
-  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
-  padding-bottom: calc(20px + var(--safe-bottom));
-}
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:2px solid var(--border2);border-radius:20px 20px 0 0;padding:22px 18px calc(20px + var(--sb));width:100%;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1)}
+.modal-ov.open .modal{transform:translateY(0)}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 18px}
+.modal h3{font-size:22px;font-weight:700;margin-bottom:6px}
+.modal p{font-size:14px;color:var(--text3);font-family:var(--mono);margin-bottom:16px}
+.modal-acts{display:flex;gap:8px;margin-top:16px}
 
-/* ── WELCOME ── */
-.welcome { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; }
-.welcome-icon { font-size: 56px; margin-bottom: 14px; }
-.welcome h2 { font-size: 22px; color: var(--text2); }
-.welcome p { font-size: 15px; color: var(--text3); font-family: var(--mono); margin-top: 8px; }
+/* CONFLICT MODAL */
+.conflict-box{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.conflict-date{font-size:16px;color:var(--text2)}
+.conflict-hint{font-size:13px;color:var(--gold);font-family:var(--mono);margin-top:4px}
 
-/* ── COURSE EDITOR ── */
-.section-label {
-  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--gold); font-family: var(--mono); font-weight: 700;
-  margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
-}
-.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* STATUS */
+.status-bar{padding:8px 16px;border-top:1px solid var(--border);background:var(--bg);font-size:14px;font-family:var(--mono);color:var(--text3);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.field { margin-bottom: 16px; }
-.field label {
-  display: block; font-size: 13px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--text3); font-family: var(--mono); margin-bottom: 8px;
-}
-.input {
-  width: 100%; background: var(--surface2); border: 2px solid var(--border);
-  border-radius: 10px; padding: 14px 16px; color: var(--text);
-  font-family: var(--sans); font-size: 18px; outline: none; transition: border-color 0.15s;
-}
-.input:focus { border-color: var(--green); }
-select.input { cursor: pointer; }
+/* TOAST */
+.toast{position:fixed;bottom:calc(80px + var(--sb));left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:2px solid var(--border2);border-radius:12px;padding:11px 20px;font-size:15px;font-family:var(--mono);color:var(--text);z-index:1000;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.green{color:var(--green);border-color:rgba(0,255,0,.4)}
+.toast.red{color:var(--red);border-color:rgba(255,51,51,.4)}
+.toast.gold{color:var(--gold);border-color:rgba(255,255,0,.4)}
 
-/* ── TOPBAR ── */
-.topbar {
-  padding: 14px 16px; border-bottom: 2px solid var(--border);
-  background: var(--bg2); display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-  flex-wrap: wrap;
-}
-.topbar-title { font-size: 18px; font-weight: 700; flex: 1; min-width: 120px; }
-.topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+/* PAR INPUT */
+.par-inp{width:52px;background:var(--surface3);border:2px solid var(--border);border-radius:8px;padding:6px;color:var(--gold);font-family:var(--mono);font-size:18px;text-align:center;outline:none}
+.par-inp:focus{border-color:var(--gold)}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+select.inp{cursor:pointer}
 
-/* ── BUTTONS ── */
-.btn {
-  padding: 12px 18px; border-radius: 10px; border: 2px solid var(--border);
-  font-family: var(--sans); font-size: 16px; font-weight: 700; cursor: pointer;
-  transition: all 0.15s; display: flex; align-items: center; gap: 6px; white-space: nowrap;
-}
-.btn:active { transform: scale(0.96); }
-.btn-green { background: var(--green); color: #000; border-color: var(--green); }
-.btn-ghost { background: var(--surface2); color: var(--text); border-color: var(--border); }
-.btn-red { background: rgba(255,51,51,0.15); color: var(--red); border-color: rgba(255,51,51,0.5); }
-.btn-gold { background: rgba(255,255,0,0.1); color: var(--gold); border-color: rgba(255,255,0,0.5); }
-
-/* ── HOLE CARDS ── */
-.holes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
-
-.hole-card {
-  background: var(--surface); border: 2px solid var(--border);
-  border-radius: 14px; padding: 16px; transition: border-color 0.2s;
-}
-.hole-card.all-captured { border-color: var(--green); }
-.hole-card.active-hole { border-color: var(--gold); background: rgba(255,255,0,0.04); }
-
-.hole-card-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
-}
-.hole-num { font-size: 18px; font-weight: 800; color: var(--green); font-family: var(--mono); }
-.par-wrap { display: flex; align-items: center; gap: 8px; }
-.par-label-sm { font-size: 14px; color: var(--text3); font-family: var(--mono); }
-.par-input {
-  width: 50px; background: var(--surface3); border: 2px solid var(--border);
-  border-radius: 8px; padding: 6px 8px; color: var(--gold);
-  font-family: var(--mono); font-size: 18px; text-align: center; outline: none;
-}
-.par-input:focus { border-color: var(--gold); }
-
-/* GPS points */
-.gps-points { display: flex; flex-direction: column; gap: 6px; }
-.gps-point {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 12px;
-}
-.gps-point-label { font-size: 15px; font-family: var(--mono); color: var(--text3); width: 16px; flex-shrink: 0; font-weight: 700; }
-.gps-point-val { font-size: 14px; font-family: var(--mono); color: var(--text2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gps-point-val.empty { color: var(--text3); font-style: italic; }
-.gps-point-val.ok { color: var(--green); }
-.gps-clear { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; padding: 0 4px; flex-shrink: 0; }
-.gps-clear:active { color: var(--red); }
-
-/* ── GPS CAPTURE PANEL ── */
-.capture-panel {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg2); border-top: 2px solid var(--border2);
-  padding: 18px 20px calc(18px + var(--safe-bottom)); z-index: 200; display: none;
-}
-.capture-panel.open { display: block; }
-.capture-title { font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); font-family: var(--mono); margin-bottom: 14px; font-weight: 700; }
-.capture-steps { display: flex; gap: 10px; margin-bottom: 16px; }
-.capture-step {
-  flex: 1; background: var(--surface2); border: 2px solid var(--border);
-  border-radius: 10px; padding: 12px; text-align: center; cursor: pointer;
-}
-.capture-step.active { border-color: var(--gold); background: rgba(255,255,0,0.08); }
-.capture-step.done { border-color: var(--green); background: rgba(0,255,0,0.05); }
-.capture-step-label { font-size: 16px; font-weight: 700; color: var(--text2); }
-.capture-step.active .capture-step-label { color: var(--gold); }
-.capture-step.done .capture-step-label { color: var(--green); }
-.capture-step-status { font-size: 13px; color: var(--text3); font-family: var(--mono); margin-top: 4px; }
-.capture-coords { font-size: 14px; font-family: var(--mono); color: var(--text3); margin-bottom: 12px; text-align: center; }
-.capture-coords.active { color: var(--green); }
-.capture-actions { display: flex; gap: 10px; }
-.btn-capture {
-  flex: 1; height: 60px; border: none; border-radius: 12px;
-  background: var(--green); color: #000; font-family: var(--sans);
-  font-size: 20px; font-weight: 700; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.btn-capture:active { background: var(--green2); transform: scale(0.97); }
-.btn-capture:disabled { background: var(--surface3); color: var(--text3); cursor: not-allowed; }
-
-/* ── STATUS BAR ── */
-.status-bar {
-  padding: 10px 20px; border-top: 1px solid var(--border); background: var(--bg2);
-  font-size: 14px; font-family: var(--mono); color: var(--text3);
-  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.88);
-  z-index: 500; display: flex; align-items: flex-end;
-  opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(4px);
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--surface); border: 2px solid var(--border2);
-  border-radius: 20px 20px 0 0; padding: 24px 20px calc(20px + var(--safe-bottom)); width: 100%;
-  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.34,1.1,0.64,1);
-}
-.modal-overlay.open .modal { transform: translateY(0); }
-.modal-handle { width: 40px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
-.modal h3 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-.modal p { font-size: 15px; color: var(--text3); font-family: var(--mono); margin-bottom: 20px; }
-.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-
-/* ── TOAST ── */
-.toast {
-  position: fixed; bottom: calc(90px + var(--safe-bottom)); left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--surface2); border: 2px solid var(--border2);
-  border-radius: 12px; padding: 12px 22px; font-size: 15px;
-  font-family: var(--mono); color: var(--text); z-index: 1000;
-  opacity: 0; transition: all 0.3s; white-space: nowrap; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.green { color: var(--green); border-color: rgba(0,255,0,0.4); }
-.toast.red { color: var(--red); border-color: rgba(255,51,51,0.4); }
-
-/* ── MOBILE NAV ── */
-.mobile-nav { display: none; gap: 8px; padding: 12px 16px; background: var(--bg2); border-bottom: 2px solid var(--border); flex-shrink: 0; }
-@media (max-width: 700px) { .mobile-nav { display: flex; } .sidebar { width: 100%; } }
-
-/* ── JSON OUTPUT ── */
-#jsonOutput { font-size: 14px; }
-
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-input[type=number] { -moz-appearance: textfield; }
-
-input[type=number] { -moz-appearance: textfield; }
+/* TEE TABS */
+.tee-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tee-tab{padding:10px 16px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text2);font-size:15px;font-weight:700;cursor:pointer}
+.tee-tab.active{border-color:var(--green);color:var(--green);background:rgba(0,255,0,.06)}
 </style>
 </head>
 <body>
-
 <div class="app">
+
   <!-- HEADER -->
-  <div class="header">
-    <div class="header-logo">⛳ Course <span>Manager</span></div>
-    <div class="gps-indicator">
+  <div class="hdr">
+    <div class="hdr-title">⛳ Course <span>Manager</span></div>
+    <div class="gps-pill">
       <div class="gps-dot" id="gps-dot"></div>
-      <span id="gps-text">GPS</span>
+      <span id="gps-txt">GPS</span>
     </div>
   </div>
 
-  <!-- MOBILE NAV -->
-  <div class="mobile-nav">
-    <button class="btn btn-ghost" style="flex:1" onclick="showMobilePanel('sidebar')">📋 Tereni</button>
-    <button class="btn btn-ghost" style="flex:1" onclick="showMobilePanel('content')" id="mobile-content-btn">✏️ Uredi</button>
-  </div>
+  <!-- MAIN SCROLL -->
+  <div class="scroll" id="mainScroll">
 
-  <div class="main">
-    <!-- SIDEBAR -->
-    <div class="sidebar mobile-open" id="sidebar">
-      <div class="sidebar-header">
-        <span class="sidebar-title">Tereni</span>
-        <div style="display:flex;gap:6px;">
-          <button class="btn-add" onclick="exportAllData()" title="Export svih podataka" style="font-size:14px;">⬇</button>
-          <button class="btn-add" onclick="openNewCourseModal()" title="Novi teren">+</button>
+    <!-- === ODABIR TERENA === -->
+    <div id="section-list">
+      <div class="sec">Tereni</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <button class="btn btn-green" onclick="openNewModal()">+ Novi teren</button>
+        <button class="btn btn-gold" onclick="exportAllData()">⬇ Export sve</button>
+        <button class="btn btn-ghost" onclick="importData()">⬆ Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="doImport(this)">
+      </div>
+      <div id="courseList"></div>
+    </div>
+
+    <!-- === EDITOR TERENA === -->
+    <div id="section-editor" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <button class="btn btn-ghost" onclick="closeEditor()">◀ Nazad</button>
+        <div style="flex:1;font-size:20px;font-weight:800;color:var(--green)" id="editor-title">Teren</div>
+        <button class="btn btn-red" onclick="deleteCourse()">🗑</button>
+      </div>
+
+      <!-- Osnove -->
+      <div class="sec">Osnove</div>
+      <div class="field">
+        <label class="lbl">Naziv terena</label>
+        <input class="inp" id="e-name" type="text" oninput="updateCourseName(this.value)">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div>
+          <label class="lbl">Broj rupa</label>
+          <select class="inp" id="e-holes" onchange="updateHoles(this.value)">
+            <option value="9">9 rupa</option>
+            <option value="18" selected>18 rupa</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Grad</label>
+          <input class="inp" id="e-city" type="text" oninput="updateCity(this.value)">
         </div>
       </div>
-      <div class="course-list" id="courseList">
-        <div class="empty-courses">Učitavam courses.json...<br>ili dodaj novi teren klikom +</div>
+
+      <!-- Tee postavke -->
+      <div class="sec">Tee opcije (par, SI, CR, Slope)</div>
+      <div class="tee-tabs" id="tee-tabs"></div>
+      <div id="tee-editor"></div>
+      <button class="btn btn-ghost btn-full" style="margin-bottom:14px;" onclick="addTee()">+ Dodaj tee</button>
+
+      <!-- GPS greena -->
+      <div class="sec">📍 GPS koordinate greena</div>
+      <div style="background:var(--surface2);border-radius:10px;padding:12px;font-size:14px;color:var(--text3);font-family:var(--mono);margin-bottom:14px;line-height:1.7;">
+        Green je uvijek na istom mjestu — vrijedi za sve tee opcije.
+      </div>
+      <button class="btn btn-gold btn-full" style="margin-bottom:14px;" onclick="startGpsAll()">📍 Snimi GPS za sve rupe</button>
+      <div id="holes-grid"></div>
+
+      <!-- Spremi -->
+      <div class="sec">Pohrana</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+        <button class="btn btn-green" onclick="saveToLocal()">💾 Browser</button>
+        <button class="btn btn-ghost" onclick="saveToAvalon()">☁️ Avalon</button>
+        <button class="btn btn-gold" onclick="exportJson()">⬇ Export JSON</button>
       </div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content-area" id="contentArea">
-      <div id="welcome" class="content-scroll">
-        <div class="welcome">
-          <div class="welcome-icon">🗺️</div>
-          <h2>Odaberi teren</h2>
-          <p>ili dodaj novi klikom na +</p>
-        </div>
-      </div>
+  </div><!-- end scroll -->
 
-      <div id="courseEditor" style="display:none;flex-direction:column;height:100%;">
-        <div class="topbar">
-          <div class="topbar-title" id="editorTitle">Teren</div>
-          <div class="topbar-actions">
-            <button class="btn btn-ghost" onclick="saveToLocal()" title="Spremi u browser">💾 Browser</button>
-            <button class="btn btn-ghost" onclick="saveToAvalon()" title="Spremi na Avalon">☁️ Avalon</button>
-            <button class="btn btn-gold" onclick="startGpsCapture()">📍 GPS</button>
-            <button class="btn btn-green" onclick="exportJson()">↓ Export</button>
-            <button class="btn btn-red" onclick="deleteCourse()">🗑</button>
-          </div>
-        </div>
-
-        <div class="content-scroll" id="editorContent"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="status-bar" id="statusBar">
-    <span id="statusText">Spreman</span>
-  </div>
-</div>
+  <div class="status-bar" id="statusBar">Spreman</div>
+</div><!-- end app -->
 
 <!-- GPS CAPTURE PANEL -->
-<div class="capture-panel" id="capturePanel">
-  <div class="capture-title">📍 GPS SNIMANJE — <span id="cap-hole-title">Rupa 1</span></div>
-  <div class="capture-steps">
-    <div class="capture-step active" id="cap-step-front" onclick="setCaptureStep(0)">
-      <div class="capture-step-label">FRONT</div>
-      <div class="capture-step-status" id="cap-status-front">na redu</div>
-    </div>
-    <div class="capture-step" id="cap-step-mid" onclick="setCaptureStep(1)">
-      <div class="capture-step-label">MID</div>
-      <div class="capture-step-status" id="cap-status-mid">čeka</div>
-    </div>
-    <div class="capture-step" id="cap-step-back" onclick="setCaptureStep(2)">
-      <div class="capture-step-label">BACK</div>
-      <div class="capture-step-status" id="cap-status-back">čeka</div>
-    </div>
-  </div>
-  <div class="capture-coords" id="cap-coords">Čekam GPS signal...</div>
-  <div class="capture-actions">
-    <button class="btn btn-ghost" onclick="closeCapturePanel()">Zatvori</button>
-    <button class="btn-capture" id="cap-btn" onclick="capturePoint()" disabled>
-      📍 Snimi
-    </button>
+<div class="cap-panel" id="capPanel">
+  <div class="cap-title">📍 GPS — <span id="cap-hole-title">Rupa 1</span> · <span id="cap-point-type">Green</span></div>
+  <div class="cap-steps" id="cap-steps"></div>
+  <div class="cap-coords" id="cap-coords">Čekam GPS...</div>
+  <div class="cap-actions">
+    <button class="btn btn-ghost" onclick="closeCapture()">Zatvori</button>
+    <button class="btn-capture" id="cap-btn" onclick="capturePoint()" disabled>📍 Snimi</button>
   </div>
 </div>
 
 <!-- Modal: Novi teren -->
-<div class="modal-overlay" id="modalNew">
+<div class="modal-ov" id="modal-new">
   <div class="modal">
     <div class="modal-handle"></div>
     <h3>Novi teren</h3>
-    <p>Unesi osnovne podatke</p>
-    <div class="field">
-      <label>Naziv terena</label>
-      <input class="input" id="newName" type="text" placeholder="npr. GC Hummelbachaue Neuss" maxlength="60">
-    </div>
+    <div class="field"><label class="lbl">Naziv</label><input class="inp" id="new-name" placeholder="npr. GC Hummelbachaue"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="field" style="margin:0">
-        <label>Broj rupa</label>
-        <select class="input" id="newHoles">
-          <option value="9">9 rupa</option>
-          <option value="18" selected>18 rupa</option>
-        </select>
-      </div>
-      <div class="field" style="margin:0">
-        <label>Default par</label>
-        <input class="input" id="newPar" type="number" value="4" min="3" max="5">
-      </div>
+      <div><label class="lbl">Rupe</label><select class="inp" id="new-holes"><option value="9">9</option><option value="18" selected>18</option></select></div>
+      <div><label class="lbl">Default par</label><input class="inp" id="new-par" type="number" value="4" min="3" max="5"></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalNew')">Odustani</button>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modal-new')">Odustani</button>
       <button class="btn btn-green" style="flex:1" onclick="createCourse()">Kreiraj</button>
     </div>
   </div>
 </div>
 
 <!-- Modal: Brisanje -->
-<div class="modal-overlay" id="modalDelete">
+<div class="modal-ov" id="modal-delete">
   <div class="modal">
     <div class="modal-handle"></div>
     <h3>Obriši teren?</h3>
-    <p id="deleteMsg"></p>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalDelete')">Odustani</button>
+    <p id="del-msg"></p>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modal-delete')">Odustani</button>
       <button class="btn btn-red" style="flex:1" onclick="confirmDelete()">Obriši</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Spremi JSON -->
-<div class="modal-overlay" id="modalSave">
+<!-- Modal: Konflikt -->
+<div class="modal-ov" id="modal-conflict">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h3>💾 Spremi courses.json</h3>
-    <p>Kopiraj i zamijeni courses.json na GitHubu</p>
-    <textarea id="jsonOutput" style="width:100%;height:200px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--green);font-family:var(--mono);font-size:11px;resize:none;outline:none;" readonly></textarea>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalSave')">Zatvori</button>
-      <button class="btn btn-ghost" style="flex:1" onclick="copyJson()">📋 Kopiraj</button>
-      <button class="btn btn-gold" style="flex:1" onclick="downloadJson()">⬇ Download</button>
+    <h3>⚠️ Konflikt podataka</h3>
+    <p>Isti teren nađen na više mjesta</p>
+    <div style="font-size:20px;font-weight:700;margin-bottom:14px;" id="conf-name"></div>
+    <div class="conflict-box">
+      <div class="conflict-date" id="conf-local-date"></div>
+      <div class="conflict-hint" id="conf-local-hint"></div>
+    </div>
+    <div class="conflict-box">
+      <div class="conflict-date" id="conf-remote-date"></div>
+      <div class="conflict-hint" id="conf-remote-hint"></div>
+    </div>
+    <p style="margin-top:10px;">Koji zapis zadržati?</p>
+    <div class="modal-acts">
+      <button class="btn btn-green" style="flex:1" onclick="resolveConflict(true)">💾 Browser</button>
+      <button class="btn btn-blue" style="flex:1" onclick="resolveConflict(false)">☁️ Avalon</button>
     </div>
   </div>
 </div>
@@ -434,679 +290,645 @@ input[type=number] { -moz-appearance: textfield; }
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ─────────────────────────────────────────────────────────
-let state = {
+// const BACKEND_URL = 'https://tvojdomen.com/golf/api.php';
+const BACKEND_URL = null;
+
+const state = {
   courses: [],
-  activeCourseIdx: null,
+  activeIdx: null,
   activeTeeIdx: 0,
   captureHoleIdx: 0,
-  captureStep: 0,    // 0=front, 1=mid, 2=back
+  captureStep: 0,
+  captureType: 'green',  // 'green', 'water', 'bunker'
+  captureSubIdx: 0,      // 0,1,2 za water/bunker
   capturing: false,
   gpsPos: null,
-  gpsActive: false,
   gpsWatchId: null,
+  gpsPollId: null,
+  conflictCallback: null,
 };
 
-// ── LOAD courses.json ─────────────────────────────────────────────
-async function loadCourses() {
-  // 1. UVIJEK prvo provjeri localStorage — ima GPS koordinate
-  const local = localStorage.getItem('golf_courses');
-  if (local) {
-    try {
-      const parsed = JSON.parse(local);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        state.courses = parsed;
-        setStatus(`Učitano ${parsed.length} terena iz browsera`);
-        renderSidebar();
-        return;
-      }
-    } catch(e) {}
-  }
+// ── UTILS ─────────────────────────────────────────────────────────
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function setStatus(msg) { document.getElementById('statusBar').textContent = msg; }
+let toastTimer;
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show' + (type?' '+type:'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className='toast', 2500);
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-ov').forEach(el =>
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); })
+);
+function fmtCoord(pt) { return pt?.lat ? `${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)}` : ''; }
 
-  // 2. Avalon server (ako konfiguriran)
+// ── LOAD ──────────────────────────────────────────────────────────
+async function loadCourses() {
+  setStatus('Učitavam...');
+  let local=[], avalon=[], file=[];
+  try { const r=localStorage.getItem('golf_courses'); if(r) local=JSON.parse(r)||[]; } catch(e){}
   if (BACKEND_URL) {
     try {
-      const res = await fetch(`${BACKEND_URL}?action=load_courses&t=${Date.now()}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          state.courses = data;
-          localStorage.setItem('golf_courses', JSON.stringify(data));
-          setStatus(`Učitano ${data.length} terena s Avalon servera`);
-          renderSidebar();
-          return;
-        }
-      }
-    } catch(e) {}
+      const r=await fetch(`${BACKEND_URL}?action=load_courses&t=${Date.now()}`);
+      if(r.ok) { const d=await r.json(); if(Array.isArray(d)) avalon=d; }
+    } catch(e){}
   }
-
-  // 3. courses.json statički fajl (inicijalni podaci bez GPS)
   try {
-    const res = await fetch('courses.json?t=' + Date.now(), { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        state.courses = data;
-        // NE prepiši localStorage ako već postoji — samo ako je prazan
-        if (!localStorage.getItem('golf_courses')) {
-          localStorage.setItem('golf_courses', JSON.stringify(data));
-        }
-        setStatus(`Učitano ${data.length} terena iz courses.json`);
-        renderSidebar();
-        return;
-      }
-    }
-  } catch(e) {}
+    const r=await fetch('courses.json?t='+Date.now(),{cache:'no-store'});
+    if(r.ok) { const d=await r.json(); if(Array.isArray(d)) file=d; }
+  } catch(e){}
 
-  state.courses = [];
-  setStatus('Nema terena — dodaj novi klikom na +');
-  renderSidebar();
+  // Spoji: local ima prednost, file kao baza
+  let merged=[...file];
+  avalon.forEach(ac => {
+    const i=merged.findIndex(m=>m.id===ac.id||m.club_name===ac.club_name);
+    if(i===-1) merged.push(ac);
+    else merged[i]={...merged[i],...ac,green_coords:ac.green_coords||merged[i].green_coords};
+  });
+  if(local.length>0) {
+    merged = await mergeCourses(local, merged.filter(m=>!local.find(l=>l.id===m.id||l.club_name===m.club_name)));
+  }
+  state.courses = merged;
+  if(merged.length>0) localStorage.setItem('golf_courses', JSON.stringify(merged));
+  setStatus(`${merged.length} terena`);
+  renderList();
 }
 
-// ── SIDEBAR ───────────────────────────────────────────────────────
-function renderSidebar() {
+// ── CONFLICT ─────────────────────────────────────────────────────
+function showConflictDialog(local, remote, cb) {
+  const ld = local.updated  ? new Date(local.updated).toLocaleString('hr')  : 'nepoznato';
+  const rd = remote.updated ? new Date(remote.updated).toLocaleString('hr') : 'nepoznato';
+  const localNewer = local.updated && remote.updated ? new Date(local.updated)>=new Date(remote.updated) : true;
+  document.getElementById('conf-name').textContent = local.club_name||remote.club_name;
+  document.getElementById('conf-local-date').textContent  = `💾 Browser: ${ld}`;
+  document.getElementById('conf-remote-date').textContent = `☁️ Avalon: ${rd}`;
+  document.getElementById('conf-local-hint').textContent  = localNewer  ? '← NOVIJI' : '';
+  document.getElementById('conf-remote-hint').textContent = !localNewer ? '← NOVIJI' : '';
+  state.conflictCallback = cb;
+  openModal('modal-conflict');
+}
+function resolveConflict(keepLocal) {
+  closeModal('modal-conflict');
+  if(state.conflictCallback) state.conflictCallback(keepLocal);
+  state.conflictCallback = null;
+}
+async function mergeCourses(localArr, remoteArr) {
+  const result = [...localArr];
+  for(const remote of remoteArr) {
+    const li = result.findIndex(l=>l.id===remote.id||l.club_name===remote.club_name);
+    if(li===-1) { result.push(remote); continue; }
+    const lup = result[li].updated ? new Date(result[li].updated) : null;
+    const rup = remote.updated     ? new Date(remote.updated)     : null;
+    if(!lup||!rup||lup.getTime()!==rup.getTime()) {
+      await new Promise(res => showConflictDialog(result[li], remote, keep => {
+        if(!keep) result[li] = remote;
+        res();
+      }));
+    }
+  }
+  return result;
+}
+
+// ── RENDER LIST ───────────────────────────────────────────────────
+function renderList() {
   const el = document.getElementById('courseList');
-  if (state.courses.length === 0) {
-    el.innerHTML = '<div class="empty-courses">Nema terena.<br>Klikni + za dodavanje.</div>';
+  if(state.courses.length===0) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text3);padding:24px;font-size:16px;font-family:var(--mono);">Nema terena. Klikni + Novi teren.</div>';
     return;
   }
-  el.innerHTML = state.courses.map((c, i) => {
-    const gpsCount = countGpsCaptured(c);
-    const totalHoles = c.holes || 18;
-    const active = i === state.activeCourseIdx ? ' active' : '';
-    return `<div class="course-item${active}" onclick="selectCourse(${i})">
-      <div class="course-item-name">${escHtml(c.club_name)}</div>
-      <div class="course-item-meta">${totalHoles} rupa · GPS: ${gpsCount}/${totalHoles}</div>
+  el.innerHTML = state.courses.map((c,i)=>{
+    const gpsCount = (c.green_coords||[]).filter(h=>h.front?.lat&&h.mid?.lat&&h.back?.lat).length;
+    const sel = i===state.activeIdx;
+    return `<div class="course-card${sel?' sel':''}" onclick="selectCourse(${i})">
+      <div class="cc-name">${esc(c.club_name)}</div>
+      <div class="cc-meta">${c.holes||18} rupa · ${c.tees?.length||0} tee · GPS: ${gpsCount}/${c.holes||18}</div>
     </div>`;
   }).join('');
 }
 
-function countGpsCaptured(course) {
-  const coords = course.green_coords || [];
-  return coords.filter(h => h.front && h.mid && h.back).length;
+// ── SELECT / EDITOR ───────────────────────────────────────────────
+function selectCourse(idx) {
+  state.activeIdx = idx;
+  state.activeTeeIdx = 0;
+  document.getElementById('section-list').style.display = 'none';
+  document.getElementById('section-editor').style.display = 'block';
+  renderEditor();
+  document.getElementById('mainScroll').scrollTop = 0;
 }
 
-// ── COURSE EDITOR ─────────────────────────────────────────────────
-function selectCourse(idx) {
-  state.activeCourseIdx = idx;
-  state.activeTeeIdx = 0;
-  document.getElementById('welcome').style.display = 'none';
-  const editor = document.getElementById('courseEditor');
-  editor.style.display = 'flex';
-  renderSidebar();
-  renderEditor();
-  showMobilePanel('content');
+function closeEditor() {
+  document.getElementById('section-list').style.display = 'block';
+  document.getElementById('section-editor').style.display = 'none';
+  renderList();
 }
 
 function renderEditor() {
-  const course = state.courses[state.activeCourseIdx];
-  if (!course) return;
+  const c = state.courses[state.activeIdx];
+  if(!c) return;
+  document.getElementById('editor-title').textContent = c.club_name;
+  document.getElementById('e-name').value  = c.club_name||'';
+  document.getElementById('e-holes').value = c.holes||18;
+  document.getElementById('e-city').value  = c.location?.city||'';
+  renderTeeTabs();
+  renderTeeEditor();
+  renderHolesGrid();
+}
 
-  document.getElementById('editorTitle').textContent = course.club_name;
+function updateCourseName(v) {
+  if(state.activeIdx===null) return;
+  state.courses[state.activeIdx].club_name = v;
+  document.getElementById('editor-title').textContent = v;
+  autoSave();
+}
+function updateHoles(v) {
+  if(state.activeIdx===null) return;
+  state.courses[state.activeIdx].holes = parseInt(v);
+  ensureGreenCoords();
+  renderHolesGrid();
+  autoSave();
+}
+function updateCity(v) {
+  if(state.activeIdx===null) return;
+  if(!state.courses[state.activeIdx].location) state.courses[state.activeIdx].location={};
+  state.courses[state.activeIdx].location.city = v;
+  autoSave();
+}
 
-  const tees = course.tees || [];
-  const activeTee = tees[state.activeTeeIdx];
-  const numHoles = course.holes || 18;
+// ── TEE EDITOR ────────────────────────────────────────────────────
+function renderTeeTabs() {
+  const c = state.courses[state.activeIdx];
+  const tees = c.tees||[];
+  document.getElementById('tee-tabs').innerHTML = tees.map((t,i)=>
+    `<button class="tee-tab${i===state.activeTeeIdx?' active':''}" onclick="state.activeTeeIdx=${i};renderTeeTabs();renderTeeEditor();">${esc(t.tee_name||'Tee '+(i+1))}</button>`
+  ).join('');
+}
 
-  // Osiguraj da postoji green_coords na razini terena
-  if (!course.green_coords || course.green_coords.length < numHoles) {
-    course.green_coords = Array.from({length: numHoles}, (_, i) => ({
-      hole_number: i+1, front: null, mid: null, back: null
-    }));
-    autoSave();
-  }
-
-  let html = '';
-
-  // ── Naziv i osnove
-  html += `<div class="section-label">Osnove</div>
-  <div class="field">
-    <label>Naziv</label>
-    <input class="input" value="${escHtml(course.club_name)}" oninput="state.courses[${state.activeCourseIdx}].club_name=this.value;document.getElementById('editorTitle').textContent=this.value;renderSidebar();">
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-    <div><label style="font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px;">Broj rupa</label>
-    <input class="input" type="number" value="${numHoles}" min="9" max="18"
-      oninput="state.courses[${state.activeCourseIdx}].holes=parseInt(this.value)||18;renderEditor();"></div>
-    <div><label style="font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px;">Grad</label>
-    <input class="input" value="${escHtml(course.location?.city||'')}"
-      oninput="if(!state.courses[${state.activeCourseIdx}].location)state.courses[${state.activeCourseIdx}].location={};state.courses[${state.activeCourseIdx}].location.city=this.value;"></div>
+function renderTeeEditor() {
+  const c = state.courses[state.activeIdx];
+  const tee = (c.tees||[])[state.activeTeeIdx];
+  if(!tee) { document.getElementById('tee-editor').innerHTML='<div style="color:var(--text3);font-size:14px;">Dodaj tee klikom gore.</div>'; return; }
+  const numH = c.holes||18;
+  let html = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div><label class="lbl">Naziv tee</label><input class="inp" value="${esc(tee.tee_name||'')}" style="font-size:16px;" oninput="updateTee('tee_name',this.value)"></div>
+    <div><label class="lbl">CR</label><input class="inp" type="number" step="0.1" value="${tee.course_rating||72}" style="font-size:16px;" oninput="updateTee('course_rating',parseFloat(this.value))"></div>
+    <div><label class="lbl">Slope</label><input class="inp" type="number" value="${tee.slope_rating||113}" style="font-size:16px;" oninput="updateTee('slope_rating',parseInt(this.value))"></div>
   </div>`;
+  html += `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:15px;">
+    <tr style="border-bottom:2px solid var(--border);">
+      <th style="padding:8px;color:var(--gold);text-align:left;width:40px;">#</th>
+      <th style="padding:8px;color:var(--gold);">PAR</th>
+      <th style="padding:8px;color:var(--gold);">SI</th>
+      <th style="padding:8px;color:var(--gold);">m</th>
+    </tr>`;
+  for(let i=0;i<numH;i++){
+    const h=(tee.holes||[])[i]||{hole_number:i+1,par:4,si:i+1,length_m:0};
+    html+=`<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px;color:var(--green);font-weight:700;">${i+1}</td>
+      <td style="padding:6px;"><input class="par-inp" type="number" min="3" max="6" value="${h.par||4}" onchange="setHolePar(${i},this.value)"></td>
+      <td style="padding:6px;"><input class="par-inp" type="number" min="1" max="${numH}" value="${h.si||i+1}" onchange="setHoleSI(${i},this.value)"></td>
+      <td style="padding:6px;"><input class="par-inp" style="width:64px;" type="number" min="0" value="${h.length_m||0}" onchange="setHoleLen(${i},this.value)"></td>
+    </tr>`;
+  }
+  html+='</table></div>';
+  html+=`<button class="btn btn-red" style="margin-top:10px;margin-bottom:4px;" onclick="removeTee(${state.activeTeeIdx})">🗑 Obriši ovaj tee</button>`;
+  document.getElementById('tee-editor').innerHTML = html;
+}
 
-  // ── GPS KOORDINATE GREENA (neovisno o tee-u!)
-  html += `<div class="section-label">📍 GPS koordinate greena</div>
-  <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;padding:8px;background:var(--surface2);border-radius:8px;">
-    Green je uvijek na istom mjestu — koordinate vrijede za sve tee opcije.
-  </div>
-  <div class="holes-grid">`;
+function updateTee(key, val) {
+  const c = state.courses[state.activeIdx];
+  if(!c.tees?.[state.activeTeeIdx]) return;
+  c.tees[state.activeTeeIdx][key] = val;
+  if(key==='tee_name') renderTeeTabs();
+  autoSave();
+}
+function setHolePar(i, v) { ensureTeeHole(i); state.courses[state.activeIdx].tees[state.activeTeeIdx].holes[i].par=parseInt(v)||4; autoSave(); }
+function setHoleSI(i, v)  { ensureTeeHole(i); state.courses[state.activeIdx].tees[state.activeTeeIdx].holes[i].si=parseInt(v)||i+1; autoSave(); }
+function setHoleLen(i, v) { ensureTeeHole(i); state.courses[state.activeIdx].tees[state.activeTeeIdx].holes[i].length_m=parseInt(v)||0; autoSave(); }
 
-  for (let i = 0; i < numHoles; i++) {
-    const gc = course.green_coords[i] || { hole_number: i+1 };
-    const hasFront = gc.front?.lat;
-    const hasMid   = gc.mid?.lat;
-    const hasBack  = gc.back?.lat;
-    const allCap   = hasFront && hasMid && hasBack;
-    const isActive = i === state.captureHoleIdx && state.capturing;
+function ensureTeeHole(i) {
+  const tee = state.courses[state.activeIdx].tees[state.activeTeeIdx];
+  if(!tee.holes) tee.holes=[];
+  while(tee.holes.length<=i) { const n=tee.holes.length+1; tee.holes.push({hole_number:n,par:4,si:n,length_m:0}); }
+}
 
-    html += `<div class="hole-card${allCap?' all-captured':''}${isActive?' active-hole':''}" id="hcard-${i}">
-      <div class="hole-card-header">
+function addTee() {
+  const c = state.courses[state.activeIdx];
+  if(!c.tees) c.tees=[];
+  c.tees.push({tee_name:'Tee '+(c.tees.length+1),course_rating:72,slope_rating:113,par:(c.holes||18)*4,holes:[]});
+  state.activeTeeIdx = c.tees.length-1;
+  renderTeeTabs(); renderTeeEditor();
+  autoSave();
+}
+function removeTee(i) {
+  if(!confirm('Obrisati ovaj tee?')) return;
+  state.courses[state.activeIdx].tees.splice(i,1);
+  state.activeTeeIdx = 0;
+  renderTeeTabs(); renderTeeEditor();
+  autoSave();
+}
+
+// ── HOLES GRID — GPS + HAZARDI ─────────────────────────────────────
+function ensureGreenCoords() {
+  const c = state.courses[state.activeIdx];
+  const n = c.holes||18;
+  if(!c.green_coords) c.green_coords=[];
+  while(c.green_coords.length<n) {
+    const i=c.green_coords.length;
+    c.green_coords.push({hole_number:i+1,front:null,mid:null,back:null,water:[],bunkers:[]});
+  }
+  c.green_coords.forEach(h => {
+    if(!h.water)   h.water=[];
+    if(!h.bunkers) h.bunkers=[];
+  });
+}
+
+function renderHolesGrid() {
+  const c = state.courses[state.activeIdx];
+  ensureGreenCoords();
+  const el = document.getElementById('holes-grid');
+  el.innerHTML = c.green_coords.map((gc,i)=>{
+    const allGreen = gc.front?.lat && gc.mid?.lat && gc.back?.lat;
+    const waters  = gc.water  || [];
+    const bunkers = gc.bunkers|| [];
+    return `<div class="hole-card${allGreen?' gps-ok':''}" id="hcard-${i}">
+      <div class="hole-hdr">
         <span class="hole-num">RUPA ${i+1}</span>
-        <span style="font-size:11px;color:${allCap?'var(--green)':'var(--text3)'};">${allCap?'✓ OK':'nije snimljeno'}</span>
+        <span class="hole-status" style="color:${allGreen?'var(--green)':'var(--text3)'}">${allGreen?'✓ OK':'—'}</span>
       </div>
-      <div class="gps-points">
-        <div class="gps-point">
-          <span class="gps-point-label">F</span>
-          <span class="gps-point-val ${hasFront?'ok':'empty'}">${hasFront?fmtCoord(gc.front):'—'}</span>
-          ${hasFront?`<button class="gps-clear" onclick="clearGps(${i},'front')">×</button>`:''}
-        </div>
-        <div class="gps-point">
-          <span class="gps-point-label">M</span>
-          <span class="gps-point-val ${hasMid?'ok':'empty'}">${hasMid?fmtCoord(gc.mid):'—'}</span>
-          ${hasMid?`<button class="gps-clear" onclick="clearGps(${i},'mid')">×</button>`:''}
-        </div>
-        <div class="gps-point">
-          <span class="gps-point-label">B</span>
-          <span class="gps-point-val ${hasBack?'ok':'empty'}">${hasBack?fmtCoord(gc.back):'—'}</span>
-          ${hasBack?`<button class="gps-clear" onclick="clearGps(${i},'back')">×</button>`:''}
-        </div>
-      </div>
-      <button class="btn btn-ghost" style="width:100%;margin-top:8px;font-size:12px;"
-        onclick="startGpsCaptureForHole(${i})">
-        ${allCap?'✓ Ponovi':'📍 Snimi GPS'}
-      </button>
+
+      <!-- Green GPS -->
+      <div style="font-size:13px;color:var(--gold);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px;">GREEN</div>
+      ${gpsRow(gc,'front',i,'green','f')}
+      ${gpsRow(gc,'mid',i,'green','m')}
+      ${gpsRow(gc,'back',i,'green','b')}
+      <button class="btn btn-gold" style="width:100%;margin:8px 0 14px;font-size:14px;" onclick="captureGreen(${i})">📍 ${allGreen?'Ponovi':'Snimi'} green</button>
+
+      <!-- Water hazards -->
+      <div style="font-size:13px;color:var(--blue);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px;">WATER HAZARD</div>
+      ${[0,1,2].map(wi=>{
+        const w = waters[wi];
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="font-size:14px;color:var(--blue);font-family:var(--mono);width:24px;font-weight:700;flex-shrink:0;">W${wi+1}</span>
+          ${w?.lat
+            ? `<span style="flex:1;font-size:13px;font-family:var(--mono);color:var(--blue);overflow:hidden;text-overflow:ellipsis;">${fmtCoord(w)}</span>
+               <button class="gps-del" onclick="clearHazard(${i},'water',${wi})">×</button>`
+            : `<input placeholder="51.162159, 6.715142"
+                 style="flex:1;background:var(--surface3);border:1px solid rgba(85,170,255,.4);border-radius:6px;padding:5px 8px;color:var(--text3);font-family:var(--mono);font-size:13px;outline:none;min-width:0;"
+                 onchange="setManualHazard(${i},'water',${wi},this.value)"
+                 onfocus="this.style.borderColor='var(--blue)'"
+                 onblur="this.style.borderColor='rgba(85,170,255,.4)'">`
+          }
+          <button style="background:none;border:1px solid var(--blue);border-radius:6px;color:var(--blue);font-size:12px;padding:4px 8px;cursor:pointer;flex-shrink:0;" onclick="captureHazard(${i},'water',${wi})">📍</button>
+        </div>`;
+      }).join('')}
+
+      <!-- Bunkers -->
+      <div style="font-size:13px;color:var(--gold);font-family:var(--mono);letter-spacing:1px;margin:10px 0 6px;">BUNKERI</div>
+      ${[0,1,2].map(bi=>{
+        const b = bunkers[bi];
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="font-size:14px;color:var(--gold);font-family:var(--mono);width:24px;font-weight:700;flex-shrink:0;">B${bi+1}</span>
+          ${b?.lat
+            ? `<span style="flex:1;font-size:13px;font-family:var(--mono);color:var(--gold);overflow:hidden;text-overflow:ellipsis;">${fmtCoord(b)}</span>
+               <button class="gps-del" onclick="clearHazard(${i},'bunkers',${bi})">×</button>`
+            : `<input placeholder="51.162159, 6.715142"
+                 style="flex:1;background:var(--surface3);border:1px solid rgba(255,255,0,.4);border-radius:6px;padding:5px 8px;color:var(--text3);font-family:var(--mono);font-size:13px;outline:none;min-width:0;"
+                 onchange="setManualHazard(${i},'bunkers',${bi},this.value)"
+                 onfocus="this.style.borderColor='var(--gold)'"
+                 onblur="this.style.borderColor='rgba(255,255,0,.4)'">`
+          }
+          <button style="background:none;border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-size:12px;padding:4px 8px;cursor:pointer;flex-shrink:0;" onclick="captureHazard(${i},'bunkers',${bi})">📍</button>
+        </div>`;
+      }).join('')}
+
     </div>`;
-  }
-  html += '</div>';
+  }).join('');
+}
 
-  // ── Tee odabir (par, SI, dužine — ne GPS!)
-  html += `<div class="section-label" style="margin-top:20px;">Tee postavke (par, SI, dužine)</div>
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-    ${tees.map((t,i)=>`<button class="btn ${i===state.activeTeeIdx?'btn-green':'btn-ghost'}" onclick="state.activeTeeIdx=${i};renderEditor();">${escHtml(t.tee_name||('Tee '+(i+1)))}</button>`).join('')}
-    <button class="btn btn-ghost" onclick="addTee()">+ Tee</button>
-  </div>`;
-
-  if (activeTee) {
-    html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
-      <div><label style="font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:5px;">Naziv tee</label>
-      <input class="input" value="${escHtml(activeTee.tee_name||'')}" style="font-size:13px;"
-        oninput="state.courses[${state.activeCourseIdx}].tees[${state.activeTeeIdx}].tee_name=this.value;"></div>
-      <div><label style="font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:5px;">CR</label>
-      <input class="input" type="number" step="0.1" value="${activeTee.course_rating||72}" style="font-size:13px;"
-        oninput="state.courses[${state.activeCourseIdx}].tees[${state.activeTeeIdx}].course_rating=parseFloat(this.value);"></div>
-      <div><label style="font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:5px;">Slope</label>
-      <input class="input" type="number" value="${activeTee.slope_rating||113}" style="font-size:13px;"
-        oninput="state.courses[${state.activeCourseIdx}].tees[${state.activeTeeIdx}].slope_rating=parseInt(this.value);"></div>
-    </div>
-    <div class="holes-grid">`;
-
-    const teeHoles = activeTee.holes || [];
-    for (let i = 0; i < numHoles; i++) {
-      const h = teeHoles[i] || { hole_number: i+1, par: 4, si: i+1 };
-      html += `<div class="hole-card" style="padding:10px 12px;">
-        <div class="hole-card-header">
-          <span class="hole-num">RUPA ${i+1}</span>
-          <div class="par-wrap">
-            <span class="par-label-sm">PAR</span>
-            <input class="par-input" type="number" min="3" max="6" value="${h.par||4}" onchange="setHolePar(${i},this.value)">
-            <span class="par-label-sm" style="margin-left:4px;">SI</span>
-            <input class="par-input" type="number" min="1" max="${numHoles}" value="${h.si||i+1}" onchange="setHoleSI(${i},this.value)">
-          </div>
-        </div>
-      </div>`;
+function gpsRow(gc, pt, holeIdx) {
+  const has = gc[pt]?.lat;
+  const lbl = pt === 'front' ? 'F' : pt === 'mid' ? 'M' : 'B';
+  return `<div class="gps-row" style="flex-wrap:wrap;gap:6px;">
+    <span class="gps-lbl" style="color:${pt==='mid'?'var(--gold)':'var(--text3)'};">${lbl}</span>
+    ${has
+      ? `<span class="gps-val ok" style="flex:1;">${fmtCoord(gc[pt])}</span>
+         <button class="gps-del" onclick="clearGps(${holeIdx},'${pt}')">×</button>`
+      : `<input placeholder="51.162159, 6.715142"
+           style="flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text3);font-family:var(--mono);font-size:13px;outline:none;min-width:0;"
+           onchange="setManualCoord(${holeIdx},'${pt}',this.value)"
+           onfocus="this.style.borderColor='var(--gold)'"
+           onblur="this.style.borderColor='var(--border)'">`
     }
-    html += '</div>';
+  </div>`;
+}
+
+function setManualCoord(holeIdx, pt, val) {
+  const parsed = parseGoogleMapsCoord(val);
+  if (!parsed) {
+    toast('Format: 51.162159, 6.715142', 'red');
+    return;
   }
-
-  document.getElementById('editorContent').innerHTML = html;
-}
-
-// ── HOLE DATA ─────────────────────────────────────────────────────
-function ensureGreenCoord(holeIdx) {
-  const course = state.courses[state.activeCourseIdx];
-  if (!course.green_coords) course.green_coords = [];
-  while (course.green_coords.length <= holeIdx) {
-    const n = course.green_coords.length + 1;
-    course.green_coords.push({ hole_number: n, front: null, mid: null, back: null });
-  }
-}
-
-function ensureHoleExists(holeIdx) {
-  const course = state.courses[state.activeCourseIdx];
-  const tee = course.tees[state.activeTeeIdx];
-  if (!tee.holes) tee.holes = [];
-  while (tee.holes.length <= holeIdx) {
-    const n = tee.holes.length + 1;
-    tee.holes.push({ hole_number: n, par: 4, si: n });
-  }
-}
-
-function setHolePar(idx, val) {
-  ensureHoleExists(idx);
-  state.courses[state.activeCourseIdx].tees[state.activeTeeIdx].holes[idx].par = parseInt(val) || 4;
+  ensureGreenCoords();
+  state.courses[state.activeIdx].green_coords[holeIdx][pt] = parsed;
   autoSave();
+  renderHolesGrid();
+  toast(`${pt.toUpperCase()} snimljeno ✓`, 'green');
 }
 
-function setHoleSI(idx, val) {
-  ensureHoleExists(idx);
-  state.courses[state.activeCourseIdx].tees[state.activeTeeIdx].holes[idx].si = parseInt(val) || idx+1;
+function setManualHazard(holeIdx, type, idx, val) {
+  const parsed = parseGoogleMapsCoord(val);
+  if (!parsed) { toast('Format: 51.162159, 6.715142', 'red'); return; }
+  ensureGreenCoords();
+  const h = state.courses[state.activeIdx].green_coords[holeIdx];
+  if (!h[type]) h[type] = [];
+  h[type][idx] = parsed;
   autoSave();
+  renderHolesGrid();
+  toast('Hazard snimljen ✓', 'green');
 }
 
-function clearGps(holeIdx, point) {
-  ensureGreenCoord(holeIdx);
-  state.courses[state.activeCourseIdx].green_coords[holeIdx][point] = null;
-  autoSave();
-  renderEditor();
-  renderSidebar();
-  showToast(`${point.toUpperCase()} obrisan`, 'red');
+function parseGoogleMapsCoord(val) {
+  if (!val || !val.trim()) return null;
+  // Podržava: "51.162159, 6.715142" ili "51.162159 6.715142" ili "51.162159,6.715142"
+  const m = val.trim().match(/^(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)$/);
+  if (!m) return null;
+  const lat = parseFloat(m[1]);
+  const lon = parseFloat(m[2]);
+  if (isNaN(lat) || isNaN(lon)) return null;
+  if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
+  return { lat, lon };
 }
 
-function clearGps(holeIdx, point) {
-  ensureHoleExists(holeIdx);
-  const h = state.courses[state.activeCourseIdx].tees[state.activeTeeIdx].holes[holeIdx];
-  delete h[point];
-  renderEditor();
-  renderSidebar();
-  showToast(`${point.toUpperCase()} obrisan`, 'red');
+function clearGps(holeIdx, pt) {
+  ensureGreenCoords();
+  state.courses[state.activeIdx].green_coords[holeIdx][pt] = null;
+  autoSave(); renderHolesGrid();
+  toast(`${pt} obrisan`, 'red');
 }
 
-// ── GPS CAPTURE ───────────────────────────────────────────────────
-function startGpsCapture() {
-  const course = state.courses[state.activeCourseIdx];
-  if (!course) { showToast('Nema odabranog terena', 'red'); return; }
-  const tee = course.tees?.[state.activeTeeIdx];
-  if (!tee) { showToast('Nema tee-a!', 'red'); return; }
-  startGpsCaptureForHole(0);
+function clearHazard(holeIdx, type, idx) {
+  ensureGreenCoords();
+  const h = state.courses[state.activeIdx].green_coords[holeIdx];
+  if(type==='water')   h.water[idx]   = null;
+  if(type==='bunkers') h.bunkers[idx] = null;
+  autoSave(); renderHolesGrid();
+  toast('Hazard obrisan', 'red');
 }
 
-function startGpsCaptureForHole(holeIdx) {
+// ── GPS CAPTURE ────────────────────────────────────────────────────
+function captureGreen(holeIdx) {
   state.captureHoleIdx = holeIdx;
+  state.captureType = 'green';
   state.captureStep = 0;
   state.capturing = true;
-  ensureHoleExists(holeIdx);
+  ensureGreenCoords();
   openCapturePanel();
   updateCapturePanel();
-  renderEditor();
+}
+
+function captureHazard(holeIdx, type, subIdx) {
+  state.captureHoleIdx = holeIdx;
+  state.captureType = type;
+  state.captureSubIdx = subIdx;
+  state.capturing = true;
+  ensureGreenCoords();
+  // Single point capture
+  document.getElementById('cap-hole-title').textContent = `Rupa ${holeIdx+1}`;
+  document.getElementById('cap-point-type').textContent = type==='water' ? `Water W${subIdx+1}` : `Bunker B${subIdx+1}`;
+  document.getElementById('cap-steps').innerHTML = `<div class="cap-step active"><div class="cap-step-lbl">${type==='water'?'💧 WATER':'🏖 BUNKER'} ${subIdx+1}</div><div class="cap-step-sub">Stani na hazard</div></div>`;
+  document.getElementById('capPanel').classList.add('open');
+  updateCaptureCoords();
+}
+
+function startGpsAll() {
+  captureGreen(0);
 }
 
 function openCapturePanel() {
-  document.getElementById('capturePanel').classList.add('open');
+  document.getElementById('capPanel').classList.add('open');
 }
 
-function closeCapturePanel() {
-  document.getElementById('capturePanel').classList.remove('open');
+function closeCapture() {
+  document.getElementById('capPanel').classList.remove('open');
   state.capturing = false;
-  renderEditor();
-}
-
-function setCaptureStep(step) {
-  state.captureStep = step;
-  updateCapturePanel();
+  renderHolesGrid();
 }
 
 function updateCapturePanel() {
-  const course = state.courses[state.activeCourseIdx];
-  const tee = course?.tees?.[state.activeTeeIdx];
-  const h = tee?.holes?.[state.captureHoleIdx];
-  const hNum = h?.hole_number || state.captureHoleIdx + 1;
+  const pts = ['front','mid','back'];
+  const lbl = ['FRONT','MID','BACK'];
+  const c = state.courses[state.activeIdx];
+  const gc = c.green_coords?.[state.captureHoleIdx];
 
-  document.getElementById('cap-hole-title').textContent = `Rupa ${hNum}`;
+  document.getElementById('cap-hole-title').textContent = `Rupa ${state.captureHoleIdx+1}`;
+  document.getElementById('cap-point-type').textContent = 'Green';
 
-  const steps = ['front','mid','back'];
-  const labels = ['FRONT','MID','BACK'];
+  document.getElementById('cap-steps').innerHTML = pts.map((p,i)=>{
+    const has = gc?.[p]?.lat;
+    const active = i===state.captureStep;
+    const done = has && !active;
+    return `<div class="cap-step${active?' active':done?' done':''}" onclick="state.captureStep=${i};updateCapturePanel();">
+      <div class="cap-step-lbl">${lbl[i]}</div>
+      <div class="cap-step-sub">${active?'← sada':has?'✓':''}</div>
+    </div>`;
+  }).join('');
 
-  steps.forEach((pt, i) => {
-    const stepEl  = document.getElementById(`cap-step-${pt}`);
-    const statEl  = document.getElementById(`cap-status-${pt}`);
-    const hasPt   = h?.[pt]?.lat;
+  updateCaptureCoords();
+}
 
-    stepEl.className = 'capture-step';
-    if (i === state.captureStep) {
-      stepEl.classList.add('active');
-      statEl.textContent = '← sada';
-    } else if (hasPt) {
-      stepEl.classList.add('done');
-      statEl.textContent = '✓';
-    } else {
-      statEl.textContent = 'čeka';
-    }
-  });
-
-  // GPS coords display
-  const coordEl = document.getElementById('cap-coords');
-  if (state.gpsPos) {
-    coordEl.textContent = `${state.gpsPos.lat.toFixed(6)}, ${state.gpsPos.lon.toFixed(6)}`;
-    coordEl.className = 'capture-coords active';
-    document.getElementById('cap-btn').disabled = false;
-    document.getElementById('cap-btn').textContent = `📍 Snimi ${labels[state.captureStep]}`;
+function updateCaptureCoords() {
+  const el = document.getElementById('cap-coords');
+  const btn = document.getElementById('cap-btn');
+  if(state.gpsPos) {
+    el.textContent = `${state.gpsPos.lat.toFixed(6)}, ${state.gpsPos.lon.toFixed(6)}`;
+    el.className = 'cap-coords ok';
+    btn.disabled = false;
+    btn.textContent = '📍 Snimi';
   } else {
-    coordEl.textContent = 'Čekam GPS signal...';
-    coordEl.className = 'capture-coords';
-    document.getElementById('cap-btn').disabled = true;
-    document.getElementById('cap-btn').textContent = '📍 Snimi';
+    el.textContent = 'Čekam GPS signal...';
+    el.className = 'cap-coords';
+    btn.disabled = true;
+    btn.textContent = '📍 Snimi';
   }
 }
 
 function capturePoint() {
-  if (!state.gpsPos) return;
+  if(!state.gpsPos) return;
+  const pos = {lat: state.gpsPos.lat, lon: state.gpsPos.lon};
+  ensureGreenCoords();
+  const gc = state.courses[state.activeIdx].green_coords[state.captureHoleIdx];
 
-  const pts = ['front','mid','back'];
-  const pt = pts[state.captureStep];
+  if(state.captureType === 'green') {
+    const pts = ['front','mid','back'];
+    gc[pts[state.captureStep]] = pos;
+    autoSave();
+    toast(`${pts[state.captureStep].toUpperCase()} snimljeno ✓`, 'green');
 
-  ensureGreenCoord(state.captureHoleIdx);
-  state.courses[state.activeCourseIdx].green_coords[state.captureHoleIdx][pt] = {
-    lat: state.gpsPos.lat, lon: state.gpsPos.lon
-  };
-  autoSave(); // Auto-spremi odmah nakon svake GPS točke
-
-  showToast(`${pt.toUpperCase()} snimljeno ✓`, 'green');
-
-  // Animiraj gumb
-  const btn = document.getElementById('cap-btn');
-  btn.textContent = '✓';
-  btn.style.background = 'var(--green2)';
-  setTimeout(() => { btn.style.background = ''; }, 600);
-
-  // Sljedeći korak
-  if (state.captureStep < 2) {
-    state.captureStep++;
-    updateCapturePanel();
-  } else {
-    // Sve 3 točke snimljene
-    const course = state.courses[state.activeCourseIdx];
-    const nextHole = state.captureHoleIdx + 1;
-
-    if (nextHole < (course.holes || 18)) {
-      // Automatski idi na sljedeću rupu
-      setTimeout(() => {
-        state.captureHoleIdx = nextHole;
-        state.captureStep = 0;
-        ensureHoleExists(nextHole);
-        showToast(`Rupa ${nextHole + 1} — snimi Front`, 'gold');
-        updateCapturePanel();
-        renderEditor();
-        // Scroll na aktivnu karticu
-        const card = document.getElementById(`hcard-${nextHole}`);
-        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 700);
+    if(state.captureStep < 2) {
+      state.captureStep++;
+      updateCapturePanel();
     } else {
-      // Sve rupe snimljene — sync na GitHub
-      setTimeout(async () => {
-        closeCapturePanel();
-        renderEditor();
-        renderSidebar();
-        showToast('Sve rupe snimljene! Snimam na GitHub...', 'green');
-        await syncCoursesToGithub(true);
-        showToast('✓ Sve snimljeno na GitHub!', 'green');
-      }, 700);
+      // Svi 3 snimljeni — idi na sljedeću rupu
+      const nextHole = state.captureHoleIdx + 1;
+      const totalHoles = state.courses[state.activeIdx].holes || 18;
+      if(nextHole < totalHoles) {
+        setTimeout(()=>{
+          state.captureHoleIdx = nextHole;
+          state.captureStep = 0;
+          toast(`Rupa ${nextHole+1} — snimi Front`, 'gold');
+          updateCapturePanel();
+          renderHolesGrid();
+          const el = document.getElementById(`hcard-${nextHole}`);
+          if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+        }, 600);
+      } else {
+        closeCapture();
+        toast('Sve rupe snimljene! 🎉', 'green');
+        renderHolesGrid();
+      }
     }
+  } else {
+    // Hazard (single point)
+    const type = state.captureType; // 'water' or 'bunkers'
+    if(!gc[type]) gc[type]=[];
+    gc[type][state.captureSubIdx] = pos;
+    autoSave();
+    closeCapture();
+    toast('Hazard snimljen ✓', 'green');
+    renderHolesGrid();
   }
-
-  renderEditor();
-  renderSidebar();
-  // Auto-sync nakon svake snimljene GPS točke
-  syncCoursesToGithub(true);
-}
-
-// ── GPS ───────────────────────────────────────────────────────────
-function startGPS() {
-  if (!navigator.geolocation) {
-    updateGpsUI('error', 'GPS N/A');
-    return;
-  }
-  updateGpsUI('searching', 'Tražim...');
-  state.gpsWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      state.gpsActive = true;
-      updateGpsUI('active', `±${Math.round(pos.coords.accuracy)}m`);
-      if (state.capturing) updateCapturePanel();
-    },
-    err => {
-      state.gpsActive = false;
-      updateGpsUI('error', 'Greška');
-    },
-    { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 }
-  );
-}
-
-function updateGpsUI(status, text) {
-  const dot = document.getElementById('gps-dot');
-  const txt = document.getElementById('gps-text');
-  dot.className = 'gps-dot' + (status==='active'?' active':status==='error'?' error':'');
-  txt.textContent = status==='active' ? `GPS ✓ ${text}` : text;
-}
-
-// ── TEE ───────────────────────────────────────────────────────────
-function addTee() {
-  const course = state.courses[state.activeCourseIdx];
-  if (!course.tees) course.tees = [];
-  const n = course.tees.length + 1;
-  course.tees.push({
-    tee_name: `Tee ${n}`,
-    color: 'yellow',
-    gender: 'M',
-    course_rating: 72.0,
-    slope_rating: 113,
-    par: course.holes === 9 ? 36 : 72,
-    holes: Array.from({length: course.holes||18}, (_,i) => ({ hole_number: i+1, par: 4, si: i+1 }))
-  });
-  state.activeTeeIdx = course.tees.length - 1;
-  renderEditor();
 }
 
 // ── CREATE / DELETE ───────────────────────────────────────────────
+function openNewModal() {
+  document.getElementById('new-name').value = '';
+  openModal('modal-new');
+  setTimeout(()=>document.getElementById('new-name').focus(), 200);
+}
+
 function createCourse() {
-  const name = document.getElementById('newName').value.trim();
-  if (!name) { showToast('Unesi naziv!', 'red'); return; }
-  const holes = parseInt(document.getElementById('newHoles').value) || 18;
-  const par   = parseInt(document.getElementById('newPar').value) || 4;
-
+  const name = document.getElementById('new-name').value.trim();
+  if(!name) { toast('Unesi naziv!', 'red'); return; }
+  const holes = parseInt(document.getElementById('new-holes').value)||18;
+  const par   = parseInt(document.getElementById('new-par').value)||4;
   const course = {
-    id: 'manual_' + Date.now(),
+    id: 'manual_'+Date.now(),
     club_name: name,
-    location: { city: '', country: '' },
+    location: {city:'',country:''},
     holes,
-    tees: [{
-      tee_name: 'Tee 1',
-      color: 'yellow',
-      gender: 'M',
-      course_rating: 72.0,
-      slope_rating: 113,
-      par: holes === 9 ? (par * 9) : (par * 18),
-      holes: Array.from({length: holes}, (_,i) => ({ hole_number: i+1, par, si: i+1 }))
-    }]
+    updated: new Date().toISOString(),
+    tees: [{tee_name:'Tee 1',course_rating:72,slope_rating:113,par:holes*par,holes:[]}],
+    green_coords: Array.from({length:holes},(_,i)=>({hole_number:i+1,front:null,mid:null,back:null,water:[],bunkers:[]}))
   };
-
   state.courses.push(course);
-  closeModal('modalNew');
-  renderSidebar();
-  selectCourse(state.courses.length - 1);
-  showToast(`"${name}" kreiran`, 'green');
+  closeModal('modal-new');
+  autoSave();
+  renderList();
+  selectCourse(state.courses.length-1);
+  toast(`"${name}" kreiran`, 'green');
 }
 
 function deleteCourse() {
-  const course = state.courses[state.activeCourseIdx];
-  document.getElementById('deleteMsg').textContent = `Obrisati "${course.club_name}"? Ova akcija ne može se poništiti.`;
-  openModal('modalDelete');
+  const c = state.courses[state.activeIdx];
+  document.getElementById('del-msg').textContent = `Obrisati "${c.club_name}"?`;
+  openModal('modal-delete');
 }
-
 function confirmDelete() {
-  state.courses.splice(state.activeCourseIdx, 1);
-  state.activeCourseIdx = null;
-  document.getElementById('welcome').style.display = '';
-  document.getElementById('courseEditor').style.display = 'none';
-  closeModal('modalDelete');
-  renderSidebar();
-  showToast('Teren obrisan', 'red');
+  state.courses.splice(state.activeIdx,1);
+  state.activeIdx=null;
+  closeModal('modal-delete');
+  autoSave();
+  closeEditor();
+  toast('Teren obrisan', 'red');
 }
 
-// ── SPREMI — lokalno + Avalon ─────────────────────────────────────
+// ── SAVE ──────────────────────────────────────────────────────────
+function autoSave() {
+  // Timestamp za conflict resolution
+  if(state.activeIdx!==null && state.courses[state.activeIdx]) {
+    state.courses[state.activeIdx].updated = new Date().toISOString();
+  }
+  localStorage.setItem('golf_courses', JSON.stringify(state.courses));
+  setStatus(`Auto-snimljeno ${new Date().toLocaleTimeString('hr')}`);
+}
+
 async function saveToLocal() {
   localStorage.setItem('golf_courses', JSON.stringify(state.courses));
-  showToast('Snimljeno u browser ✓', 'green');
-  setStatus(`Snimljeno lokalno — ${state.courses.length} terena`);
+  toast('Snimljeno u browser ✓', 'green');
+  setStatus('Snimljeno lokalno');
 }
 
 async function saveToAvalon() {
-  if (!BACKEND_URL) {
-    showToast('Avalon nije konfiguriran', 'red');
-    return;
-  }
+  if(!BACKEND_URL) { toast('Avalon nije konfiguriran', 'red'); return; }
   setStatus('Snimam na Avalon...');
   try {
-    const res = await fetch(BACKEND_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'save_courses', data: state.courses })
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    showToast('Snimljeno na Avalon ✓', 'green');
+    const r = await fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save_courses',data:state.courses})});
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    toast('Snimljeno na Avalon ✓', 'green');
     setStatus('Snimljeno na Avalon');
-  } catch(e) {
-    showToast(`Avalon greška: ${e.message}`, 'red');
-    setStatus(`Greška: ${e.message}`);
-  }
+  } catch(e) { toast(`Greška: ${e.message}`, 'red'); setStatus(`Greška: ${e.message}`); }
 }
 
-// Auto-spremi nakon svake promjene
-function autoSave() {
-  localStorage.setItem('golf_courses', JSON.stringify(state.courses));
-  setStatus(`Auto-snimljeno — ${new Date().toLocaleTimeString('hr')}`);
-}
-
-async function exportJson() {
-  // Spremi lokalno
-  await saveToLocal();
-  // Spremi na Avalon ako je konfiguriran
-  if (BACKEND_URL) await saveToAvalon();
-  // Otvori export modal
-  const json = JSON.stringify(state.courses, null, 2);
-  document.getElementById('jsonOutput').value = json;
-  openModal('modalSave');
-}
-
-// ── EXPORT SVIH PODATAKA (lokalno + Avalon) ───────────────────────
+// ── EXPORT / IMPORT ───────────────────────────────────────────────
 async function exportAllData() {
-  setStatus('Učitavam sve podatke...');
-
-  // Lokalni podaci
-  const localCourses = JSON.parse(localStorage.getItem('golf_courses') || '[]');
-
-  // Avalon podaci
-  let avalonCourses = [];
-  if (BACKEND_URL) {
-    try {
-      const res = await fetch(`${BACKEND_URL}?action=load_courses&t=${Date.now()}`);
-      if (res.ok) avalonCourses = await res.json();
-    } catch(e) {}
-  }
-
-  // Spoji sve — izbjegni duplikate po id
-  const allIds = new Set();
-  const merged = [];
-  [...state.courses, ...localCourses, ...avalonCourses].forEach(c => {
-    if (!allIds.has(c.id)) {
-      allIds.add(c.id);
-      merged.push(c);
-    }
-  });
-
-  // Ažuriraj state
-  state.courses = merged;
-  localStorage.setItem('golf_courses', JSON.stringify(merged));
-  renderSidebar();
-
-  // Download
-  const json = JSON.stringify(merged, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `courses-export-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-
-  setStatus(`Exportirano ${merged.length} terena`);
-  showToast(`${merged.length} terena exportirano ✓`, 'green');
-}
-
-function copyJson() {
-  const txt = document.getElementById('jsonOutput').value;
-  navigator.clipboard.writeText(txt).then(() => showToast('Kopirano!', 'green'));
-}
-
-function downloadJson() {
   const json = JSON.stringify(state.courses, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
+  const blob = new Blob([json],{type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `courses-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
-  showToast('courses.json preuzet', 'green');
+  toast(`${state.courses.length} terena exportirano ✓`, 'green');
 }
 
-// ── MOBILE ────────────────────────────────────────────────────────
-function showMobilePanel(panel) {
-  const sidebar = document.getElementById('sidebar');
-  const content = document.getElementById('contentArea');
-  if (panel === 'sidebar') {
-    sidebar.classList.add('mobile-open');
-    content.classList.remove('mobile-open');
-  } else {
-    sidebar.classList.remove('mobile-open');
-    content.classList.add('mobile-open');
-  }
+function exportJson() { exportAllData(); }
+
+function importData() { document.getElementById('importFile').click(); }
+
+function doImport(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const imported = Array.isArray(data) ? data : (data.courses||[]);
+      if(!imported.length) { toast('Nema podataka', 'red'); return; }
+      state.courses = await mergeCourses(state.courses, imported);
+      autoSave();
+      renderList();
+      toast(`${imported.length} terena uvezeno ✓`, 'green');
+    } catch(e) { toast('Greška čitanja', 'red'); }
+    input.value = '';
+  };
+  reader.readAsText(file);
 }
 
-// ── UTILS ─────────────────────────────────────────────────────────
-function fmtCoord(pt) {
-  if (!pt) return '';
-  return `${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)}`;
+// ── GPS ───────────────────────────────────────────────────────────
+function startGPS() {
+  if(!navigator.geolocation) { updateGps('err','GPS N/A'); return; }
+  updateGps('','Tražim...');
+  state.gpsWatchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {enableHighAccuracy:true,maximumAge:2000,timeout:15000});
+  state.gpsPollId  = setInterval(()=>navigator.geolocation.getCurrentPosition(onGps,()=>{},{enableHighAccuracy:true,maximumAge:3000,timeout:5000}), 3000);
+}
+function onGps(pos) {
+  state.gpsPos = {lat:pos.coords.latitude,lon:pos.coords.longitude};
+  updateGps('on',`GPS ✓ ±${Math.round(pos.coords.accuracy)}m`);
+  if(state.capturing) updateCaptureCoords();
+}
+function onGpsErr(e) { updateGps('err','GPS greška'); }
+function updateGps(cls, txt) {
+  document.getElementById('gps-dot').className = 'gps-dot'+(cls?' '+cls:'');
+  document.getElementById('gps-txt').textContent = txt;
 }
 
-function setStatus(msg) {
-  document.getElementById('statusText').textContent = msg;
-}
+// ── INIT ──────────────────────────────────────────────────────────
+document.getElementById('new-name').addEventListener('keydown', e=>{if(e.key==='Enter')createCourse();});
 
-function escHtml(s) {
-  if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function openNewCourseModal() {
-  document.getElementById('newName').value = '';
-  openModal('modalNew');
-  setTimeout(() => document.getElementById('newName').focus(), 200);
-}
-
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
-});
-document.getElementById('newName').addEventListener('keydown', e => { if (e.key === 'Enter') createCourse(); });
-
-let toastTimer;
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' '+type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.className = 'toast', 2500);
-}
-
-// ── STORAGE — localStorage sada, Avalon PHP uskoro ───────────────
-// const BACKEND_URL = 'https://tvojdomen.com/golf/api.php';
-const BACKEND_URL = null;
-
-async function syncCoursesToGithub(silent = false) {
-  await saveToLocal();
-  if (BACKEND_URL) await saveToAvalon();
-}
-
-// ── INIT ─────────────────────────────────────────────────────────
 loadCourses();
 startGPS();
-
 </script>
 </body>
 </html>
