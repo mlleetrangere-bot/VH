@@ -626,78 +626,243 @@
       },
       {
         "hole_number": 10,
-        "front": null,
-        "mid": null,
-        "back": null,
+        "front": {
+          "lat": 51.15939,
+          "lon": 6.716812
+        },
+        "mid": {
+          "lat": 51.159227,
+          "lon": 6.716743
+        },
+        "back": {
+          "lat": 51.15906,
+          "lon": 6.716609
+        },
         "water": [],
-        "bunkers": []
+        "bunkers": [
+          {
+            "lat": 51.159482,
+            "lon": 6.7169
+          },
+          {
+            "lat": 51.159334,
+            "lon": 6.716597
+          }
+        ]
       },
       {
         "hole_number": 11,
-        "front": null,
-        "mid": null,
-        "back": null,
-        "water": [],
-        "bunkers": []
+        "front": {
+          "lat": 51.162154,
+          "lon": 6.715139
+        },
+        "mid": {
+          "lat": 51.162176,
+          "lon": 6.714996
+        },
+        "back": {
+          "lat": 51.162182,
+          "lon": 6.714839
+        },
+        "water": [
+          {
+            "lat": 51.160919,
+            "lon": 6.716691
+          }
+        ],
+        "bunkers": [
+          {
+            "lat": 51.16205,
+            "lon": 6.715218
+          }
+        ]
       },
       {
         "hole_number": 12,
-        "front": null,
-        "mid": null,
-        "back": null,
+        "front": {
+          "lat": 51.165399,
+          "lon": 6.714601
+        },
+        "mid": {
+          "lat": 51.165556,
+          "lon": 6.714582
+        },
+        "back": {
+          "lat": 51.165703,
+          "lon": 6.714627
+        },
         "water": [],
-        "bunkers": []
+        "bunkers": [
+          {
+            "lat": 51.164554,
+            "lon": 6.71547
+          }
+        ]
       },
       {
         "hole_number": 13,
-        "front": null,
-        "mid": null,
-        "back": null,
+        "front": {
+          "lat": 51.167679,
+          "lon": 6.712284
+        },
+        "mid": {
+          "lat": 51.167747,
+          "lon": 6.712108
+        },
+        "back": {
+          "lat": 51.1678,
+          "lon": 6.71193
+        },
         "water": [],
-        "bunkers": []
+        "bunkers": [
+          {
+            "lat": 51.16754,
+            "lon": 6.712428
+          }
+        ]
       },
       {
         "hole_number": 14,
-        "front": null,
-        "mid": null,
-        "back": null,
-        "water": [],
-        "bunkers": []
+        "front": {
+          "lat": 51.16452,
+          "lon": 6.71217
+        },
+        "mid": {
+          "lat": 51.164451,
+          "lon": 6.712339
+        },
+        "back": {
+          "lat": 51.164326,
+          "lon": 6.712451
+        },
+        "water": [
+          {
+            "lat": 51.165452,
+            "lon": 6.711034
+          }
+        ],
+        "bunkers": [
+          {
+            "lat": 51.164646,
+            "lon": 6.712018
+          },
+          {
+            "lat": 51.164492,
+            "lon": 6.71197
+          }
+        ]
       },
       {
         "hole_number": 15,
-        "front": null,
-        "mid": null,
-        "back": null,
+        "front": {
+          "lat": 51.162626,
+          "lon": 6.714167
+        },
+        "mid": {
+          "lat": 51.162521,
+          "lon": 6.714206
+        },
+        "back": {
+          "lat": 51.162415,
+          "lon": 6.714231
+        },
         "water": [],
-        "bunkers": []
+        "bunkers": [
+          {
+            "lat": 51.162756,
+            "lon": 6.714317
+          },
+          {
+            "lat": 51.162622,
+            "lon": 6.713982
+          }
+        ]
       },
       {
         "hole_number": 16,
-        "front": null,
-        "mid": null,
-        "back": null,
-        "water": [],
+        "front": {
+          "lat": 51.160845,
+          "lon": 6.715797
+        },
+        "mid": {
+          "lat": 51.160697,
+          "lon": 6.715963
+        },
+        "back": {
+          "lat": 51.160577,
+          "lon": 6.716066
+        },
+        "water": [
+          {
+            "lat": 51.160959,
+            "lon": 6.715643
+          }
+        ],
         "bunkers": []
       },
       {
         "hole_number": 17,
-        "front": null,
-        "mid": null,
-        "back": null,
+        "front": {
+          "lat": 51.156503,
+          "lon": 6.714679
+        },
+        "mid": {
+          "lat": 51.156395,
+          "lon": 6.714713
+        },
+        "back": {
+          "lat": 51.156291,
+          "lon": 6.714676
+        },
         "water": [],
-        "bunkers": []
+        "bunkers": [
+          {
+            "lat": 51.159107,
+            "lon": 6.715447
+          },
+          {
+            "lat": 51.156627,
+            "lon": 6.714824
+          },
+          {
+            "lat": 51.156577,
+            "lon": 6.714438
+          }
+        ]
       },
       {
         "hole_number": 18,
-        "front": null,
-        "mid": null,
-        "back": null,
-        "water": [],
-        "bunkers": []
+        "front": {
+          "lat": 51.159868,
+          "lon": 6.718153
+        },
+        "mid": {
+          "lat": 51.160008,
+          "lon": 6.718262
+        },
+        "back": {
+          "lat": 51.160158,
+          "lon": 6.718355
+        },
+        "water": [
+          {
+            "lat": 51.159654,
+            "lon": 6.718049
+          }
+        ],
+        "bunkers": [
+          {
+            "lat": 51.157794,
+            "lon": 6.716144
+          },
+          {
+            "lat": 51.158355,
+            "lon": 6.717074
+          }
+        ]
       }
     ],
-    "updated": "2026-05-23T18:40:00.382Z"
+    "updated": "2026-05-23T19:20:22.792Z"
   },
   {
     "id": "hummelbachaue-9",
