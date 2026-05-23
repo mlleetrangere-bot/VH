@@ -1744,6 +1744,7 @@ function startRound() {
   startDistanceRefresh();
   acquireWakeLock();
   requestNotificationPermission();
+  saveActiveRound(); // Snimi početno stanje
   showScreen('play');
 }
 
@@ -1773,8 +1774,140 @@ function initNewRound() {
 // ═══════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════
-// WAKE LOCK — sprječava gašenje ekrana tijekom igre
+// AUTO-SAVE AKTIVNE IGRE — nastavak nakon ubijanja browsera
 // ═══════════════════════════════════════════════════════════════════
+
+const ACTIVE_ROUND_KEY = 'golf_active_round';
+const ACTIVE_ROUND_W_KEY = 'golf_active_round_watch';
+
+function saveActiveRound() {
+  if (!state.courseName || state.strokes.length === 0) return;
+  const snapshot = {
+    savedAt:       new Date().toISOString(),
+    courseName:    state.courseName,
+    numHoles:      state.numHoles,
+    currentHole:   state.currentHole,
+    par:           [...state.par],
+    si:            [...(state.si||[])],
+    courseRating:  state.courseRating,
+    slopeRating:   state.slopeRating,
+    coursePar:     state.coursePar,
+    hcpSystem:     state.hcpSystem,
+    courseGps:     state.courseGps,
+    roundPlayingHcps: state.roundPlayingHcps || {},
+    players:       state.players.map((p, pi) => ({
+      ...p,
+      strokes: [...(state.strokes[pi]||[])],
+      putts:   [...(state.putts[pi]||[])],
+    }))
+  };
+  localStorage.setItem(ACTIVE_ROUND_KEY, JSON.stringify(snapshot));
+}
+
+function clearActiveRound() {
+  localStorage.removeItem(ACTIVE_ROUND_KEY);
+}
+
+function restoreActiveRound() {
+  try {
+    const raw = localStorage.getItem(ACTIVE_ROUND_KEY);
+    if (!raw) return false;
+    const snap = JSON.parse(raw);
+    if (!snap.courseName || !snap.players?.length) return false;
+
+    const savedAt = new Date(snap.savedAt);
+    const ago = Math.round((Date.now() - savedAt) / 60000);
+    const agoStr = ago < 60
+      ? `${ago} min`
+      : `${Math.round(ago/60)}h ${ago%60}min`;
+
+    // Pitaj korisnika želi li nastaviti
+    const msg = `Nađena prekinuta igra!\n\n${snap.courseName}\nRupa ${snap.currentHole + 1}/${snap.numHoles}\nSpremljeno: ${agoStr} nazad\n\nNastaviti?`;
+    if (!confirm(msg)) {
+      clearActiveRound();
+      return false;
+    }
+
+    // Vrati state
+    state.courseName        = snap.courseName;
+    state.numHoles          = snap.numHoles;
+    state.currentHole       = snap.currentHole;
+    state.par               = snap.par;
+    state.si                = snap.si || [];
+    state.courseRating       = snap.courseRating;
+    state.slopeRating        = snap.slopeRating;
+    state.coursePar          = snap.coursePar;
+    state.hcpSystem          = snap.hcpSystem;
+    state.courseGps          = snap.courseGps;
+    state.roundPlayingHcps   = snap.roundPlayingHcps || {};
+    state.players            = snap.players.map(p => ({
+      name: p.name, color: p.color, avatar: p.avatar,
+      hcp: p.hcp, gender: p.gender, teeName: p.teeName
+    }));
+    state.strokes = snap.players.map(p => [...(p.strokes||[])]);
+    state.putts   = snap.players.map(p => [...(p.putts||[])]);
+
+    startGPS();
+    startDistanceRefresh();
+    acquireWakeLock();
+    showScreen('play');
+    return true;
+  } catch(e) {
+    clearActiveRound();
+    return false;
+  }
+}
+
+// Watch verzija
+function wSaveActiveRound() {
+  if (!wState.courseName || !wState.strokes.length) return;
+  const snap = {
+    savedAt:     new Date().toISOString(),
+    courseName:  wState.courseName,
+    numHoles:    wState.numHoles,
+    currentHole: wState.currentHole,
+    par:         [...wState.par],
+    si:          [...(wState.si||[])],
+    courseGps:   wState.courseGps,
+    selectedCourseIdx: wState.selectedCourseIdx,
+    players: wState.players.map((p, pi) => ({
+      ...p,
+      strokes: [...(wState.strokes[pi]||[])],
+      putts:   [...(wState.putts[pi]||[])],
+    }))
+  };
+  localStorage.setItem(ACTIVE_ROUND_W_KEY, JSON.stringify(snap));
+}
+
+function wClearActiveRound() {
+  localStorage.removeItem(ACTIVE_ROUND_W_KEY);
+}
+
+function wRestoreActiveRound() {
+  try {
+    const raw = localStorage.getItem(ACTIVE_ROUND_W_KEY);
+    if (!raw) return false;
+    const snap = JSON.parse(raw);
+    if (!snap.courseName || !snap.players?.length) return false;
+
+    wState.courseName        = snap.courseName;
+    wState.numHoles          = snap.numHoles;
+    wState.currentHole       = snap.currentHole;
+    wState.par               = snap.par;
+    wState.si                = snap.si || [];
+    wState.courseGps         = snap.courseGps;
+    wState.selectedCourseIdx = snap.selectedCourseIdx;
+    wState.players           = snap.players.map(p => ({
+      name: p.name, hcp: p.hcp, gender: p.gender, teeName: p.teeName
+    }));
+    wState.strokes = snap.players.map(p => [...(p.strokes||[])]);
+    wState.putts   = snap.players.map(p => [...(p.putts||[])]);
+    return true;
+  } catch(e) {
+    wClearActiveRound();
+    return false;
+  }
+}
 
 let wakeLock = null;
 
@@ -1792,37 +1925,27 @@ function releaseWakeLock() {
   if (wakeLock) { wakeLock.release(); wakeLock = null; }
 }
 
-// Kad se ekran otključa — ponovo pokreni GPS i osvježi distance
+// Kad se ekran otključa na satu — ponovo pokreni GPS i osvježi distance
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && state.currentScreen === 'play') {
-    // Ponovo zatraži wake lock
-    acquireWakeLock();
-    // Ponovo pokreni GPS polling (može se ugasiti kad je ekran zaključan)
-    if (state.gpsPollId) clearInterval(state.gpsPollId);
-    state.gpsPollId = setInterval(() => {
+  if (document.visibilityState === 'visible') {
+    // Phone
+    if (state.currentScreen === 'play') {
+      acquireWakeLock();
+      if (state.gpsPos) updateDistances();
       navigator.geolocation.getCurrentPosition(
-        pos => {
-          state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-          state.gpsActive = true;
-          updateGpsStatus('active', `GPS ✓ ±${Math.round(pos.coords.accuracy)}m`);
-          updateDistances();
-        },
-        () => {},
-        { enableHighAccuracy: true, maximumAge: 2000, timeout: 8000 }
+        pos => { state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude }; updateDistances(); },
+        () => {}, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
       );
-    }, 3000);
-    // Odmah osvježi jednom
-    if (state.gpsPos) updateDistances();
-    // Forsiraj novi GPS fix
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        state.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-        updateGpsStatus('active', `GPS ✓ ±${Math.round(pos.coords.accuracy)}m`);
-        updateDistances();
-      },
-      () => {},
-      { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
-    );
+    }
+    // Watch
+    if (wState.screen === 'play') {
+      acquireWakeLock();
+      if (wState.gpsPos) wUpdateDistances();
+      navigator.geolocation.getCurrentPosition(
+        pos => { wState.gpsPos = { lat: pos.coords.latitude, lon: pos.coords.longitude }; wUpdateDistances(); },
+        () => {}, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+      );
+    }
   }
 });
 
@@ -2079,6 +2202,7 @@ function renderPlayerScoreCards() {
 function changeStroke(playerIdx, delta) {
   const h = state.currentHole;
   state.strokes[playerIdx][h] = Math.max(0, state.strokes[playerIdx][h] + delta);
+  saveActiveRound();
   renderPlayerScoreCards();
 }
 
@@ -2086,13 +2210,15 @@ function changePutt(playerIdx, delta) {
   const h = state.currentHole;
   if (!state.putts[playerIdx]) state.putts[playerIdx] = Array(state.numHoles).fill(0);
   state.putts[playerIdx][h] = Math.max(0, state.putts[playerIdx][h] + delta);
+  saveActiveRound();
   renderPlayerScoreCards();
 }
 
 function nextHole() {
   if (state.currentHole < state.numHoles - 1) {
     state.currentHole++;
-    state._notifTimer = null; // Odmah pošalji notif za novu rupu
+    state._notifTimer = null;
+    saveActiveRound();
     renderPlay();
   } else {
     showScreen('scorecard');
@@ -2103,6 +2229,7 @@ function prevHole() {
   if (state.currentHole > 0) {
     state.currentHole--;
     state._notifTimer = null;
+    saveActiveRound();
     renderPlay();
   }
 }
@@ -2290,6 +2417,7 @@ function finishRound() {
 
   _finishingRound = false;
 
+  clearActiveRound(); // Obriši snimljeno stanje
   showToast('Runda završena! ✓', 'green');
   showScreen('home');
   syncHistoryToServer(true);
@@ -3134,16 +3262,25 @@ const wState = {
 };
 
 async function wInit() {
-  // Sakrij sve phone elemente
   document.querySelectorAll('.app > div:not(#watch-app)').forEach(el => el.style.display = 'none');
   document.getElementById('watch-app').style.display = 'block';
 
-  // Prikaži loading
-  wShowScreen('home');
   wStartGPS();
-
-  // Učitaj terene i povijest paralelno
   await Promise.all([wLoadCourses(), wLoadHistory()]);
+
+  // Provjeri postoji li prekinuta igra
+  if (wRestoreActiveRound()) {
+    // Vrati se u igru
+    acquireWakeLock();
+    if (wState.distRefreshId) clearInterval(wState.distRefreshId);
+    wState.distRefreshId = setInterval(() => {
+      if (wState.screen === 'play' && wState.gpsPos) wUpdateDistances();
+    }, 2000);
+    wShowScreen('play');
+    showToast('Nastavak igre ✓', 'green');
+  } else {
+    wShowScreen('home');
+  }
 }
 
 function wShowScreen(name) {
@@ -3323,6 +3460,14 @@ function wStartRound() {
   wState.putts   = [Array(course.holes).fill(0)];
   wState.currentHole = 0;
   wState.courseGps = course.green_coords || null;
+
+  // Wake lock i distance refresh — iste funkcije kao phone
+  acquireWakeLock();
+  if (wState.distRefreshId) clearInterval(wState.distRefreshId);
+  wState.distRefreshId = setInterval(() => {
+    if (wState.screen === 'play' && wState.gpsPos) wUpdateDistances();
+  }, 2000);
+
   wShowScreen('play');
 }
 
@@ -3385,18 +3530,21 @@ function wRenderPlayersPlay() {
 function wChangeStroke(pi, delta) {
   if (!wState.strokes[pi]) wState.strokes[pi] = Array(wState.numHoles).fill(0);
   wState.strokes[pi][wState.currentHole] = Math.max(0, (wState.strokes[pi][wState.currentHole]||0) + delta);
+  wSaveActiveRound();
   wRenderPlayersPlay();
 }
 
 function wChangePutt(pi, delta) {
   if (!wState.putts[pi]) wState.putts[pi] = Array(wState.numHoles).fill(0);
   wState.putts[pi][wState.currentHole] = Math.max(0, (wState.putts[pi][wState.currentHole]||0) + delta);
+  wSaveActiveRound();
   wRenderPlayersPlay();
 }
 
 function wNextHole() {
   if (wState.currentHole < wState.numHoles - 1) {
     wState.currentHole++;
+    wSaveActiveRound();
     wRenderPlay();
   } else {
     wShowScreen('scorecard');
@@ -3406,6 +3554,7 @@ function wNextHole() {
 function wPrevHole() {
   if (wState.currentHole > 0) {
     wState.currentHole--;
+    wSaveActiveRound();
     wRenderPlay();
   }
 }
@@ -3512,7 +3661,6 @@ function wGoToHole(idx) {
 // ── FINISH ROUND ──────────────────────────────────────────────────
 async function wFinishRound() {
   const record = {
-    id: Date.now().toString(),
     courseName: wState.courseName,
     numHoles: wState.numHoles,
     date: new Date().toISOString(),
@@ -3533,15 +3681,15 @@ async function wFinishRound() {
   };
 
   state.history.push(record);
-  localStorage.setItem('golfHistory', JSON.stringify(state.history));
+  saveHistoryToLocal();
 
-  // Sync na GitHub
-  try {
-    await githubPush('golf-history.json',
-      JSON.stringify({ updated: new Date().toISOString(), rounds: state.history }, null, 2),
-      `Watch runda — ${record.courseName}`
-    );
-  } catch (e) {}
+  // Cleanup
+  if (wState.distRefreshId) { clearInterval(wState.distRefreshId); wState.distRefreshId = null; }
+  releaseWakeLock();
+  wClearActiveRound(); // Obriši snimljeno stanje
+
+  // Sync na server
+  syncHistoryToServer(true);
 
   wShowScreen('home');
 }
@@ -3627,70 +3775,75 @@ async function syncHistoryToServer(silent = false) {
 }
 
 // ── UČITAJ (pri pokretanju) ───────────────────────────────────────
+// Konflikt modal za povijest (runde imaju unique ID — konflikt nije moguć)
+// Runde se nikad ne mijenjaju retroaktivno, pa je merge jednostavan — uzmi sve unique ID-ove
 async function loadHistoryFromServer() {
-  // 1. Pokušaj Avalon
-  if (BACKEND_URL) {
-    try {
-      const res = await fetch(`${BACKEND_URL}?action=load_history&t=${Date.now()}`);
-      if (res.ok) {
-        const data = await res.json();
-        const rounds = data.rounds || (Array.isArray(data) ? data : []);
-        const localIds = new Set(state.history.map(r => r.id));
-        const newRounds = rounds.filter(r => !localIds.has(r.id));
-        if (newRounds.length > 0) {
-          state.history = [...state.history, ...newRounds]
-            .sort((a,b) => new Date(a.date) - new Date(b.date));
-          saveHistoryToLocal();
-        }
-        setStorageStatus(`${state.history.length} rundi • Avalon + browser`, '#00ff00');
-        return;
-      }
-    } catch(e) {}
-  }
-  // 2. Samo localStorage
-  setStorageStatus(`${state.history.length} rundi • browser`, '#888');
-}
+  setStorageStatus('Učitavam povijest...', '#ffff00');
 
-// ── EXPORT SVIH PODATAKA (browser + Avalon) ───────────────────────
-async function exportAllHistory() {
-  setStorageStatus('Učitavam sve podatke...', '#ffff00');
+  // Lokalni podaci (već u state.history)
+  const localRounds = [...state.history];
+  const localIds = new Set(localRounds.map(r => r.id));
+
   let avalonRounds = [];
+  let avalonOk = false;
 
-  // Povuci s Avalona ako je dostupan
+  // Učitaj s Avalona
   if (BACKEND_URL) {
     try {
       const res = await fetch(`${BACKEND_URL}?action=load_history&t=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         avalonRounds = data.rounds || (Array.isArray(data) ? data : []);
+        avalonOk = true;
       }
     } catch(e) {}
   }
 
-  // Spoji sve — bez duplikata
-  const allIds = new Set(state.history.map(r => r.id));
-  const merged = [...state.history];
-  avalonRounds.forEach(r => {
-    if (!allIds.has(r.id)) { merged.push(r); allIds.add(r.id); }
-  });
-  merged.sort((a,b) => new Date(a.date) - new Date(b.date));
+  // Spoji — runde imaju unique timestamp ID, nema konflikata
+  // Avalon može imati runde s drugih uređaja koje nema lokalno
+  const newFromAvalon = avalonRounds.filter(r => !localIds.has(r.id));
 
-  // Ažuriraj lokalni state
-  state.history = merged;
-  saveHistoryToLocal();
-  renderHistory();
+  if (newFromAvalon.length > 0) {
+    state.history = [...localRounds, ...newFromAvalon]
+      .sort((a,b) => new Date(a.date) - new Date(b.date));
+    saveHistoryToLocal();
+    setStorageStatus(
+      `${state.history.length} rundi (${newFromAvalon.length} novih s Avalona)`,
+      '#00ff00'
+    );
+    renderHome();
+    if (state.currentScreen === 'history') renderHistory();
+    if (state.currentScreen === 'stats') renderStats();
+  } else {
+    const src = avalonOk ? 'Avalon + browser' : 'browser';
+    setStorageStatus(`${state.history.length} rundi • ${src}`, avalonOk ? '#00ff00' : '#888');
+  }
+}
 
-  // Download
-  const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), rounds: merged }, null, 2)],
-    { type: 'application/json' });
+// ── EXPORT SVIH PODATAKA (browser + Avalon) ───────────────────────
+async function exportAllHistory() {
+  // localStorage je potpuna slika (spajamo pri pokretanju)
+  // Export je jednostavan download lokalnih podataka
+  if (state.history.length === 0) {
+    showToast('Nema podataka za export', 'red');
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify({
+    exported: new Date().toISOString(),
+    rounds: state.history
+  }, null, 2)], { type: 'application/json' });
+
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `golf-povijest-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 
-  setStorageStatus(`${merged.length} rundi exportirano`, '#00ff00');
-  showToast(`${merged.length} rundi exportirano ✓`, 'green');
+  setStorageStatus(`${state.history.length} rundi exportirano`, '#00ff00');
+  showToast(`${state.history.length} rundi exportirano ✓`, 'green');
 }
+
+// ── EXPORT (stara funkcija) ───────────────────────────────────────
 
 // ── EXPORT (stara funkcija — zadržana za kompatibilnost) ──────────
 function exportHistory() { exportAllHistory(); }
@@ -3735,6 +3888,11 @@ function clearHistory() {
 
 renderHome();
 loadHistoryFromServer().then(() => renderHome());
+
+// Provjeri postoji li prekinuta igra (phone verzija)
+if (!IS_WATCH) {
+  setTimeout(() => restoreActiveRound(), 500);
+}
 </script>
 </body>
 </html>
