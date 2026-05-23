@@ -195,18 +195,13 @@ select.inp{cursor:pointer}
         </div>
       </div>
 
-      <!-- Tee postavke -->
-      <div class="sec">Tee opcije (par, SI, CR, Slope)</div>
-      <div class="tee-tabs" id="tee-tabs"></div>
-      <div id="tee-editor"></div>
-      <button class="btn btn-ghost btn-full" style="margin-bottom:14px;" onclick="addTee()">+ Dodaj tee</button>
-
-      <!-- GPS greena -->
+      <!-- GPS greena — ODMAH, bez tee odabira -->
       <div class="sec">📍 GPS koordinate greena</div>
-      <div style="background:var(--surface2);border-radius:10px;padding:12px;font-size:14px;color:var(--text3);font-family:var(--mono);margin-bottom:14px;line-height:1.7;">
-        Green je uvijek na istom mjestu — vrijedi za sve tee opcije.
+      <div style="background:var(--surface2);border-radius:10px;padding:12px;font-size:14px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;line-height:1.7;">
+        Green je uvijek na istom mjestu — vrijedi za sve tee opcije.<br>
+        Unesi koordinate iz Google Maps ili snimi GPS na terenu.
       </div>
-      <button class="btn btn-gold btn-full" style="margin-bottom:14px;" onclick="startGpsAll()">📍 Snimi GPS za sve rupe</button>
+      <button class="btn btn-gold btn-full" style="margin-bottom:14px;" onclick="startGpsAll()">📍 Snimi GPS za sve rupe (na terenu)</button>
       <div id="holes-grid"></div>
 
       <!-- Spremi -->
@@ -216,6 +211,12 @@ select.inp{cursor:pointer}
         <button class="btn btn-ghost" onclick="saveToAvalon()">☁️ Avalon</button>
         <button class="btn btn-gold" onclick="exportJson()">⬇ Export JSON</button>
       </div>
+
+      <!-- Tee postavke — na dnu -->
+      <div class="sec">Tee opcije (par, SI, CR, Slope)</div>
+      <div class="tee-tabs" id="tee-tabs"></div>
+      <div id="tee-editor"></div>
+      <button class="btn btn-ghost btn-full" style="margin-bottom:20px;" onclick="addTee()">+ Dodaj tee</button>
     </div>
 
   </div><!-- end scroll -->
