@@ -1738,13 +1738,26 @@ function startRound() {
 
   state.currentHole = 0;
   state.strokes = state.players.map(() => Array(state.numHoles).fill(0));
-  state.putts   = state.players.map(() => Array(state.numHoles).fill(0));
-
   // Izračunaj Playing Handicap za svakog igrača
   state.roundPlayingHcps = {};
   state.players.forEach(p => {
     state.roundPlayingHcps[p.name] = calcPlayingHcpForPlayer(p);
   });
+
+  // Pre-postavi udarce i puttere
+  // Udarci = par rupe (= 2 stableford boda za tog igrača)
+  // Putteri = 2 po defaultu
+  state.strokes = state.players.map((p, pi) => {
+    const ph = state.roundPlayingHcps[p.name] || 0;
+    return Array.from({length: state.numHoles}, (_, i) => {
+      const par = state.par[i] || 4;
+      // 2 stableford boda = neto par = bruto par + extra strokes
+      const si    = state.si?.[i] || i + 1;
+      const extra = Math.floor(ph / state.numHoles) + (si <= (ph % state.numHoles) ? 1 : 0);
+      return par + extra;
+    });
+  });
+  state.putts = state.players.map(() => Array(state.numHoles).fill(2));
 
   startGPS();
   startDistanceRefresh();
@@ -2249,18 +2262,17 @@ function renderPlayerScoreCards() {
         </div>
       </div>
 
-      <!-- Udarci + hint -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <!-- Udarci -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <button style="width:62px;height:62px;border-radius:50%;border:2px solid #444;background:#222;font-size:30px;color:#fff;cursor:pointer;flex-shrink:0;"
           onclick="changeStroke(${pi},-1)">−</button>
         <div style="flex:1;text-align:center;">
-          <div style="font-size:62px;font-weight:700;color:#fff;line-height:1;font-family:var(--font-mono);">${s > 0 ? s : '?'}</div>
-          <div style="font-size:14px;font-weight:600;color:${diff===null?'#555':diffColor(diff)};margin-top:2px;">${diff !== null ? diffLabel : `norma: ${suggested}`}</div>
+          <div style="font-size:62px;font-weight:700;color:#fff;line-height:1;font-family:var(--font-mono);">${s}</div>
+          <div style="font-size:14px;font-weight:600;color:${diff===null?'#555':diffColor(diff)};margin-top:2px;">${diffLabel||'—'}</div>
         </div>
         <button style="width:62px;height:62px;border-radius:50%;border:2px solid #444;background:#222;font-size:30px;color:#fff;cursor:pointer;flex-shrink:0;"
           onclick="changeStroke(${pi},1)">+</button>
       </div>
-      ${s === 0 ? `<button style="width:100%;padding:8px;background:#1a1a00;border:1px solid #555500;border-radius:8px;color:#aaa;font-size:14px;cursor:pointer;margin-bottom:8px;" onclick="setDefaultStroke(${pi})">Unesi normu (${suggested})</button>` : ''}
 
       <!-- Putteri -->
       <div style="background:#000;border:2px solid #333;border-radius:10px;padding:10px 14px;">
@@ -2269,14 +2281,13 @@ function renderPlayerScoreCards() {
             <button style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#aaa;cursor:pointer;"
               onclick="changePutt(${pi},-1)">−</button>
             <div style="text-align:center;">
-              <div style="font-size:36px;font-weight:700;color:#55aaff;font-family:var(--font-mono);line-height:1;">${pu > 0 ? pu : '?'}</div>
+              <div style="font-size:36px;font-weight:700;color:#55aaff;font-family:var(--font-mono);line-height:1;">${pu}</div>
               <div style="font-size:11px;color:#666;font-family:var(--font-mono);">PUTTER</div>
             </div>
             <button style="width:44px;height:44px;border-radius:50%;border:2px solid #444;background:#222;font-size:22px;color:#aaa;cursor:pointer;"
               onclick="changePutt(${pi},1)">+</button>
           </div>
           <div style="text-align:right;">
-            ${pu === 0 ? `<button style="background:#001a33;border:1px solid #334455;border-radius:6px;color:#55aaff;font-size:12px;padding:4px 10px;cursor:pointer;" onclick="setDefaultPutt(${pi})">+2</button>` : ''}
             <div style="font-size:13px;color:#555;font-family:var(--font-mono);">ukupno</div>
             <div style="font-size:20px;color:#55aaff;font-family:var(--font-mono);font-weight:700;">${totalPu}</div>
           </div>
@@ -3600,8 +3611,14 @@ function wStartRound() {
   wState.numHoles = course.holes;
   wState.par = tee?.holes ? tee.holes.map(h => h.par) : Array(course.holes).fill(4);
   wState.si  = tee?.holes ? tee.holes.map(h => h.si || h.hole_number) : Array.from({length:course.holes},(_,i)=>i+1);
-  wState.strokes = [Array(course.holes).fill(0)];
-  wState.putts   = [Array(course.holes).fill(0)];
+  const ph = wCalcPH(wState.players[0], course);
+  wState.strokes = [Array.from({length: course.holes}, (_, i) => {
+    const par   = wState.par[i] || 4;
+    const si    = wState.si?.[i] || i + 1;
+    const extra = Math.floor(ph / course.holes) + (si <= (ph % course.holes) ? 1 : 0);
+    return par + extra;
+  })];
+  wState.putts = [Array(course.holes).fill(2)];
   wState.currentHole = 0;
   wState.courseGps = course.green_coords || null;
 
@@ -3659,13 +3676,15 @@ function wRenderPlayersPlay() {
       </div>
 
       <!-- Putteri -->
-      <div class="wputt-row">
-        <button class="wputt-btn" onclick="wChangePutt(${pi},-1)">−</button>
+      <div style="display:flex;align-items:center;gap:10px;background:#000;border:2px solid #333;border-radius:12px;padding:10px 12px;">
+        <button onclick="wChangePutt(${pi},-1)"
+          style="width:56px;height:56px;border-radius:50%;border:3px solid #444;background:#222;font-size:30px;color:#aaa;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1;">−</button>
         <div style="flex:1;text-align:center;">
-          <div class="wputt-num">${pu}</div>
-          <div style="font-size:22px;color:#444;font-family:monospace;">PUTT</div>
+          <div style="font-size:var(--wf);font-weight:800;color:#55aaff;font-family:monospace;line-height:1;">${pu}</div>
+          <div style="font-size:24px;color:#444;font-family:monospace;margin-top:2px;">PUTT</div>
         </div>
-        <button class="wputt-btn" onclick="wChangePutt(${pi},1)">+</button>
+        <button onclick="wChangePutt(${pi},1)"
+          style="width:56px;height:56px;border-radius:50%;border:3px solid #444;background:#222;font-size:30px;color:#aaa;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>
       </div>
     </div>`;
   }).join('');
