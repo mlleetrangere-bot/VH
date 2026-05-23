@@ -418,9 +418,9 @@ html, body {
    SCREEN: IGRA
 ══════════════════════════════════════════════════════════════ */
 .hole-header {
-  padding: 14px 20px 10px;
+  padding: 0;
   flex-shrink: 0;
-  border-bottom: 2px solid var(--border2);
+  border-bottom: none;
 }
 .hole-meta {
   display: flex;
@@ -522,13 +522,8 @@ html, body {
 
 /* Players scores */
 .players-scores {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 12px 16px 0;
+  padding: 0 16px;
 }
-.players-scores::-webkit-scrollbar { display: none; }
 
 .player-score-card {
   background: var(--surface);
@@ -972,52 +967,60 @@ input[type=number] { -moz-appearance: textfield; }
        SCREEN: IGRA
   ═══════════════════════════════════════════════════ -->
   <div class="screen" id="screen-play">
-    <div class="hole-header">
-      <div class="hole-meta">
+    <!-- Cijeli play ekran je jedna scrollajuća stranica -->
+    <div class="scroll-content" style="padding:0 0 120px;">
+
+      <!-- Rupa + par -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 10px;border-bottom:2px solid #222;">
         <div>
-          <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);letter-spacing:2px;margin-bottom:2px;" id="play-course-name">TEREN</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:2px;margin-bottom:2px;" id="play-course-name">TEREN</div>
           <div class="hole-number" id="play-hole-num">1</div>
         </div>
-        <div class="hole-par-badge">
+        <div style="text-align:right;">
           <div class="hole-par-label">PAR</div>
           <div class="hole-par-val" id="play-par">4</div>
         </div>
       </div>
 
-      <!-- GPS distances -->
-      <div class="gps-bar">
+      <!-- GPS status -->
+      <div class="gps-bar" style="margin:10px 16px 0;">
         <div class="gps-dot" id="gps-dot"></div>
         <span class="gps-text" id="gps-text">GPS: aktiviram...</span>
       </div>
 
-      <div class="dist-panel">
-        <div class="dist-block">
-          <div class="dist-block-label">BACK</div>
-          <div class="dist-block-val" id="dist-back">—</div>
-          <div class="dist-block-unit">m</div>
+      <!-- Distance -->
+      <div style="padding:10px 16px 0;">
+        <div class="dist-panel">
+          <div class="dist-block">
+            <div class="dist-block-label">BACK</div>
+            <div class="dist-block-val" id="dist-back">—</div>
+            <div class="dist-block-unit">m</div>
+          </div>
+          <div class="dist-block mid">
+            <div class="dist-block-label">MID</div>
+            <div class="dist-block-val" id="dist-mid">—</div>
+            <div class="dist-block-unit">m</div>
+          </div>
+          <div class="dist-block">
+            <div class="dist-block-label">FRONT</div>
+            <div class="dist-block-val" id="dist-front">—</div>
+            <div class="dist-block-unit">m</div>
+          </div>
         </div>
-        <div class="dist-block mid">
-          <div class="dist-block-label">MID</div>
-          <div class="dist-block-val" id="dist-mid">—</div>
-          <div class="dist-block-unit">m</div>
-        </div>
-        <div class="dist-block">
-          <div class="dist-block-label">FRONT</div>
-          <div class="dist-block-val" id="dist-front">—</div>
-          <div class="dist-block-unit">m</div>
-        </div>
+        <div id="dist-debug" style="text-align:center;font-size:11px;color:#333;font-family:monospace;padding:2px 0;"></div>
+        <!-- Hazardi -->
+        <div id="hazard-panel" style="display:none;padding:4px 0 8px;"></div>
       </div>
-      <div id="dist-debug" style="text-align:center;font-size:11px;color:#333;font-family:monospace;padding:2px 0;"></div>
 
-      <!-- Hazard distances — prikazuju se samo ako postoje koordinate -->
-      <div id="hazard-panel" style="display:none;padding:0 4px 8px;"></div>
+      <!-- Igrači -->
+      <div class="players-scores" id="players-scores"></div>
+
+      <!-- Summary -->
+      <div id="play-summary" style="padding:8px 16px 4px;"></div>
+
     </div>
 
-    <div class="players-scores" id="players-scores"></div>
-
-    <!-- Summary dosadašnje igre -->
-    <div id="play-summary" style="padding:8px 16px 4px;"></div>
-
+    <!-- Navigacija — fiksna na dnu -->
     <div class="hole-nav">
       <button class="btn btn-secondary btn-sm" id="btn-prev-hole" onclick="prevHole()">◀</button>
       <div class="hole-progress" id="hole-progress"></div>
@@ -3722,21 +3725,46 @@ function wStartGPS() {
   };
 
   const onError = err => {
-    const msgs = ['', '⚠ Dozvoli GPS u browseru', '⚠ GPS signal slab', '⚠ GPS timeout'];
-    setStatus(msgs[err.code] || '⚠ GPS greška', '#ff3333');
+    // Timeout — samo pokušaj ponovo tiho, ne pokazuj grešku odmah
+    if (err.code === 3) {
+      setStatus('GPS traži...', '#888');
+      // Ponovi odmah s kratkim timeoutom
+      navigator.geolocation.getCurrentPosition(onSuccess, () => {
+        setStatus('GPS weak', '#ff8800');
+      }, { enableHighAccuracy: false, maximumAge: 10000, timeout: 5000 });
+    } else if (err.code === 1) {
+      setStatus('⚠ Dozvoli GPS', '#ff3333');
+    } else {
+      setStatus('GPS...', '#888');
+    }
   };
 
-  const opts = { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 };
-
-  // Pokušaj watchPosition (može ne raditi na nekim Wear OS browserima)
+  // watchPosition s dugim timeoutom
   try {
-    wState.gpsWatchId = navigator.geolocation.watchPosition(onSuccess, onError, opts);
+    wState.gpsWatchId = navigator.geolocation.watchPosition(onSuccess, onError, {
+      enableHighAccuracy: true,
+      maximumAge: 3000,
+      timeout: 30000  // 30s — sat treba više vremena
+    });
   } catch(e) {}
 
-  // Fallback polling svakih 3s — radi na Samsung Internet Wear OS
+  // Polling svakih 4s — agresivniji retry za sat
+  if (wState.gpsPollId) clearInterval(wState.gpsPollId);
   wState.gpsPollId = setInterval(() => {
-    navigator.geolocation.getCurrentPosition(onSuccess, () => {}, opts);
-  }, 3000);
+    // Prvo probaj brzo s cached lokacijom
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      () => {
+        // Fallback — probaj bez high accuracy
+        navigator.geolocation.getCurrentPosition(onSuccess, () => {}, {
+          enableHighAccuracy: false,
+          maximumAge: 10000,
+          timeout: 8000
+        });
+      },
+      { enableHighAccuracy: true, maximumAge: 3000, timeout: 6000 }
+    );
+  }, 4000);
 }
 
 function wUpdateDistances() {
