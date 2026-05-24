@@ -2686,39 +2686,67 @@ function renderRoundDetailModal(idx) {
   document.getElementById('modal-round-meta').textContent = `${fmtDate(r.date)} · ${r.numHoles} rupa`;
   document.getElementById('modal-delete-btn').onclick = () => deleteRound(idx);
 
-  const cols = r.players.length > 1
-    ? `32px 1fr ${r.players.map(()=>'38px').join(' ')} 44px`
-    : '32px 1fr 44px 44px';
+  // Uzmi Playing Handicap iz snimljenih podataka
+  const p   = r.players[0];
+  const ph  = p.playingHcp ?? p.hcp ?? 36;
+  const numH = r.numHoles || r.par.length;
 
-  let html = `<div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">`;
-  html += `<div class="sc-row header" style="grid-template-columns:${cols}">
-    <span>#</span><span>PAR</span>
-    ${r.players.length>1 ? r.players.map(p=>`<span style="color:${p.color}">${p.avatar}</span>`).join('') : '<span>UD.</span>'}
-    <span style="text-align:right">+/−</span>
-  </div>`;
+  let totBrt=0, totP=0, totSb=0, totPut=0, totNet=0;
 
-  r.par.forEach((par, i) => {
-    const diffs = r.players.map(p => p.strokes[i] > 0 ? p.strokes[i] - par : null);
-    html += `<div class="sc-row" style="grid-template-columns:${cols};cursor:pointer" onclick="editHistoryHole(${idx},${i})">
-      <span class="sc-hole">${i+1}</span>
-      <span class="sc-par">${par}</span>
-      ${r.players.length>1
-        ? r.players.map(p=>`<span style="color:${p.strokes[i]>0?diffColor(p.strokes[i]-par):'var(--text3)'};font-family:var(--font-mono);font-size:13px;">${p.strokes[i]||'—'}</span>`).join('')
-        : `<span style="font-family:var(--font-mono)">${r.players[0]?.strokes[i]||'—'}</span>`}
-      <span class="sc-diff ${diffClass(diffs[0])}">${fmtDiff(diffs[0])}</span>
-    </div>`;
-  });
+  const rows = r.par.map((par, i) => {
+    const s   = p.strokes[i] || 0;
+    const pu  = (p.putts||[])[i] || 0;
+    const si  = (r.si||[])[i] || i+1;
+    const extra = Math.floor(ph/numH) + (si<=(ph%numH)?1:0);
+    const neto  = s>0 ? s-extra : 0;
+    const brutoDiff = s>0 ? s-par : null;
+    const netoDiff  = s>0 ? neto-par : null;
+    const pts = s>0 ? Math.max(0, 2-(neto-par)) : 0;
 
-  const totals = r.players.map(p => p.strokes.reduce((a,b)=>a+b,0));
-  html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default">
-    <span style="color:var(--green)">∑</span>
-    <span class="sc-par">${r.par.reduce((a,b)=>a+b,0)}</span>
-    ${r.players.length>1 ? r.players.map((p,pi)=>`<span style="font-family:var(--font-mono);color:var(--text)">${totals[pi]}</span>`).join('') : `<span style="font-family:var(--font-mono)">${totals[0]}</span>`}
-    <span class="sc-diff ${diffClass(r.players[0]?.totalDiff)}" style="font-size:14px">${fmtDiff(r.players[0]?.totalDiff)}</span>
-  </div></div>`;
+    totBrt+=s; totP+=par; totPut+=pu;
+    if(s>0){totNet+=neto; totSb+=pts;}
 
-  html += `<div style="margin-top:10px;font-size:12px;color:var(--text3);font-family:var(--font-mono);text-align:center;">
-    Klikni na rupu za uređivanje
+    const brtCol = brutoDiff===null?'#555':diffColor(brutoDiff);
+    const netCol = netoDiff===null?'#555':diffColor(netoDiff);
+    const sbCol  = pts>=3?'#00ff00':pts===2?'#aaa':pts===1?'#ff6633':'#555';
+
+    return `<tr style="border-bottom:1px solid #1a1a1a;cursor:pointer;" onclick="editHistoryHole(${idx},${i})">
+      <td style="padding:9px 8px;font-size:17px;font-weight:700;color:#888;font-family:var(--font-mono);">${i+1}</td>
+      <td style="padding:9px 6px;font-size:15px;color:#555;text-align:center;">${par}</td>
+      <td style="padding:9px 6px;font-size:17px;font-weight:700;color:${brtCol};text-align:center;font-family:var(--font-mono);">${s||'—'}</td>
+      <td style="padding:9px 6px;font-size:17px;color:${netCol};text-align:center;font-family:var(--font-mono);">${s>0?neto:'—'}</td>
+      <td style="padding:9px 6px;font-size:17px;font-weight:700;color:${sbCol};text-align:center;font-family:var(--font-mono);">${s>0?pts:'—'}</td>
+      <td style="padding:9px 6px;font-size:17px;color:#55aaff;text-align:center;font-family:var(--font-mono);">${pu||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const bDiffT = totBrt-totP;
+  const nDiffT = totNet-totP;
+
+  const html = `
+  <div style="overflow-y:auto;max-height:55vh;-webkit-overflow-scrolling:touch;">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="border-bottom:2px solid #333;position:sticky;top:0;background:#1a1a1a;z-index:1;">
+        <th style="padding:8px;font-size:13px;color:#888;font-family:var(--font-mono);text-align:left;">#</th>
+        <th style="padding:8px 6px;font-size:13px;color:#888;font-family:var(--font-mono);text-align:center;">PAR</th>
+        <th style="padding:8px 6px;font-size:13px;color:#fff;font-family:var(--font-mono);text-align:center;">BRT</th>
+        <th style="padding:8px 6px;font-size:13px;color:#aaa;font-family:var(--font-mono);text-align:center;">NET</th>
+        <th style="padding:8px 6px;font-size:13px;color:#55aaff;font-family:var(--font-mono);text-align:center;">SB</th>
+        <th style="padding:8px 6px;font-size:13px;color:#55aaff;font-family:var(--font-mono);text-align:center;">PUT</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr style="border-top:2px solid #444;background:#111;">
+        <td style="padding:10px 8px;font-size:18px;font-weight:800;color:var(--green);font-family:var(--font-mono);">∑</td>
+        <td style="padding:10px 6px;font-size:16px;color:#555;text-align:center;font-family:var(--font-mono);">${totP}</td>
+        <td style="padding:10px 6px;font-size:18px;font-weight:800;color:${diffColor(bDiffT)};text-align:center;font-family:var(--font-mono);">${totBrt}<span style="font-size:12px;"> (${fmtDiff(bDiffT)})</span></td>
+        <td style="padding:10px 6px;font-size:18px;font-weight:700;color:${diffColor(nDiffT)};text-align:center;font-family:var(--font-mono);">${totNet}</td>
+        <td style="padding:10px 6px;font-size:18px;font-weight:800;color:#55aaff;text-align:center;font-family:var(--font-mono);">${totSb}</td>
+        <td style="padding:10px 6px;font-size:18px;font-weight:700;color:#55aaff;text-align:center;font-family:var(--font-mono);">${totPut}</td>
+      </tr></tfoot>
+    </table>
+  </div>
+  <div style="margin-top:8px;font-size:12px;color:var(--text3);font-family:var(--font-mono);text-align:center;">
+    Tapni rupu za uređivanje
   </div>`;
 
   document.getElementById('modal-round-content').innerHTML = html;
