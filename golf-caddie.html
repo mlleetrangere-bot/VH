@@ -105,10 +105,10 @@ html, body {
 /* ── SCROLLABLE CONTENT ── */
 .scroll-content {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: calc(20px + var(--safe-bottom));
+  padding-bottom: calc(80px + var(--safe-bottom));
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
@@ -1060,7 +1060,7 @@ input[type=number] { -moz-appearance: textfield; }
   <!-- ════════════════════════════════════════════════
        SCREEN: POVIJEST
   ═══════════════════════════════════════════════════ -->
-  <div class="screen" id="screen-history">
+  <div class="screen" id="screen-history" style="overflow:hidden;">
     <div class="header">
       <div style="width:38px"></div>
       <div class="header-title">POVIJEST</div>
@@ -1072,10 +1072,10 @@ input[type=number] { -moz-appearance: textfield; }
       </div>
     </div>
 
-    <div class="scroll-content">
-      <div id="storage-status-bar" style="padding:8px 16px 0;font-size:13px;color:#555;font-family:var(--font-mono);text-align:center;"></div>
+    <div class="scroll-content" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px calc(80px + var(--safe-bottom));">
+      <div id="storage-status-bar" style="padding:8px 0 0;font-size:13px;color:#555;font-family:var(--font-mono);text-align:center;"></div>
       <div id="history-list" style="padding-top:8px;"></div>
-      <div style="padding:0 16px 16px;">
+      <div style="padding:8px 0 16px;">
         <button class="btn btn-red btn-md btn-full" onclick="clearHistory()">🗑 Obriši sve</button>
       </div>
     </div>
@@ -1168,8 +1168,26 @@ input[type=number] { -moz-appearance: textfield; }
   </div>
 
   <!-- ════════════════════════════════════════════════
-       SCREEN: POSTAVKE
+       MODAL: Checklist prije igre
   ═══════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-checklist">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h3>⛳ Sprema za teren?</h3>
+      <p style="margin-bottom:16px;">Provjeri jesi li uzela sve:</p>
+      <div id="checklist-items" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        ${['💧 Voda','🥨 Grickalice','🧴 Krema za sunčanje','🕶️ Naočale','🧢 Kapa','👟 Ulošci','🍎 Voće','🍫 Slatko'].map((item,i) => `
+        <label style="display:flex;align-items:center;gap:14px;cursor:pointer;padding:10px 14px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;font-size:20px;font-weight:600;color:var(--text);transition:all .15s;" id="chk-lbl-${i}">
+          <input type="checkbox" id="chk-${i}" onchange="toggleCheck(${i})"
+            style="width:28px;height:28px;accent-color:var(--green);cursor:pointer;flex-shrink:0;">
+          ${item}
+        </label>`).join('')}
+      </div>
+      <button class="btn btn-primary btn-lg btn-full" onclick="startRoundFromChecklist()">
+        ▶ Krećemo!
+      </button>
+    </div>
+  </div>
   <div class="screen" id="screen-settings">
     <div class="header">
       <div style="width:38px"></div>
@@ -1689,18 +1707,33 @@ function removePlayer(idx) {
 }
 
 function startRound() {
+  // Provjera validacije
   const course = getSelectedCourseData();
-
   if (course) {
-    // Provjeri da svaki igrač ima tee (ako teren ima tee opcije)
     if (course.tees?.length > 0) {
       const missing = state.players.find(p => !p.teeName);
       if (missing) { showToast(`Odaberi tee za ${missing.name}!`, 'red'); return; }
     }
+  } else {
+    const name = document.getElementById('course-name')?.value?.trim();
+    if (!name) { showToast('Unesi naziv terena!', 'red'); return; }
+  }
 
+  // Za 18 rupa — pokaži checklist
+  const numHoles = course ? (course.holes || 18) : (parseInt(document.getElementById('num-holes')?.value) || 18);
+  if (numHoles >= 18) {
+    openModal('modal-checklist');
+  } else {
+    _doStartRound();
+  }
+}
+
+function _doStartRound() {
+  const course = getSelectedCourseData();
+
+  if (course) {
     state.courseName = course.club_name;
-    state.numHoles = course.holes;
-
+    state.numHoles   = course.holes;
     // Par i SI uzimamo od prvog igrača koji ima tee
     const firstPlayer = state.players[0];
     const tee = course.tees?.find(t => t.tee_name === firstPlayer.teeName) || course.tees?.[0];
@@ -1714,7 +1747,6 @@ function startRound() {
       state.par = Array(course.holes).fill(4);
       state.si  = Array.from({length:course.holes},(_,i)=>i+1);
     }
-    // GPS koordinate greena — iz green_coords (neovisno o tee-u)
     state.courseGps = course.green_coords || null;
 
   } else {
@@ -2390,6 +2422,7 @@ function nextHole() {
     state._notifTimer = null;
     saveActiveRound();
     renderPlay();
+    document.querySelector('#screen-play .scroll-content')?.scrollTo({top:0,behavior:'instant'});
   } else {
     showScreen('scorecard');
   }
@@ -2401,6 +2434,7 @@ function prevHole() {
     state._notifTimer = null;
     saveActiveRound();
     renderPlay();
+    document.querySelector('#screen-play .scroll-content')?.scrollTo({top:0,behavior:'instant'});
   }
 }
 
@@ -2444,66 +2478,97 @@ function renderScorecardTable() {
   renderPhInfo();
 
   const table = document.getElementById('scorecard-table');
-  // Kolumne: # | PAR | BRT | NETO | SB | PUT | edit
-  const cols = '28px 28px 36px 36px 32px 28px 28px';
-
-  let html = `<div style="overflow-x:auto;">
-  <div style="min-width:280px;">
-  <div class="sc-row header" style="grid-template-columns:${cols};font-size:11px;">
-    <span>#</span>
-    <span>PAR</span>
-    <span style="color:#fff;">BRT</span>
-    <span style="color:#aaa;">NET</span>
-    <span style="color:#55aaff;">SB</span>
-    <span style="color:#55aaff;">PUT</span>
-    <span></span>
-  </div>`;
 
   let totBrt=0, totP=0, totSb=0, totPut=0, totNet=0;
 
-  html += state.par.map((par, i) => {
+  const rows = state.par.map((par, i) => {
     const s   = strokes[i] || 0;
     const si  = state.si?.[i] || i+1;
     const pu  = (state.putts[pi]||[])[i] || 0;
     const extra = Math.floor(ph / state.numHoles) + (si <= (ph % state.numHoles) ? 1 : 0);
     const neto  = s > 0 ? s - extra : 0;
-    const netoDiff = s > 0 ? neto - par : null;
+    const netoDiff  = s > 0 ? neto - par : null;
     const brutoDiff = s > 0 ? s - par : null;
     const pts = s > 0 ? Math.max(0, 2 - (neto - par)) : 0;
 
     totBrt += s; totP += par; totPut += pu;
-    if(s>0) { totNet += neto; totSb += pts; }
+    if (s > 0) { totNet += neto; totSb += pts; }
 
     const brtCol  = brutoDiff===null?'#555':diffColor(brutoDiff);
     const netoCol = netoDiff===null?'#555':diffColor(netoDiff);
     const sbCol   = pts>=3?'#00ff00':pts===2?'#aaa':pts===1?'#ff6633':'#555';
-    const isCur   = i===state.currentHole;
+    const isCur   = i === state.currentHole;
 
-    return `<div class="sc-row${isCur?' current':''}" style="grid-template-columns:${cols};cursor:pointer;" onclick="goToHole(${i})">
-      <span class="sc-hole" style="color:${isCur?'#ffff00':'#888'}">${i+1}</span>
-      <span class="sc-par">${par}</span>
-      <span style="font-family:var(--font-mono);font-weight:700;color:${brtCol};">${s||'—'}</span>
-      <span style="font-family:var(--font-mono);color:${netoCol};">${s>0?neto:'—'}</span>
-      <span style="font-family:var(--font-mono);font-weight:700;color:${sbCol};">${s>0?pts:'—'}</span>
-      <span style="font-family:var(--font-mono);color:#55aaff;">${pu||'—'}</span>
-      <span style="font-size:14px;cursor:pointer;" onclick="event.stopPropagation();editActiveHole(${i})">✏️</span>
-    </div>`;
+    return `<tr style="border-bottom:1px solid #1a1a1a;background:${isCur?'#111':''};cursor:pointer;" onclick="goToHole(${i})">
+      <td style="padding:10px 8px;font-size:18px;font-weight:700;color:${isCur?'#ffff00':'#888'};font-family:var(--font-mono);">${i+1}</td>
+      <td style="padding:10px 6px;font-size:16px;color:#555;text-align:center;">${par}</td>
+      <td style="padding:10px 6px;font-size:18px;font-weight:700;color:${brtCol};text-align:center;font-family:var(--font-mono);">${s||'—'}</td>
+      <td style="padding:10px 6px;font-size:18px;color:${netoCol};text-align:center;font-family:var(--font-mono);">${s>0?neto:'—'}</td>
+      <td style="padding:10px 6px;font-size:18px;font-weight:700;color:${sbCol};text-align:center;font-family:var(--font-mono);">${s>0?pts:'—'}</td>
+      <td style="padding:10px 6px;font-size:18px;color:#55aaff;text-align:center;font-family:var(--font-mono);">${pu||'—'}</td>
+      <td style="padding:10px 6px;font-size:16px;text-align:center;cursor:pointer;" onclick="event.stopPropagation();editActiveHole(${i})">✏️</td>
+    </tr>`;
   }).join('');
 
   const brutoDiffT = totBrt - totP;
   const netoDiffT  = totNet - totP;
-  html += `<div class="sc-row total-row" style="grid-template-columns:${cols};cursor:default;font-size:15px;">
-    <span style="color:var(--green);font-weight:700;">∑</span>
-    <span class="sc-par">${totP}</span>
-    <span style="font-family:var(--font-mono);font-weight:700;color:${diffColor(brutoDiffT)};">${totBrt}</span>
-    <span style="font-family:var(--font-mono);color:${diffColor(netoDiffT)};">${totNet}</span>
-    <span style="font-family:var(--font-mono);font-weight:700;color:#55aaff;">${totSb}</span>
-    <span style="font-family:var(--font-mono);color:#55aaff;">${totPut}</span>
-    <span></span>
-  </div>
-  </div></div>`;
 
-  table.innerHTML = html;
+  table.innerHTML = `
+  <table style="width:100%;border-collapse:collapse;">
+    <thead>
+      <tr style="border-bottom:2px solid #333;">
+        <th style="padding:10px 8px;font-size:14px;color:#888;font-family:var(--font-mono);text-align:left;font-weight:600;">#</th>
+        <th style="padding:10px 6px;font-size:14px;color:#888;font-family:var(--font-mono);text-align:center;font-weight:600;">PAR</th>
+        <th style="padding:10px 6px;font-size:14px;color:#fff;font-family:var(--font-mono);text-align:center;font-weight:700;">BRT</th>
+        <th style="padding:10px 6px;font-size:14px;color:#aaa;font-family:var(--font-mono);text-align:center;font-weight:600;">NET</th>
+        <th style="padding:10px 6px;font-size:14px;color:#55aaff;font-family:var(--font-mono);text-align:center;font-weight:700;">SB</th>
+        <th style="padding:10px 6px;font-size:14px;color:#55aaff;font-family:var(--font-mono);text-align:center;font-weight:600;">PUT</th>
+        <th style="width:32px;"></th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+    <tfoot>
+      <tr style="border-top:2px solid #444;background:#111;">
+        <td style="padding:12px 8px;font-size:20px;font-weight:800;color:var(--green);font-family:var(--font-mono);">∑</td>
+        <td style="padding:12px 6px;font-size:18px;color:#555;text-align:center;font-family:var(--font-mono);">${totP}</td>
+        <td style="padding:12px 6px;font-size:20px;font-weight:800;color:${diffColor(brutoDiffT)};text-align:center;font-family:var(--font-mono);">${totBrt} <span style="font-size:14px;">(${fmtDiff(brutoDiffT)})</span></td>
+        <td style="padding:12px 6px;font-size:20px;font-weight:700;color:${diffColor(netoDiffT)};text-align:center;font-family:var(--font-mono);">${totNet}</td>
+        <td style="padding:12px 6px;font-size:20px;font-weight:800;color:#55aaff;text-align:center;font-family:var(--font-mono);">${totSb}</td>
+        <td style="padding:12px 6px;font-size:20px;font-weight:700;color:#55aaff;text-align:center;font-family:var(--font-mono);">${totPut}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>`;
+}
+
+function toggleCheck(i) {
+  const lbl = document.getElementById(`chk-lbl-${i}`);
+  const chk = document.getElementById(`chk-${i}`);
+  if (chk.checked) {
+    lbl.style.borderColor = 'var(--green)';
+    lbl.style.background  = 'rgba(0,255,0,0.06)';
+    lbl.style.color       = 'var(--green)';
+  } else {
+    lbl.style.borderColor = 'var(--border)';
+    lbl.style.background  = 'var(--surface2)';
+    lbl.style.color       = 'var(--text)';
+  }
+}
+
+function startRoundFromChecklist() {
+  closeModal('modal-checklist');
+  // Reset checkboxova za sljedeći put
+  for (let i = 0; i < 8; i++) {
+    const chk = document.getElementById(`chk-${i}`);
+    const lbl = document.getElementById(`chk-lbl-${i}`);
+    if (chk) chk.checked = false;
+    if (lbl) {
+      lbl.style.borderColor = 'var(--border)';
+      lbl.style.background  = 'var(--surface2)';
+      lbl.style.color       = 'var(--text)';
+    }
+  }
+  _doStartRound();
 }
 
 function goToHole(idx) {
