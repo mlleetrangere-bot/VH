@@ -1159,6 +1159,7 @@ input[type=number] { -moz-appearance: textfield; }
       <div class="modal-handle"></div>
       <h3 id="modal-round-title">Runda</h3>
       <p id="modal-round-meta"></p>
+      <div id="sc-ph-info" style="margin-bottom:10px;"></div>
       <div id="modal-round-content"></div>
       <div style="margin-top:16px;display:flex;gap:8px;">
         <button class="btn btn-ghost btn-md" style="flex:1" onclick="closeModal('modal-round-detail')">Zatvori</button>
@@ -2600,14 +2601,19 @@ function finishRound() {
     numHoles: state.numHoles,
     date: new Date().toISOString(),
     par: [...state.par],
+    si:  [...(state.si||[])],
+    courseRating: state.courseRating,
+    slopeRating:  state.slopeRating,
     players: state.players.map((p, pi) => {
-      const totalS = (state.strokes[pi]||[]).reduce((a,b)=>a+b,0);
-      const totalP = state.par.reduce((a,b)=>a+b,0);
+      const totalS  = (state.strokes[pi]||[]).reduce((a,b)=>a+b,0);
+      const totalP  = state.par.reduce((a,b)=>a+b,0);
+      const playingHcp = state.roundPlayingHcps?.[p.name] ?? calcPlayingHcpForPlayer(p);
       return {
         name: p.name,
         color: p.color,
         avatar: p.avatar,
         hcp: p.hcp,
+        playingHcp,
         gender: p.gender,
         teeName: p.teeName,
         strokes: [...(state.strokes[pi]||[])],
@@ -2686,10 +2692,19 @@ function renderRoundDetailModal(idx) {
   document.getElementById('modal-round-meta').textContent = `${fmtDate(r.date)} · ${r.numHoles} rupa`;
   document.getElementById('modal-delete-btn').onclick = () => deleteRound(idx);
 
-  // Uzmi Playing Handicap iz snimljenih podataka
+  // Uzmi Playing Handicap — spremen pri završetku runde
   const p   = r.players[0];
-  const ph  = p.playingHcp ?? p.hcp ?? 36;
+  // playingHcp je snimljen od verzije 2.0 — za starije runde izračunaj
+  const ph  = p.playingHcp ?? calcPlayingHcp(p.hcp ?? 36, r.slopeRating ?? 113, r.courseRating ?? 72, r.par?.reduce((a,b)=>a+b,0) ?? 72);
   const numH = r.numHoles || r.par.length;
+
+  // Prikaži PH info
+  const phInfo = document.getElementById('sc-ph-info');
+  if (phInfo) phInfo.innerHTML = `<span style="font-family:var(--font-mono);font-size:13px;color:#888;">
+    HCP: <b style="color:#ffff00;">${p.hcp}</b> &nbsp;|&nbsp;
+    Playing HCP: <b style="color:#00ff00;">${ph}</b>
+    ${r.slopeRating ? `&nbsp;|&nbsp; Slope: ${r.slopeRating}` : ''}
+  </span>`;
 
   let totBrt=0, totP=0, totSb=0, totPut=0, totNet=0;
 
@@ -3198,17 +3213,16 @@ function setHcpSystem(sys) {
 // ── Playing Handicap izračun ──────────────────────────────────────
 // WHS:     PH = round(HCI × Slope/113 + (CR − Par))
 // Vorgabe: PH = round(Vorgabe × Slope/113)  (simplified)
-function calcPlayingHcp(hci) {
-  const cr   = parseFloat(document.getElementById('course-rating')?.value) || state.courseRating;
-  const sl   = parseFloat(document.getElementById('slope-rating')?.value)  || state.slopeRating;
-  const cp   = parseFloat(document.getElementById('course-par-total')?.value) || state.coursePar;
-  const n    = parseFloat(document.getElementById('num-holes')?.value) || 18;
-  const factor = n === 9 ? 0.5 : 1.0;
+function calcPlayingHcp(hci, slope, cr, coursePar, numHoles) {
+  const sl  = slope    ?? parseFloat(document.getElementById('slope-rating')?.value)    ?? state.slopeRating  ?? 113;
+  const cra = cr       ?? parseFloat(document.getElementById('course-rating')?.value)   ?? state.courseRating ?? 72;
+  const cp  = coursePar?? parseFloat(document.getElementById('course-par-total')?.value)?? state.coursePar    ?? 72;
+  const n   = numHoles ?? parseFloat(document.getElementById('num-holes')?.value)       ?? 18;
+  const factor = n <= 9 ? 0.5 : 1.0;
 
   if (state.hcpSystem === 'WHS') {
-    return Math.round(hci * (sl / 113) * factor + (cr - cp) * factor);
+    return Math.round(hci * (sl / 113) * factor + (cra - cp) * factor);
   } else {
-    // Vorgabe: direktno × slope/113
     return Math.round(hci * (sl / 113) * factor);
   }
 }
