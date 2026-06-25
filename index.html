@@ -3,1299 +3,480 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Villa Helena – Vodice, Dalmacija</title>
+<title>Villa Helena · Vodice, Dalmacija</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
+:root{
+  --sea:#14606e; --sea-deep:#0c3a44; --sea-light:#4a9aab;
+  --foam:#e8f1f0; --sand:#f7f3ea; --sun:#d99a3f; --sun-soft:#e8be7e;
+  --ink:#1d2a2c; --stone:#69767a; --line:rgba(29,42,44,0.12); --white:#ffffff;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;font-size:18px;line-height:1.7}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--sand);color:var(--ink);font-weight:300;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.eyebrow{font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;font-weight:500;color:var(--sea)}
 
-/* ── SOCIAL BAR ── */
-.social-bar{background:#111;display:flex;align-items:center;justify-content:flex-end;gap:0.5rem;padding:0.5rem 2rem;flex-wrap:wrap}
-.social-btn{display:flex;align-items:center;gap:0.4rem;text-decoration:none;font-size:0.85rem;font-weight:bold;padding:0.35rem 0.9rem;border-radius:4px;transition:opacity 0.2s;color:#fff}
-.social-btn:hover{opacity:0.8}
-.social-btn.wb{background:#25D366}
-.social-btn.fb{background:#1877F2}
-.social-btn.ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
-.social-icon{font-size:1.1rem}
-.social-sep{color:rgba(255,255,255,0.3);font-size:0.8rem}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 2.5rem;transition:background .4s,padding .4s,box-shadow .4s}
+.nav.scrolled{background:rgba(247,243,234,.92);backdrop-filter:blur(14px);padding:.9rem 2.5rem;box-shadow:0 1px 0 var(--line)}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--white);letter-spacing:.02em;transition:color .4s}
+.nav.scrolled .nav-brand{color:var(--ink)}
+.nav-brand span{font-style:italic;font-weight:400}
+.nav-links{display:flex;gap:2.2rem;align-items:center}
+.nav-links a{font-size:.82rem;letter-spacing:.08em;font-weight:400;color:rgba(255,255,255,.85);transition:color .3s}
+.nav.scrolled .nav-links a{color:var(--stone)}
+.nav-links a:hover{color:var(--white)}
+.nav.scrolled .nav-links a:hover{color:var(--sea)}
+.nav-lang{display:flex;gap:.5rem;border-left:1px solid rgba(255,255,255,.25);padding-left:1.4rem}
+.nav.scrolled .nav-lang{border-color:var(--line)}
+.lang-btn{background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.6);transition:color .2s;padding:.2rem}
+.nav.scrolled .lang-btn{color:var(--stone)}
+.lang-btn.active{color:var(--white)}
+.nav.scrolled .lang-btn.active{color:var(--sea)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
+.nav-toggle span{width:26px;height:2px;background:var(--white);transition:background .4s}
+.nav.scrolled .nav-toggle span{background:var(--ink)}
 
-/* ── NAV ── */
-nav{position:fixed;top:36px;left:0;right:0;z-index:100;background:#fff;border-bottom:3px solid #111;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;flex-wrap:wrap;gap:0.5rem}
-.nav-logo{font-size:1.6rem;font-weight:bold;color:#111;text-decoration:none}
-.nav-logo span{color:#2a6b7c}
-.nav-links{display:flex;gap:1.5rem;list-style:none;flex-wrap:wrap}
-.nav-links a{text-decoration:none;color:#111;font-size:1rem;font-weight:bold;border-bottom:2px solid transparent;transition:border-color 0.2s;cursor:pointer}
-.nav-links a:hover{border-bottom-color:#2a6b7c}
-.lang-group{display:flex;gap:0.4rem}
-.lang-btn{background:#fff;border:2px solid #111;color:#111;font-family:Arial,sans-serif;font-size:0.9rem;font-weight:bold;padding:0.3rem 0.7rem;cursor:pointer;border-radius:4px;transition:all 0.2s}
-.lang-btn.active,.lang-btn:hover{background:#111;color:#fff}
-
-/* ── HERO ── */
-.hero{background:#f5f5f5;border-bottom:3px solid #111;padding:8rem 2rem 4rem;text-align:center}
-.hero h1{font-size:3.5rem;font-weight:bold;color:#111;margin-bottom:0.5rem}
-.hero h1 span{color:#2a6b7c}
-.hero-sub{font-size:1.3rem;color:#333;margin-bottom:2rem}
-.hero-badges{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem}
-.badge{background:#fff;border:2px solid #111;color:#111;font-size:1rem;font-weight:bold;padding:0.5rem 1.2rem;border-radius:4px}
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 2rem 4rem;overflow:hidden;background:linear-gradient(165deg,var(--sea-deep) 0%,var(--sea) 55%,var(--sea-light) 100%)}
+.hero-waves{position:absolute;bottom:-1px;left:0;width:100%;line-height:0}
+.hero-waves svg{width:100%;height:90px;display:block}
+.hero-sun{position:absolute;top:18%;right:14%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,var(--sun-soft) 0%,var(--sun) 70%);opacity:.85;filter:blur(2px);box-shadow:0 0 80px 30px rgba(217,154,63,.35)}
+.hero-content{position:relative;z-index:2;max-width:780px;animation:rise 1.1s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero .eyebrow{color:var(--sun-soft);margin-bottom:1.6rem}
+.hero h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(3.2rem,9vw,6.5rem);color:var(--white);line-height:.98;margin-bottom:1.4rem}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--sun-soft)}
+.hero-tag{font-size:clamp(1rem,2.2vw,1.3rem);font-weight:300;color:rgba(255,255,255,.88);max-width:540px;margin:0 auto 2.6rem}
+.hero-rating{display:inline-flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:.5rem 1.3rem;margin-bottom:2.6rem;backdrop-filter:blur(6px)}
+.hero-rating .stars{color:var(--sun-soft);letter-spacing:.1em;font-size:.9rem}
+.hero-rating .score{font-weight:600;color:var(--white);font-size:.95rem}
+.hero-rating .src{font-size:.78rem;color:rgba(255,255,255,.6)}
 .hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn-main{background:#111;color:#fff;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem 2.5rem;border:3px solid #111;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.2s}
-.btn-main:hover{background:#2a6b7c;border-color:#2a6b7c}
-.btn-sec{background:#fff;color:#111;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem 2.5rem;border:3px solid #111;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.2s}
-.btn-sec:hover{background:#f0f0f0}
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:1.05rem 2.3rem;border-radius:100px;border:1px solid transparent;transition:all .3s cubic-bezier(.2,.7,.3,1)}
+.btn-sun{background:var(--sun);color:var(--white)}
+.btn-sun:hover{background:var(--white);color:var(--sea-deep);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--white);border-color:rgba(255,255,255,.4)}
+.btn-ghost:hover{background:rgba(255,255,255,.12);border-color:var(--white);transform:translateY(-2px)}
 
-/* ── SECTIONS ── */
-section{padding:4rem 2rem;border-bottom:2px solid #ddd}
-.container{max-width:1100px;margin:0 auto}
-.sec-label{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.15em;color:#2a6b7c;font-weight:bold;margin-bottom:0.4rem}
-.sec-title{font-size:2.2rem;font-weight:bold;color:#111;margin-bottom:0.8rem}
-.sec-desc{font-size:1.1rem;color:#333;max-width:700px}
+/* SECTIONS */
+section{padding:6.5rem 2.5rem}
+.wrap{max-width:1140px;margin:0 auto}
+.sec-head{max-width:640px;margin-bottom:3.5rem}
+.sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
+.sec-head .eyebrow{display:block;margin-bottom:1rem}
+.sec-head h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.05;color:var(--ink)}
+.sec-head h2 em{font-style:italic;color:var(--sea)}
+.sec-head p{margin-top:1.2rem;color:var(--stone);font-size:1.08rem}
 
-/* ── AMENITIES ── */
-.amenities-bg{background:#f5f5f5}
-.amenities-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;margin-top:2rem}
-.amenity-card{background:#fff;border:2px solid #111;border-radius:6px;padding:1.5rem 1.2rem;text-align:center}
-.amenity-icon{font-size:2.2rem;margin-bottom:0.6rem}
-.amenity-name{font-size:1rem;font-weight:bold;color:#111}
+/* INTRO */
+.intro{background:var(--sand)}
+.intro-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:4rem;align-items:center}
+.intro-text p{color:var(--stone);margin-bottom:1.3rem;font-size:1.06rem}
+.intro-text p strong{color:var(--ink);font-weight:500}
+.intro-figure{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:4/5;background:linear-gradient(160deg,var(--sea-light),var(--sea-deep));display:flex;align-items:center;justify-content:center}
+.ph-note{color:rgba(255,255,255,.7);text-align:center;padding:2rem;font-size:.9rem}
+.ph-note .ph-icon{font-size:2.4rem;display:block;margin-bottom:.6rem;opacity:.6}
+.ph-note .ph-name{font-family:monospace;font-size:.78rem;margin-top:.5rem;opacity:.55}
 
-/* ── ROOMS ── */
-.rooms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2rem}
-.room-card{border:3px solid #111;border-radius:6px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
-.room-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
-.room-card-top{background:#111;padding:1.5rem;position:relative}
-.room-type-lbl{font-size:0.85rem;text-transform:uppercase;color:#aaa;margin-bottom:0.3rem;font-weight:bold}
-.room-id{font-size:2rem;font-weight:bold;color:#fff}
-.room-cap{position:absolute;top:1rem;right:1rem;background:#fff;color:#111;font-size:0.85rem;font-weight:bold;padding:0.3rem 0.7rem;border-radius:4px}
-.room-card-body{padding:1.5rem;background:#fff}
-.room-feats{list-style:none;margin-bottom:1.2rem}
-.room-feats li{font-size:1rem;color:#111;padding:0.25rem 0;border-bottom:1px solid #eee}
-.room-feats li:last-child{border-bottom:none}
-.room-price-row{display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:2px solid #111}
-.room-price{font-size:1.6rem;font-weight:bold;color:#111}
-.room-price-detail{font-size:0.85rem;color:#555;margin-top:0.2rem}
-.room-btn{background:#2a6b7c;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.7rem 1.4rem;border-radius:4px;transition:background 0.2s}
-.room-btn:hover{background:#1a4a57}
+/* AMENITIES */
+.amenities{background:var(--foam)}
+.am-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6rem}
+.am-card{background:var(--white);border-radius:4px;padding:2rem 1.6rem;border:1px solid var(--line);transition:transform .35s,box-shadow .35s}
+.am-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px -18px rgba(12,58,68,.3)}
+.am-icon{width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--foam);border-radius:50%;margin-bottom:1.1rem;color:var(--sea)}
+.am-icon svg{width:22px;height:22px}
+.am-card h3{font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:.35rem}
+.am-card p{font-size:.86rem;color:var(--stone)}
+.am-note{margin-top:2.2rem;font-size:.9rem;color:var(--stone);font-style:italic}
 
-/* ── PRICE CALCULATOR ── */
-.price-calc-bg{background:#eef5f7}
+/* UNITS */
+.units{background:var(--sand)}
+.units-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem}
+.unit-card{position:relative;background:var(--white);border-radius:6px;overflow:hidden;border:1px solid var(--line);cursor:pointer;transition:transform .4s cubic-bezier(.2,.7,.3,1),box-shadow .4s}
+.unit-card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -24px rgba(12,58,68,.4)}
+.unit-photo{position:relative;aspect-ratio:16/10;overflow:hidden;background:linear-gradient(150deg,var(--sea-light),var(--sea-deep));display:flex;align-items:center;justify-content:center}
+.unit-photo .ph-note{font-size:.82rem;padding:1rem}
+.unit-photo .ph-note .ph-icon{font-size:2rem;margin-bottom:.4rem}
+.unit-badge{position:absolute;top:1.1rem;left:1.1rem;z-index:2;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.5rem;background:rgba(255,255,255,.95);color:var(--sea-deep);width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
+.unit-type-tag{position:absolute;top:1.3rem;right:1.1rem;z-index:2;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;background:var(--sun);color:var(--white);padding:.35rem .85rem;border-radius:100px}
+.unit-body{padding:1.7rem 1.8rem 1.9rem}
+.unit-body h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.7rem;color:var(--ink);margin-bottom:.2rem}
+.unit-cap{font-size:.84rem;color:var(--stone);letter-spacing:.04em;margin-bottom:1.1rem;display:flex;align-items:center;gap:.4rem}
+.unit-feats{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.unit-feat{font-size:.76rem;color:var(--sea);background:var(--foam);padding:.3rem .75rem;border-radius:100px}
+.unit-foot{display:flex;align-items:flex-end;justify-content:space-between;border-top:1px solid var(--line);padding-top:1.2rem}
+.unit-price .amt{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink)}
+.unit-price .per{font-size:.8rem;color:var(--stone)}
+.unit-more{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--sea);display:flex;align-items:center;gap:.4rem;transition:gap .3s}
+.unit-card:hover .unit-more{gap:.7rem}
 
-/* Wizard steps */
-.wiz-steps{display:flex;align-items:center;gap:0;margin-bottom:2rem;border:2px solid #111;border-radius:6px;overflow:hidden}
-.wiz-step{flex:1;padding:0.9rem 1rem;text-align:center;font-size:0.95rem;font-weight:bold;color:#888;background:#f5f5f5;border-right:2px solid #111;cursor:default;transition:all 0.2s}
-.wiz-step:last-child{border-right:none}
-.wiz-step.done{background:#e6ffe6;color:#006600}
-.wiz-step.active{background:#111;color:#fff}
-.wiz-step-num{display:block;font-size:0.75rem;margin-bottom:0.1rem;opacity:0.7}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;z-index:100;background:rgba(12,58,68,.55);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:3rem 1.5rem;overflow-y:auto}
+.modal-bg.open{display:flex;animation:fade .3s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--sand);border-radius:8px;max-width:920px;width:100%;overflow:hidden;position:relative;animation:pop .4s cubic-bezier(.2,.7,.3,1);box-shadow:0 40px 90px -30px rgba(0,0,0,.5)}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-close{position:absolute;top:1.2rem;right:1.2rem;z-index:10;width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.92);color:var(--ink);font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:all .25s}
+.modal-close:hover{background:var(--sun);color:var(--white);transform:rotate(90deg)}
+.gallery{background:var(--sea-deep)}
+.gallery-main{aspect-ratio:16/9;background:linear-gradient(150deg,var(--sea-light),var(--sea-deep));display:flex;align-items:center;justify-content:center}
+.gallery-main .ph-note .ph-icon{font-size:2.6rem}
+.gallery-thumbs{display:flex;gap:6px;padding:6px;background:var(--sea-deep)}
+.gallery-thumb{flex:1;aspect-ratio:4/3;border-radius:3px;cursor:pointer;background:linear-gradient(150deg,var(--sea-light),var(--sea));display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:1.1rem;opacity:.65;transition:opacity .25s}
+.gallery-thumb:hover,.gallery-thumb.active{opacity:1;outline:2px solid var(--sun)}
+.modal-info{padding:2.4rem 2.6rem 2.8rem}
+.modal-info-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.6rem}
+.modal-info-head .m-type{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sun);font-weight:600;margin-bottom:.4rem}
+.modal-info-head h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2.6rem;color:var(--ink);line-height:1}
+.modal-info-head .m-cap{font-size:.9rem;color:var(--stone);margin-top:.5rem}
+.modal-price{text-align:right;flex-shrink:0}
+.modal-price .amt{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:600;color:var(--sea)}
+.modal-price .per{font-size:.82rem;color:var(--stone)}
+.modal-desc{color:var(--stone);font-size:1.04rem;margin-bottom:2rem;line-height:1.8}
+.modal-feats-title{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);font-weight:600;margin-bottom:1rem}
+.modal-feats{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem 1.6rem;margin-bottom:2.2rem}
+.modal-feat{display:flex;align-items:center;gap:.7rem;font-size:.94rem;color:var(--ink)}
+.modal-feat svg{width:18px;height:18px;color:var(--sea);flex-shrink:0}
+.modal-actions{display:flex;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.8rem}
+.btn-dark{background:var(--sea-deep);color:var(--white)}
+.btn-dark:hover{background:var(--sea);transform:translateY(-2px)}
+.btn-line{background:transparent;color:var(--sea-deep);border-color:var(--sea-deep)}
+.btn-line:hover{background:var(--sea-deep);color:var(--white)}
 
-.wiz-panel{display:none;animation:fadeUp 0.3s ease}
-.wiz-panel.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* LOCATION */
+.location{background:var(--sea-deep);color:var(--white)}
+.location .eyebrow{color:var(--sun-soft)}
+.location .sec-head h2{color:var(--white)}
+.location .sec-head h2 em{color:var(--sun-soft)}
+.location .sec-head p{color:rgba(255,255,255,.7)}
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.loc-list{display:flex;flex-direction:column;gap:1.1rem}
+.loc-item{display:flex;gap:1.1rem;align-items:flex-start;padding-bottom:1.1rem;border-bottom:1px solid rgba(255,255,255,.12)}
+.loc-item:last-child{border-bottom:none}
+.loc-item .l-icon{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--sun-soft)}
+.loc-item .l-icon svg{width:20px;height:20px}
+.loc-item h4{font-size:1rem;font-weight:500;margin-bottom:.15rem}
+.loc-item p{font-size:.88rem;color:rgba(255,255,255,.65)}
+.loc-map{aspect-ratio:1/1;border-radius:6px;overflow:hidden;background:linear-gradient(150deg,var(--sea-light),var(--sea));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;border:1px solid rgba(255,255,255,.15)}
+.loc-map .pin{font-size:3rem}
+.loc-map .place{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:500}
+.loc-map .sub{font-size:.85rem;color:rgba(255,255,255,.65)}
 
-.wiz-box{background:#fff;border:2px solid #111;border-radius:6px;padding:2rem;margin-bottom:1.5rem}
-.wiz-title{font-size:1.3rem;font-weight:bold;color:#111;margin-bottom:1.5rem}
+/* CONTACT */
+.contact{background:var(--sand)}
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-top:1rem}
+.contact-card{background:var(--white);border:1px solid var(--line);border-radius:6px;padding:2.2rem 1.8rem;text-align:center;transition:transform .35s,box-shadow .35s}
+.contact-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px -18px rgba(12,58,68,.3)}
+.contact-card .c-icon{width:54px;height:54px;border-radius:50%;background:var(--foam);color:var(--sea);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
+.contact-card .c-icon svg{width:24px;height:24px}
+.contact-card h4{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:.5rem;font-weight:500}
+.contact-card a,.contact-card span{font-size:1.05rem;color:var(--ink);font-weight:400}
+.contact-card a:hover{color:var(--sea)}
 
-/* Date inputs */
-.date-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.2rem}
-.date-group{display:flex;flex-direction:column;gap:0.4rem}
-.date-group label{font-size:1rem;font-weight:bold;color:#111}
-.date-input{border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.1rem;color:#111;outline:none;width:100%}
-.date-input:focus{border-color:#2a6b7c;outline:3px solid rgba(42,107,124,0.2)}
-.nights-badge{background:#111;color:#fff;border-radius:4px;padding:0.5rem 1.2rem;font-weight:bold;font-size:1rem;display:none;margin-top:0.5rem;text-align:center}
-.nights-badge.visible{display:block}
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.5rem;text-align:center}
+.foot-brand{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:500;color:var(--white);margin-bottom:.4rem}
+.foot-brand span{font-style:italic;font-weight:400;color:var(--sun-soft)}
+.foot-sub{font-size:.9rem;margin-bottom:1.6rem}
+.foot-social{display:flex;gap:1rem;justify-content:center;margin-bottom:2rem}
+.foot-social a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;color:rgba(255,255,255,.7)}
+.foot-social a:hover{background:var(--sun);color:var(--white);transform:translateY(-3px)}
+.foot-social svg{width:20px;height:20px}
+.foot-copy{font-size:.78rem;color:rgba(255,255,255,.4);padding-top:1.8rem;border-top:1px solid rgba(255,255,255,.1)}
 
-/* Guest counters */
-.guest-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.2rem}
-.guest-group{display:flex;flex-direction:column;gap:0.4rem}
-.guest-label{font-size:1rem;font-weight:bold;color:#111}
-.guest-sub{font-size:0.85rem;color:#555}
-.guest-counter{display:flex;align-items:center;gap:1rem;margin-top:0.4rem}
-.counter-btn{width:40px;height:40px;background:#111;color:#fff;border:none;font-size:1.4rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;flex-shrink:0}
-.counter-btn:hover{background:#2a6b7c}
-.counter-val{font-size:1.4rem;font-weight:bold;color:#111;min-width:36px;text-align:center}
-
-/* Child ages */
-.child-ages-wrap{background:#f5f5f5;border:2px solid #ddd;border-radius:6px;padding:1.2rem;margin-top:1rem;display:none}
-.child-ages-wrap.visible{display:block}
-.child-ages-title{font-size:1rem;font-weight:bold;color:#111;margin-bottom:0.8rem}
-.age-inputs{display:flex;gap:1rem;flex-wrap:wrap}
-.age-group{display:flex;flex-direction:column;gap:0.3rem;align-items:center}
-.age-group label{font-size:0.85rem;font-weight:bold;color:#555}
-.age-input{width:80px;border:2px solid #111;border-radius:4px;padding:0.5rem;font-family:Arial,sans-serif;font-size:1.1rem;text-align:center;outline:none}
-.age-input:focus{border-color:#2a6b7c}
-.free-badge{font-size:0.75rem;color:#006600;font-weight:bold;text-align:center;margin-top:0.2rem}
-
-/* Price results */
-.price-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem}
-.price-result-card{background:#fff;border:3px solid #111;border-radius:6px;padding:1.5rem;cursor:pointer;transition:all 0.2s;position:relative}
-.price-result-card:hover{border-color:#2a6b7c;transform:translateY(-3px);box-shadow:0 6px 20px rgba(42,107,124,0.15)}
-.price-result-card.unavail{background:#f5f5f5;border-color:#ccc;cursor:not-allowed;opacity:0.6}
-.price-result-card.unavail:hover{transform:none;box-shadow:none}
-.prc-type{font-size:0.8rem;font-weight:bold;text-transform:uppercase;color:#555;margin-bottom:0.2rem}
-.prc-name{font-size:1.5rem;font-weight:bold;color:#111;margin-bottom:0.5rem}
-.prc-cap{font-size:0.9rem;color:#555;margin-bottom:1rem}
-.prc-per-night{border-top:2px solid #111;padding-top:1rem;margin-bottom:0.5rem}
-.prc-per-night-label{font-size:0.85rem;color:#555;margin-bottom:0.2rem}
-.prc-per-night-val{font-size:1.6rem;font-weight:bold;color:#111}
-.prc-per-night-unit{font-size:0.9rem;color:#555}
-.prc-total-wrap{background:#f5f5f5;border-radius:4px;padding:0.8rem 1rem;margin-top:0.8rem;display:flex;justify-content:space-between;align-items:center}
-.prc-total-label{font-size:0.9rem;color:#555;font-weight:bold}
-.prc-total-val{font-size:1.4rem;font-weight:bold;color:#2a6b7c}
-.prc-book-btn{width:100%;background:#2a6b7c;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem;border-radius:4px;margin-top:1rem;transition:background 0.2s}
-.prc-book-btn:hover{background:#1a4a57}
-.prc-unavail-msg{font-size:0.9rem;color:#cc0000;font-weight:bold;margin-top:0.8rem;text-align:center}
-
-/* Step nav buttons */
-.wiz-nav{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
-.wiz-next{background:#111;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem 2rem;border-radius:4px;transition:background 0.2s}
-.wiz-next:hover{background:#2a6b7c}
-.wiz-back{background:#fff;color:#111;border:2px solid #111;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem 2rem;border-radius:4px;transition:background 0.2s}
-.wiz-back:hover{background:#f0f0f0}
-
-/* Booking form (step 3 – contact) */
-.booking-summary-bar{background:#111;color:#fff;border-radius:6px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
-.bsb-room{font-size:1.1rem;font-weight:bold}
-.bsb-detail{font-size:0.9rem;opacity:0.75}
-.bsb-price{font-size:1.3rem;font-weight:bold;color:#4ecf8a}
-
-/* ── LOCATION ── */
-.loc-bg{background:#eef5f7}
-.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem;align-items:start}
-.loc-items{display:flex;flex-direction:column;gap:1rem}
-.loc-item{display:flex;align-items:center;gap:1rem;background:#fff;border:2px solid #111;border-radius:6px;padding:1rem 1.3rem}
-.loc-icon{font-size:1.8rem}
-.loc-text-title{font-size:1.1rem;font-weight:bold;color:#111}
-.loc-text-desc{font-size:0.95rem;color:#444}
-.map-box{background:#fff;border:2px solid #111;border-radius:6px;height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;color:#555;font-size:1rem}
-
-/* ── BOOKING ── */
-.booking-wrap{background:#fff;border:2px solid #111;border-radius:6px;padding:2rem;margin-top:2rem}
-.room-tabs{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:2rem}
-.room-tab{background:#fff;border:2px solid #111;color:#111;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.6rem 1.2rem;border-radius:4px;cursor:pointer;transition:all 0.2s}
-.room-tab.active{background:#111;color:#fff}
-.booking-inner{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.cal-nav{background:#fff;border:2px solid #111;color:#111;width:36px;height:36px;border-radius:4px;cursor:pointer;font-size:1rem;font-weight:bold;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
-.cal-nav:hover{background:#111;color:#fff}
-.cal-month-lbl{font-size:1.2rem;font-weight:bold;color:#111}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dn{text-align:center;font-size:0.8rem;font-weight:bold;color:#555;padding:0.4rem 0}
-.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:0.95rem;border-radius:4px;cursor:pointer;transition:all 0.15s;border:1px solid transparent}
-.cal-d:hover:not(.disabled):not(.empty){background:#f0f0f0;border-color:#111}
-.cal-d.empty{cursor:default}
-.cal-d.disabled{color:#ccc;cursor:not-allowed}
-.cal-d.booked{background:#ddd;color:#888;cursor:not-allowed;text-decoration:line-through}
-.cal-d.sel-start,.cal-d.sel-end{background:#111;color:#fff;font-weight:bold}
-.cal-d.in-range{background:#e0e0e0;color:#111}
-.cal-d.today{font-weight:bold;color:#2a6b7c;border:2px solid #2a6b7c}
-.cal-legend{display:flex;gap:1.2rem;margin-top:0.8rem;flex-wrap:wrap;font-size:0.9rem}
-.leg-item{display:flex;align-items:center;gap:0.4rem;color:#333}
-.leg-dot{width:14px;height:14px;border-radius:3px}
-.dot-a{background:#fff;border:2px solid #111}
-.dot-b{background:#ddd;border:2px solid #888}
-.dot-s{background:#111}
-.date-sum{background:#f5f5f5;border:2px solid #111;border-radius:6px;padding:1rem 1.2rem;margin:1rem 0;display:none}
-.date-sum.visible{display:block}
-.ds-row{display:flex;justify-content:space-between;font-size:1rem;color:#111;margin-bottom:0.3rem}
-.ds-total{border-top:2px solid #111;margin-top:0.5rem;padding-top:0.5rem;font-size:1.2rem;font-weight:bold;color:#111;display:flex;justify-content:space-between}
-.ds-breakdown{font-size:0.85rem;color:#555;margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid #ddd}
-.ds-breakdown div{display:flex;justify-content:space-between;padding:0.15rem 0}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
-.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.8rem}
-.fg label{font-size:0.95rem;font-weight:bold;color:#111}
-.fg input,.fg textarea,.fg select{background:#fff;border:2px solid #111;border-radius:4px;padding:0.75rem 0.9rem;font-family:Arial,sans-serif;font-size:1rem;color:#111;outline:none}
-.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:#2a6b7c;outline:3px solid rgba(42,107,124,0.2)}
-.fg textarea{resize:vertical;min-height:80px}
-.submit-btn{width:100%;background:#111;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem;border-radius:4px;margin-top:0.5rem;transition:background 0.2s}
-.submit-btn:hover{background:#2a6b7c}
-.submit-btn:disabled{background:#aaa;cursor:not-allowed}
-.notice{border-radius:4px;padding:1rem 1.2rem;font-size:1rem;margin-top:0.8rem;display:none;font-weight:bold}
-.notice.visible{display:block}
-.notice.success{background:#e6ffe6;border:2px solid #006600;color:#004400}
-.notice.warning{background:#fff8e6;border:2px solid #996600;color:#553300}
-.notice.error{background:#ffe6e6;border:2px solid #cc0000;color:#880000}
-
-/* ── CONTACT ── */
-.contact-cards{display:flex;flex-direction:column;gap:1rem;margin-top:2rem;max-width:500px}
-.contact-card{background:#fff;border:2px solid #111;border-radius:6px;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:1.2rem;text-decoration:none;color:#111;transition:background 0.2s}
-.contact-card:hover{background:#f5f5f5}
-.cc-icon{width:46px;height:46px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
-.cc-strong{font-size:1.1rem;font-weight:bold;color:#111}
-.cc-sub{font-size:0.9rem;color:#555}
-
-/* ── ADMIN ── */
-.admin-section{background:#f5f5f5;padding:3rem 2rem;border-top:3px solid #111}
-.admin-toggle{background:#fff;border:2px solid #111;color:#111;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.7rem 1.5rem;border-radius:4px;cursor:pointer;transition:all 0.2s}
-.admin-toggle:hover{background:#111;color:#fff}
-.admin-panel{display:none;margin-top:1.5rem}
-.admin-panel.visible{display:block}
-.export-btns{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem}
-.export-btn{border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.6rem 1.4rem;border-radius:4px;transition:background 0.2s;color:#fff}
-.export-btn.csv{background:#555}
-.export-btn.csv:hover{background:#333}
-.export-btn.xl{background:#006600}
-.export-btn.xl:hover{background:#004400}
-.tbl-wrap{overflow-x:auto}
-.res-table{width:100%;border-collapse:collapse;font-size:0.9rem}
-.res-table th{text-align:left;font-size:0.8rem;font-weight:bold;color:#111;padding:0.7rem 1rem;border-bottom:2px solid #111;background:#eee;white-space:nowrap}
-.res-table td{padding:0.8rem 1rem;border-bottom:1px solid #ddd;color:#111;white-space:nowrap}
-.res-table tr:hover td{background:#f5f5f5}
-.sbadge{display:inline-block;font-size:0.8rem;font-weight:bold;padding:0.2rem 0.7rem;border-radius:4px;border:1px solid}
-.sp{background:#fff3cc;color:#664400;border-color:#cc9900}
-.sc{background:#e6ffe6;color:#004400;border-color:#006600}
-.sx{background:#ffe6e6;color:#880000;border-color:#cc0000}
-.act-btn{background:none;border:2px solid currentColor;border-radius:4px;font-size:0.85rem;font-weight:bold;padding:0.25rem 0.7rem;cursor:pointer;font-family:Arial,sans-serif;margin-right:0.3rem;transition:all 0.15s}
-.ab-confirm{color:#006600}.ab-confirm:hover{background:#e6ffe6}
-.ab-cancel{color:#cc0000}.ab-cancel:hover{background:#ffe6e6}
-
-/* ── FOOTER ── */
-footer{background:#111;color:#fff;padding:2.5rem 2rem;text-align:center;font-size:1rem;line-height:1.8}
-footer strong{font-size:1.2rem}
-footer a{color:#aaddff;text-decoration:underline}
-
-/* GH status */
-#ghStatus,#ghError{position:fixed;top:1rem;right:1rem;z-index:9999;padding:0.6rem 1.2rem;border-radius:4px;font-family:Arial,sans-serif;font-size:0.95rem;font-weight:bold;display:none}
-#ghStatus{background:#006600;color:#fff}
-#ghError{background:#cc0000;color:#fff;max-width:300px}
-
-@media(max-width:768px){
-  .nav-links{display:none}
-  .hero h1{font-size:2.2rem}
-  .loc-grid,.booking-inner,.form-row,.guest-row{grid-template-columns:1fr}
-  .map-box{display:none}
-  section{padding:3rem 1.2rem}
-  .social-bar{justify-content:center}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .am-grid{grid-template-columns:repeat(2,1fr)}
+  .intro-grid{grid-template-columns:1fr;gap:2.5rem}
+  .units-grid{grid-template-columns:1fr}
+  .loc-grid{grid-template-columns:1fr;gap:2rem}
+  .contact-grid{grid-template-columns:1fr}
+  .modal-feats{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .nav{padding:1.1rem 1.4rem}
+  .nav-links{position:fixed;top:0;right:-100%;width:75%;height:100vh;background:var(--sea-deep);flex-direction:column;justify-content:center;gap:1.8rem;transition:right .4s cubic-bezier(.2,.7,.3,1);padding:2rem}
+  .nav-links.open{right:0}
+  .nav-links a,.nav.scrolled .nav-links a{color:rgba(255,255,255,.85);font-size:1rem}
+  .nav-lang{border-color:rgba(255,255,255,.25)}
+  .nav-toggle{display:flex}
+  section{padding:4.5rem 1.5rem}
+  .am-grid{grid-template-columns:1fr 1fr;gap:1rem}
+  .modal-info{padding:1.8rem 1.6rem 2.2rem}
+  .modal-info-head h2{font-size:2rem}
+  .modal-price .amt{font-size:2rem}
+  .hero-sun{width:80px;height:80px;top:14%;right:10%}
 }
 </style>
 </head>
 <body>
 
-<div id="ghStatus"></div>
-<div id="ghError"></div>
-
-<!-- SOCIAL BAR -->
-<div class="social-bar">
-  <a href="https://wa.me/385958600340" target="_blank" class="social-btn wb">
-    <span class="social-icon">💬</span> WhatsApp
-  </a>
-  <span class="social-sep">|</span>
-  <a href="https://www.facebook.com/villahelena.vodice" target="_blank" class="social-btn fb">
-    <span class="social-icon">📘</span> Facebook
-  </a>
-  <span class="social-sep">|</span>
-  <a href="https://www.instagram.com/villahelena.vodice" target="_blank" class="social-btn ig">
-    <span class="social-icon">📸</span> Instagram
-  </a>
-</div>
-
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">Villa <span>Helena</span></a>
-  <ul class="nav-links">
-    <li><a onclick="scrollTo('#sadrzaji')" data-i18n="nav_am">Sadržaji</a></li>
-    <li><a onclick="scrollTo('#smjestaji')" data-i18n="nav_rooms">Smještaji</a></li>
-    <li><a onclick="scrollTo('#cijene')" data-i18n="nav_prices">Cijene i rezervacija</a></li>
-    <li><a onclick="scrollTo('#lokacija')" data-i18n="nav_loc">Lokacija</a></li>
-    <li><a onclick="scrollTo('#kontakt')" data-i18n="nav_contact">Kontakt</a></li>
-  </ul>
-  <div class="lang-group">
-    <button class="lang-btn active" onclick="setLang('hr')">HR</button>
-    <button class="lang-btn" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('de')">DE</button>
+<nav class="nav" id="nav">
+  <a href="#" class="nav-brand">Villa <span>Helena</span></a>
+  <div class="nav-links" id="navLinks">
+    <a href="#o-vili" data-i18n="nav_about">O vili</a>
+    <a href="#pogodnosti" data-i18n="nav_amenities">Pogodnosti</a>
+    <a href="#jedinice" data-i18n="nav_units">Smještaj</a>
+    <a href="#lokacija" data-i18n="nav_location">Lokacija</a>
+    <a href="#kontakt" data-i18n="nav_contact">Kontakt</a>
+    <div class="nav-lang">
+      <button class="lang-btn active" data-lang="hr">HR</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+    </div>
   </div>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
 </nav>
 
-<!-- HERO -->
 <header class="hero">
-  <h1>Villa <span>Helena</span></h1>
-  <p class="hero-sub" data-i18n="hero_sub">Apartmani i sobe u Vodicama, Dalmacija</p>
-  <div class="hero-badges">
-    <span class="badge">🏊 <span data-i18n="b_pool">Vanjski bazen</span></span>
-    <span class="badge">🌿 <span data-i18n="b_quiet">Mirna lokacija</span></span>
-    <span class="badge">🚗 <span data-i18n="b_park">Privatni parking</span></span>
-    <span class="badge">📶 Wi-Fi</span>
-    <span class="badge">🍖 <span data-i18n="b_grill">Roštilj</span></span>
+  <div class="hero-sun"></div>
+  <div class="hero-content">
+    <span class="eyebrow" data-i18n="hero_eyebrow">Vodice · Dalmacija · Hrvatska</span>
+    <h1 data-i18n="hero_title">Vaš ljetni<br><em>predah uz more</em></h1>
+    <p class="hero-tag" data-i18n="hero_tag">Moderno uređeni apartmani i sobe s vanjskim bazenom, u mirnom dijelu Vodica — savršeni za parove, obitelji i manje grupe.</p>
+    <div class="hero-rating">
+      <span class="stars">★★★★★</span><span class="score">9,4</span>
+      <span class="src" data-i18n="hero_rating">Booking.com · 47 recenzija</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#jedinice" class="btn btn-sun" data-i18n="hero_cta1">Pogledaj smještaj</a>
+      <a href="#kontakt" class="btn btn-ghost" data-i18n="hero_cta2">Kontaktiraj nas</a>
+    </div>
   </div>
-  <div class="hero-cta">
-    <a href="#cijene" class="btn-main" onclick="scrollTo('#cijene')" data-i18n="cta_prices">Provjeri cijene</a>
-    <a href="#rezervacija" class="btn-sec" onclick="scrollTo('#rezervacija')" data-i18n="cta_book">Rezerviraj</a>
+  <div class="hero-waves">
+    <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,40 C240,80 480,10 720,40 C960,70 1200,15 1440,45 L1440,90 L0,90 Z" fill="#f7f3ea"/></svg>
   </div>
 </header>
 
-<!-- SADRŽAJI -->
-<section class="amenities-bg" id="sadrzaji">
-  <div class="container">
-    <p class="sec-label" data-i18n="am_label">Što nudimo</p>
-    <h2 class="sec-title" data-i18n="am_title">Sve za savršen odmor</h2>
-    <div class="amenities-grid">
-      <div class="amenity-card"><div class="amenity-icon">🏊</div><div class="amenity-name" data-i18n="am1">Vanjski bazen i sunčalište</div></div>
-      <div class="amenity-card"><div class="amenity-icon">🌅</div><div class="amenity-name" data-i18n="am2">Privatna terasa</div></div>
-      <div class="amenity-card"><div class="amenity-icon">❄️</div><div class="amenity-name" data-i18n="am3">Klima uređaj</div></div>
-      <div class="amenity-card"><div class="amenity-icon">📶</div><div class="amenity-name" data-i18n="am4">Besplatan Wi-Fi</div></div>
-      <div class="amenity-card"><div class="amenity-icon">🚿</div><div class="amenity-name" data-i18n="am5">Vlastita kupaonica</div></div>
-      <div class="amenity-card"><div class="amenity-icon">🚗</div><div class="amenity-name" data-i18n="am6">Privatni parking</div></div>
-      <div class="amenity-card"><div class="amenity-icon">🍖</div><div class="amenity-name" data-i18n="am7">Roštilj u dvorištu</div></div>
-      <div class="amenity-card"><div class="amenity-icon">🍳</div><div class="amenity-name" data-i18n="am8">Opremljena kuhinja*</div></div>
-    </div>
-    <p style="margin-top:1rem;font-size:0.95rem;color:#555" data-i18n="am_note">* Opremljena kuhinja u apartmanima.</p>
-  </div>
-</section>
-
-<!-- SMJEŠTAJI -->
-<section id="smjestaji">
-  <div class="container">
-    <p class="sec-label" data-i18n="rooms_label">Dostupne jedinice</p>
-    <h2 class="sec-title" data-i18n="rooms_title">Odaberite smještaj</h2>
-    <div class="rooms-grid" id="roomsGrid"></div>
-  </div>
-</section>
-
-<!-- CIJENE I REZERVACIJA -->
-<!-- REZERVACIJA I CIJENE -->
-<section id="cijene" id="rezervacija" style="padding:4rem 2rem;border-bottom:2px solid #ddd">
-  <div class="container">
-    <p class="sec-label" data-i18n="prices_label">Rezervacija i cijene</p>
-    <h2 class="sec-title">Rezervirajte smještaj</h2>
-
-    <!-- ═══ KORAK 1: PRETRAGA ═══ -->
-    <div id="step1">
-
-      <!-- Search box -->
-      <div style="background:#fff;border:2px solid #111;border-radius:6px;padding:2rem;margin-top:1.5rem">
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
-          <div style="display:flex;flex-direction:column;gap:0.5rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="checkin_date">📅 Datum dolaska</label>
-            <input type="date" id="calcCheckin"
-              style="border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.05rem;color:#111;outline:none;width:100%"
-              onchange="onSearchChange()"/>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.5rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111" data-i18n="checkout_date">📅 Datum odlaska</label>
-            <input type="date" id="calcCheckout"
-              style="border:2px solid #111;border-radius:4px;padding:0.8rem 1rem;font-family:Arial,sans-serif;font-size:1.05rem;color:#111;outline:none;width:100%"
-              onchange="onSearchChange()"/>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem">
-          <div style="display:flex;flex-direction:column;gap:0.5rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111">👤 <span data-i18n="adults">Odrasli</span></label>
-            <div style="display:flex;align-items:center;gap:1rem">
-              <button type="button" id="btnAdultMinus"
-                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">−</button>
-              <span id="adultsVal" style="font-size:1.5rem;font-weight:bold;color:#111;min-width:36px;text-align:center">2</span>
-              <button type="button" id="btnAdultPlus"
-                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">+</button>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.5rem">
-            <label style="font-size:1rem;font-weight:bold;color:#111">👶 <span data-i18n="children">Djeca</span></label>
-            <div style="display:flex;align-items:center;gap:1rem">
-              <button type="button" id="btnChildMinus"
-                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">−</button>
-              <span id="childrenVal" style="font-size:1.5rem;font-weight:bold;color:#111;min-width:36px;text-align:center">0</span>
-              <button type="button" id="btnChildPlus"
-                style="width:48px;height:48px;background:#111;color:#fff;border:none;font-size:1.6rem;font-weight:bold;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">+</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="nightsBadge" style="display:none;background:#2a6b7c;color:#fff;border-radius:4px;padding:0.5rem 1.2rem;font-weight:bold;font-size:1rem;margin-top:0.5rem;display:inline-block"></div>
-        <p style="font-size:0.85rem;color:#555;margin-top:0.8rem">✓ Djeca do 3 godine besplatno i ne računaju se u kapacitet sobe</p>
+<section class="intro" id="o-vili">
+  <div class="wrap intro-grid">
+    <div class="intro-text">
+      <div class="sec-head" style="margin-bottom:2rem">
+        <span class="eyebrow" data-i18n="about_eyebrow">Dobrodošli</span>
+        <h2 data-i18n="about_title">Mir, more i <em>mediteranski ugođaj</em></h2>
       </div>
-
-      <!-- Price results -->
-      <div id="priceResults" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem;margin-top:1.5rem"></div>
+      <p data-i18n="about_p1">Smještena u mirnom dijelu Vodica, <strong>Villa Helena</strong> nudi smještaj s pogledom na more, besplatnim Wi-Fijem i besplatnim privatnim parkingom. Uz bazen s pogledom, vila pruža terasu i sunčalište svim gostima.</p>
+      <p data-i18n="about_p2">Sve jedinice opremljene su klima uređajem, televizorom s ravnim ekranom i satelitskim programima, hladnjakom, kuhalom za vodu i privatnom kupaonicom. Apartmani dodatno imaju potpuno opremljenu kuhinju s perilicom posuđa, mikrovalnom pećnicom i tosterom.</p>
+      <p data-i18n="about_p3">Gosti se mogu opustiti u vrtu, a roštilj u dvorištu slobodno je na raspolaganju. Plava plaža udaljena je samo 1,4 km, a centar Vodica desetak minuta hoda.</p>
     </div>
-
-    <!-- ═══ KORAK 2: KONTAKT FORMA ═══ -->
-    <div id="step2" style="display:none">
-
-      <!-- Summary bar -->
-      <div style="background:#111;color:#fff;border-radius:6px;padding:1.2rem 1.5rem;margin-top:1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem">
-        <div>
-          <div id="bsbRoom" style="font-size:1.2rem;font-weight:bold"></div>
-          <div id="bsbDetail" style="font-size:0.9rem;opacity:0.75;margin-top:0.2rem"></div>
-        </div>
-        <div id="bsbPrice" style="font-size:1.4rem;font-weight:bold;color:#4ecf8a"></div>
-      </div>
-
-      <!-- Contact form -->
-      <div style="background:#fff;border:2px solid #111;border-radius:6px;padding:2rem">
-        <div style="font-size:1.2rem;font-weight:bold;color:#111;margin-bottom:1.5rem" data-i18n="your_details">Vaši kontakt podaci</div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-          <div class="fg"><label data-i18n="first_name">Ime</label><input type="text" id="fFN" autocomplete="given-name"/></div>
-          <div class="fg"><label data-i18n="last_name">Prezime</label><input type="text" id="fLN" autocomplete="family-name"/></div>
-        </div>
-        <div class="fg"><label>Email</label><input type="email" id="fEM" autocomplete="email"/></div>
-        <div class="fg"><label data-i18n="phone">Telefon</label><input type="tel" id="fPH" autocomplete="tel"/></div>
-        <div class="fg"><label data-i18n="country">Država</label><input type="text" id="fCO" autocomplete="country-name"/></div>
-
-        <!-- Dob djece -->
-        <div id="childAgesWrap" style="display:none;background:#f5f5f5;border:2px solid #ddd;border-radius:6px;padding:1.2rem;margin-bottom:1rem">
-          <div style="font-size:1rem;font-weight:bold;color:#111;margin-bottom:0.8rem" data-i18n="children_ages">Dob svakog djeteta (u godinama):</div>
-          <div id="childAgesInputs" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
-          <p style="font-size:0.85rem;color:#006600;font-weight:bold;margin-top:0.8rem">✓ Djeca do 3 godine ne plaćaju</p>
-        </div>
-
-        <div class="fg"><label data-i18n="note">Napomena / Posebni zahtjevi</label>
-          <textarea id="fNO" style="min-height:80px" placeholder="Posebni zahtjevi, pitanja..."></textarea>
-        </div>
-
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
-          <button type="button" onclick="goBackToSearch()"
-            style="background:#fff;color:#111;border:2px solid #111;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem 1.5rem;border-radius:4px;cursor:pointer">
-            ← <span data-i18n="wiz_back">Natrag</span>
-          </button>
-          <button type="button" onclick="submitBooking()" id="submitBtn"
-            style="flex:1;background:#111;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1.1rem;font-weight:bold;padding:1rem;border-radius:4px;transition:background 0.2s"
-            data-i18n="send_request">Pošalji zahtjev za rezervaciju</button>
-        </div>
-        <div class="notice success" id="successNotice"></div>
-        <div class="notice error" id="errorNotice"></div>
-        <p style="font-size:0.85rem;color:#555;margin-top:1rem" data-i18n="book_note">Nakon slanja zahtjeva, kontaktirat ćemo vas za potvrdu u najkraćem roku.</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- KONTAKT -->
-<section id="kontakt">
-  <div class="container">
-    <p class="sec-label" data-i18n="contact_label">Kontakt</p>
-    <h2 class="sec-title" data-i18n="contact_title">Javite nam se</h2>
-    <div class="contact-cards">
-      <a href="tel:+385958600340" class="contact-card"><div class="cc-icon">📞</div><div><div class="cc-strong">+385 95 8600 340</div><div class="cc-sub" data-i18n="contact_tel">Telefon i WhatsApp</div></div></a>
-      <a href="mailto:villahelena.cro@gmail.com" class="contact-card"><div class="cc-icon">✉️</div><div><div class="cc-strong">villahelena.cro@gmail.com</div><div class="cc-sub" data-i18n="contact_email">Email upiti i rezervacije</div></div></a>
-      <div class="contact-card"><div class="cc-icon">📍</div><div><div class="cc-strong">Vodice, Hrvatska</div><div class="cc-sub">Dalmacija · kraj Šibenika</div></div></div>
+    <div class="intro-figure">
+      <div class="ph-note"><span class="ph-icon">📷</span><span data-i18n="photo_villa">Fotografija vile i bazena</span><div class="ph-name">slike/vila-1.jpg</div></div>
     </div>
   </div>
 </section>
 
-<!-- ADMIN -->
-<div class="admin-section">
-  <div class="container">
-    <button class="admin-toggle" onclick="toggleAdmin()">🔒 <span data-i18n="admin_view">Pregled rezervacija</span></button>
-    <div class="admin-panel" id="adminPanel">
-      <div class="export-btns">
-        <button class="export-btn csv" onclick="exportCSV()">↙ Export CSV</button>
-        <button class="export-btn xl" onclick="exportExcel()">↙ Export Excel</button>
-      </div>
-      <div class="tbl-wrap"><div id="adminTableWrap"></div></div>
+<section class="amenities" id="pogodnosti">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" data-i18n="am_eyebrow">Što vas čeka</span>
+      <h2 data-i18n="am_title">Sve za <em>opušten odmor</em></h2>
     </div>
+    <div class="am-grid" id="amGrid"></div>
+    <p class="am-note" data-i18n="am_note">* Potpuno opremljena kuhinja dostupna je u apartmanima C2 i B2.</p>
+  </div>
+</section>
+
+<section class="units" id="jedinice">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" data-i18n="units_eyebrow">Naš smještaj</span>
+      <h2 data-i18n="units_title">Četiri jedinice, <em>jedan savršen odmor</em></h2>
+      <p data-i18n="units_desc">Kliknite na jedinicu za više detalja i fotografije.</p>
+    </div>
+    <div class="units-grid" id="unitsGrid"></div>
+  </div>
+</section>
+
+<section class="location" id="lokacija">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow" data-i18n="loc_eyebrow">Gdje se nalazimo</span>
+      <h2 data-i18n="loc_title">Vodice, <em>srce Dalmacije</em></h2>
+      <p data-i18n="loc_desc">Mirna zona, a sve nadohvat ruke — plaža, centar i ljepote šibenskog zaljeva.</p>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-list" id="locList"></div>
+      <div class="loc-map">
+        <div class="pin">📍</div>
+        <div class="place">Villa Helena</div>
+        <div class="sub">Vodice · Dalmacija · Hrvatska</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="kontakt">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" data-i18n="contact_eyebrow">Javite nam se</span>
+      <h2 data-i18n="contact_title">Rezervirajte svoj <em>termin</em></h2>
+      <p data-i18n="contact_desc">Za upite o dostupnosti i rezervacije slobodno nas kontaktirajte — odgovaramo brzo.</p>
+    </div>
+    <div class="contact-grid">
+      <a href="tel:+385958600340" class="contact-card">
+        <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <h4 data-i18n="contact_phone">Telefon i WhatsApp</h4>
+        <a href="tel:+385958600340">+385 95 8600 340</a>
+      </a>
+      <a href="mailto:villahelena.cro@gmail.com" class="contact-card">
+        <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></div>
+        <h4 data-i18n="contact_email">Email</h4>
+        <a href="mailto:villahelena.cro@gmail.com">villahelena.cro@gmail.com</a>
+      </a>
+      <div class="contact-card">
+        <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <h4 data-i18n="contact_addr">Adresa</h4>
+        <span>Vodice, Hrvatska</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-brand">Villa <span>Helena</span></div>
+  <div class="foot-sub" data-i18n="foot_sub">Apartmani i sobe · Vodice, Dalmacija</div>
+  <div class="foot-social">
+    <a href="https://wa.me/385958600340" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2"/></svg></a>
+    <a href="https://www.facebook.com/villahelena.vodice" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7v-3.5h3.1V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.2h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12"/></svg></a>
+    <a href="https://www.instagram.com/villahelena.vodice" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+  </div>
+  <div class="foot-copy">© 2025 Villa Helena · Vodice, Hrvatska · <span data-i18n="foot_rights">Sva prava pridržana</span></div>
+</footer>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">×</button>
+    <div class="gallery">
+      <div class="gallery-main" id="galleryMain"></div>
+      <div class="gallery-thumbs" id="galleryThumbs"></div>
+    </div>
+    <div class="modal-info" id="modalInfo"></div>
   </div>
 </div>
 
-<footer>
-  <p><strong>Villa Helena</strong></p>
-  <p>Vodice, Hrvatska · Dalmacija</p>
-  <p style="margin-top:0.5rem"><a href="tel:+385958600340">+385 95 8600 340</a> · <a href="mailto:villahelena.cro@gmail.com">villahelena.cro@gmail.com</a></p>
-  <p style="margin-top:1rem;font-size:0.85rem;opacity:0.7">© 2025 Villa Helena. Sva prava pridržana.</p>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ══════════════════════════════════════════
-//  CONFIG – zamijeni token u settings.js
-// ══════════════════════════════════════════
-// Token se čita iz localStorage – postavi ga jednom u Admin panelu (Postavke)
-// i automatski vrijedi i za index stranicu jer su na istoj domeni.
-let GH_TOKEN = localStorage.getItem('vh_gh_token') || '';
-const GH_REPO = 'mlleetrangere-bot/VH';
-const GH_FILE = 'rezervacije.json';
-let ghFileSha = null;
+const UNITS=[
+  {id:'C2',type:'apartman',capacity:4,price:130,photos:5,
+   name:{hr:'Apartman C2',en:'Apartment C2',de:'Apartment C2'},
+   view:{hr:'Pogled na more',en:'Sea view',de:'Meerblick'},
+   desc:{hr:'Prostran apartman za do 4 osobe s jednom spavaćom sobom i sofom na razvlačenje u dnevnom boravku. Terasa s pogledom na more idealno je mjesto za jutarnju kavu uz zvuk mora.',en:'Spacious apartment for up to 4 guests with one bedroom and a sofa bed in the living room. The sea-view terrace is the perfect spot for morning coffee.',de:'Geräumiges Apartment für bis zu 4 Gäste mit einem Schlafzimmer und Schlafsofa im Wohnzimmer. Die Terrasse mit Meerblick ist ideal für den Morgenkaffee.'},
+   feats:{hr:['1 spavaća soba','Sofa na razvlačenje','Terasa s pogledom na more','Opremljena kuhinja','Privatna kupaonica','Klima uređaj'],en:['1 bedroom','Sofa bed','Sea-view terrace','Equipped kitchen','Private bathroom','Air conditioning'],de:['1 Schlafzimmer','Schlafsofa','Terrasse mit Meerblick','Ausgestattete Küche','Eigenes Bad','Klimaanlage']}},
+  {id:'B2',type:'apartman',capacity:5,price:150,photos:5,
+   name:{hr:'Apartman B2',en:'Apartment B2',de:'Apartment B2'},
+   view:{hr:'Pogled na bazen',en:'Pool view',de:'Poolblick'},
+   desc:{hr:'Najveći apartman, za do 5 osoba. Jedna spavaća soba te dnevni boravak s dodatnim krevetom i sofom na razvlačenje. Terasa gleda na bazen — savršeno za obitelji.',en:'Our largest apartment, for up to 5 guests. One bedroom plus a living room with an extra bed and sofa bed. The terrace overlooks the pool — perfect for families.',de:'Unser größtes Apartment für bis zu 5 Gäste. Ein Schlafzimmer plus Wohnzimmer mit Zusatzbett und Schlafsofa. Die Terrasse blickt auf den Pool — ideal für Familien.'},
+   feats:{hr:['1 spavaća soba','Krevet + sofa u dnevnom','Terasa s pogledom na bazen','Opremljena kuhinja','Privatna kupaonica','Klima uređaj'],en:['1 bedroom','Bed + sofa in living room','Pool-view terrace','Equipped kitchen','Private bathroom','Air conditioning'],de:['1 Schlafzimmer','Bett + Sofa im Wohnzimmer','Terrasse mit Poolblick','Ausgestattete Küche','Eigenes Bad','Klimaanlage']}},
+  {id:'C1',type:'soba',capacity:2,price:90,photos:4,
+   name:{hr:'Soba C1',en:'Room C1',de:'Zimmer C1'},
+   view:{hr:'Pogled na grad',en:'City view',de:'Stadtblick'},
+   desc:{hr:'Udobna dvokrevetna soba za 2 osobe s bračnim krevetom i privatnom kupaonicom. Vlastita terasa s pogledom na grad idealna je za parove.',en:'Comfortable double room for 2 guests with a double bed and private bathroom. Private city-view terrace, ideal for couples.',de:'Komfortables Doppelzimmer für 2 Gäste mit Doppelbett und eigenem Bad. Private Terrasse mit Stadtblick, ideal für Paare.'},
+   feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad','Klima uređaj','Hladnjak i kuhalo','Besplatan Wi-Fi'],en:['Double bed','Private bathroom','City-view terrace','Air conditioning','Fridge & kettle','Free Wi-Fi'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick','Klimaanlage','Kühlschrank & Wasserkocher','Kostenloses WLAN']}},
+  {id:'A1',type:'soba',capacity:2,price:90,photos:4,
+   name:{hr:'Soba A1',en:'Room A1',de:'Zimmer A1'},
+   view:{hr:'Pogled na grad',en:'City view',de:'Stadtblick'},
+   desc:{hr:'Svijetla dvokrevetna soba za 2 osobe s bračnim krevetom, privatnom kupaonicom i vlastitom terasom s pogledom na grad. Mirno utočište nakon dana na plaži.',en:'Bright double room for 2 guests with a double bed, private bathroom and private city-view terrace. A quiet retreat after a beach day.',de:'Helles Doppelzimmer für 2 Gäste mit Doppelbett, eigenem Bad und privater Terrasse mit Stadtblick. Ruhiger Rückzugsort nach einem Strandtag.'},
+   feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad','Klima uređaj','Hladnjak i kuhalo','Besplatan Wi-Fi'],en:['Double bed','Private bathroom','City-view terrace','Air conditioning','Fridge & kettle','Free Wi-Fi'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick','Klimaanlage','Kühlschrank & Wasserkocher','Kostenloses WLAN']}},
+];
 
-// ══════════════════════════════════════════
-//  GITHUB API
-// ══════════════════════════════════════════
-async function ghRead(){
-  if(!GH_TOKEN) return JSON.parse(localStorage.getItem('vh_bookings')||'[]');
-  try{
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`,{
-      headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json'}
-    });
-    if(res.status===404){ghFileSha=null;return[];}
-    const data = await res.json();
-    ghFileSha = data.sha;
-    return JSON.parse(atob(data.content.replace(/\n/g,'')));
-  }catch(e){return JSON.parse(localStorage.getItem('vh_bookings')||'[]');}
-}
-
-async function ghWrite(bookings){
-  if(!GH_TOKEN){ localStorage.setItem('vh_bookings',JSON.stringify(bookings)); return; }
-  try{
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(bookings,null,2))));
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`,{
-      method:'PUT',
-      headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify({message:`Rezervacija ${cetNow()}`,content,...(ghFileSha?{sha:ghFileSha}:{})})
-    });
-    const data = await res.json();
-    if(data.content) ghFileSha = data.content.sha;
-    localStorage.setItem('vh_bookings',JSON.stringify(bookings));
-    showGhStatus('✓ Rezervacija snimljena');
-  }catch(e){ localStorage.setItem('vh_bookings',JSON.stringify(bookings)); }
-}
-
-let ALL_BOOKINGS = [];
-function getBookings(){ return ALL_BOOKINGS; }
-async function saveBookings(b){ ALL_BOOKINGS=b; await ghWrite(b); }
-
-function showGhStatus(msg){
-  const el=document.getElementById('ghStatus');
-  el.textContent=msg; el.style.display='block'; el.style.opacity='1';
-  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.style.display='none',500); },3000);
-}
-function showGhError(msg){
-  const el=document.getElementById('ghError');
-  el.textContent=msg; el.style.display='block';
-  setTimeout(()=>el.style.display='none',6000);
-}
-
-// ══════════════════════════════════════════
-//  CET TIMEZONE
-// ══════════════════════════════════════════
-function cetNow(){
-  return new Date().toLocaleString('hr-HR',{timeZone:'Europe/Zagreb',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-}
-function cetIso(){
-  const now = new Date();
-  const cet = new Date(now.toLocaleString('en-US',{timeZone:'Europe/Zagreb'}));
-  return cet.toISOString();
-}
-
-// ══════════════════════════════════════════
-//  PRICES (učitava se iz localStorage - admin ih postavlja)
-// ══════════════════════════════════════════
-function getPrices(){
-  try{ return JSON.parse(localStorage.getItem('vh_prices')||'null') || DEFAULT_PRICES; }catch(e){ return DEFAULT_PRICES; }
-}
-
-const DEFAULT_PRICES = {
-  C2:{ base:2, offseason:110, season:130, extraPerson:15 },
-  B2:{ base:2, offseason:130, season:150, extraPerson:15 },
-  C1:{ base:2, offseason:70,  season:90,  extraPerson:10 },
-  A1:{ base:2, offseason:70,  season:90,  extraPerson:10 },
+const ICONS={
+  pool:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 16c1.5 0 1.5 1.5 3 1.5s1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5"/><path d="M2 20c1.5 0 1.5 1.5 3 1.5s1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5"/><path d="M8 14V5a2 2 0 0 1 4 0M16 14V5a2 2 0 0 0-4 0"/></svg>',
+  terrace:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>',
+  ac:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M2 12h20M5 5l3 3M19 5l-3 3M5 19l3-3M19 19l-3-3"/></svg>',
+  wifi:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>',
+  bath:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12V5a2 2 0 0 1 2-2 2 2 0 0 1 2 2M2 12h20v3a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4z"/></svg>',
+  parking:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>',
+  bbq:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 8h14l-1.5 7a3 3 0 0 1-3 2.5h-5A3 3 0 0 1 6.5 15zM9 19l-1 3M15 19l1 3M10 4s-.5 1 0 2M14 4s-.5 1 0 2"/></svg>',
+  kitchen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M8 6h.01M8 13v4"/></svg>',
+  sea:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 18c1.5 0 1.5 1.5 3 1.5s1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5"/><circle cx="17" cy="7" r="3"/></svg>',
+  beach:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22V8M12 8a6 6 0 0 1 9 2M12 8a6 6 0 0 0-9 2M3 22h18"/></svg>',
+  town:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 21V7l5-4v18M19 21V11l-9-4M9 9v.01M9 12v.01M9 15v.01"/></svg>',
+  car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 17h14M6 17l-1-5 2-5h10l2 5-1 5M7 17v2M17 17v2M7 12h10"/></svg>'
 };
 
-function isSeason(dateStr){
-  const m = new Date(dateStr).getMonth()+1; // 1-12
-  return m===7||m===8; // srpanj i kolovoz
-}
+const AMENITIES={
+  hr:[{i:'pool',t:'Vanjski bazen',d:'Bazen i prostrano sunčalište za sve goste'},{i:'terrace',t:'Privatna terasa',d:'Vlastiti vanjski prostor uz svaku jedinicu'},{i:'ac',t:'Klima uređaj',d:'Ugodna temperatura tijekom cijelog boravka'},{i:'wifi',t:'Besplatan Wi-Fi',d:'Brz internet u svim prostorima'},{i:'bath',t:'Privatna kupaonica',d:'Vlastita kupaonica s tušem i sušilom'},{i:'parking',t:'Privatni parking',d:'Besplatno parkiralište bez rezervacije'},{i:'bbq',t:'Roštilj u dvorištu',d:'Slobodno na raspolaganju gostima'},{i:'kitchen',t:'Opremljena kuhinja*',d:'Perilica suđa, mikrovalna, hladnjak'}],
+  en:[{i:'pool',t:'Outdoor pool',d:'Swimming pool and sun deck for all guests'},{i:'terrace',t:'Private terrace',d:'Your own outdoor space with each unit'},{i:'ac',t:'Air conditioning',d:'Comfortable temperature throughout your stay'},{i:'wifi',t:'Free Wi-Fi',d:'Fast internet in all areas'},{i:'bath',t:'Private bathroom',d:'En-suite bathroom with shower and hairdryer'},{i:'parking',t:'Free parking',d:'Free private parking, no reservation needed'},{i:'bbq',t:'BBQ in the garden',d:'Freely available to all guests'},{i:'kitchen',t:'Equipped kitchen*',d:'Dishwasher, microwave, fridge'}],
+  de:[{i:'pool',t:'Außenpool',d:'Pool und Sonnendeck für alle Gäste'},{i:'terrace',t:'Private Terrasse',d:'Eigener Außenbereich bei jeder Einheit'},{i:'ac',t:'Klimaanlage',d:'Angenehme Temperatur während des Aufenthalts'},{i:'wifi',t:'Kostenloses WLAN',d:'Schnelles Internet in allen Bereichen'},{i:'bath',t:'Eigenes Bad',d:'Eigenes Bad mit Dusche und Föhn'},{i:'parking',t:'Kostenlos Parken',d:'Privatparkplatz, keine Reservierung nötig'},{i:'bbq',t:'Grill im Garten',d:'Frei verfügbar für alle Gäste'},{i:'kitchen',t:'Ausgestattete Küche*',d:'Geschirrspüler, Mikrowelle, Kühlschrank'}]
+};
 
-function calcNightPrice(roomId, dateStr, extraAdults){
-  const p = getPrices();
-  const rp = p[roomId] || DEFAULT_PRICES[roomId];
-  const base = isSeason(dateStr) ? rp.season : rp.offseason;
-  return base + (extraAdults * (rp.extraPerson||0));
-}
+const LOCATION={
+  hr:[{i:'beach',t:'Plava plaža — 1,4 km',d:'Najbliža plaža, lako pješke ili autom'},{i:'town',t:'Centar Vodica — 10 min',d:'Restorani, kafići i trgovine nadohvat ruke'},{i:'sea',t:'More i zaljev',d:'Vožnja brodom, ronjenje i jedrenje u blizini'},{i:'car',t:'Zračna luka Zadar — 63 km',d:'Najbliža zračna luka, oko sat vremena vožnje'}],
+  en:[{i:'beach',t:'Plava Beach — 1.4 km',d:'Nearest beach, easy walk or short drive'},{i:'town',t:'Vodice centre — 10 min',d:'Restaurants, cafés and shops close by'},{i:'sea',t:'Sea & bay',d:'Boat trips, diving and sailing nearby'},{i:'car',t:'Zadar Airport — 63 km',d:'Nearest airport, about an hour by car'}],
+  de:[{i:'beach',t:'Plava-Strand — 1,4 km',d:'Nächster Strand, zu Fuß oder kurze Fahrt'},{i:'town',t:'Zentrum Vodice — 10 Min',d:'Restaurants, Cafés und Geschäfte in der Nähe'},{i:'sea',t:'Meer & Bucht',d:'Bootsausflüge, Tauchen und Segeln in der Nähe'},{i:'car',t:'Flughafen Zadar — 63 km',d:'Nächster Flughafen, ca. eine Stunde mit dem Auto'}]
+};
 
-function calcTotal(roomId, checkin, checkout, adults){
-  const prices = getPrices();
-  const rp = prices[roomId] || DEFAULT_PRICES[roomId];
-  const extra = Math.max(0, adults - rp.base);
-  let total = 0, nights = 0;
-  let seasonNights = 0, offNights = 0;
-  let d = new Date(checkin);
-  const end = new Date(checkout);
-  while(d < end){
-    const ds = d.toISOString().split('T')[0];
-    const nightly = isSeason(ds) ? rp.season : rp.offseason;
-    total += nightly + extra*(rp.extraPerson||0);
-    if(isSeason(ds)) seasonNights++; else offNights++;
-    nights++;
-    d.setDate(d.getDate()+1);
-  }
-  return {total, nights, seasonNights, offNights, extra, rp};
-}
-
-// ══════════════════════════════════════════
-//  TRANSLATIONS
-// ══════════════════════════════════════════
 const T={
-  hr:{
-    nav_am:"Sadržaji",nav_rooms:"Smještaji",nav_prices:"Cijene",nav_loc:"Lokacija",nav_book:"Rezervacija",nav_contact:"Kontakt",
-    hero_sub:"Apartmani i sobe u Vodicama, Dalmacija",
-    b_pool:"Vanjski bazen",b_quiet:"Mirna lokacija",b_park:"Privatni parking",b_grill:"Roštilj",
-    cta_prices:"Provjeri cijene",cta_book:"Rezerviraj",
-    am_label:"Što nudimo",am_title:"Sve za savršen odmor",
-    am1:"Vanjski bazen i sunčalište",am2:"Privatna terasa",am3:"Klima uređaj",am4:"Besplatan Wi-Fi",
-    am5:"Vlastita kupaonica",am6:"Privatni parking",am7:"Roštilj u dvorištu",am8:"Opremljena kuhinja*",
-    am_note:"* Opremljena kuhinja u apartmanima.",
-    rooms_label:"Dostupne jedinice",rooms_title:"Odaberite smještaj",
-    prices_label:"Transparentne cijene",prices_title:"Izračunaj svoju cijenu",
-    prices_desc:"Unesite broj gostiju i datume – odmah vidite točnu cijenu.",
-    who_coming:"Tko dolazi?",
-    adults:"Odrasli",adults_sub:"18+ godina",
-    children:"Djeca",children_sub:"Do 3 god. besplatno",
-    checkin_date:"Datum dolaska",checkout_date:"Datum odlaska",optional:"Za točan izračun",
-    children_ages:"Dob djece (u godinama):",
-    age_note:"* Djeca do 3 godine ne računaju se u kapacitet.",
-    price_note:"* Cijena je bazirana na 2 odrasle osobe. Djeca do 3 godine ne plaćaju.",
-    book_label:"Online rezervacija",book_title:"Rezervirajte smještaj",
-    book_desc:"Odaberite sobu, provjerite dostupnost i pošaljite zahtjev.",
-    select_dates:"Odaberite datume",leg_free:"Slobodno",leg_booked:"Rezervirano",leg_sel:"Odabrano",
-    your_details:"Vaši podaci",checkin:"Dolazak",checkout:"Odlazak",nights:"Noći",total:"Ukupno",
-    first_name:"Ime",last_name:"Prezime",phone:"Telefon",guests:"Odrasli",country:"Država",note:"Napomena",
-    send_request:"Pošalji zahtjev za rezervaciju",
-    contact_label:"Kontakt",contact_title:"Javite nam se",
-    contact_tel:"Telefon i WhatsApp",contact_email:"Email upiti",
-    admin_view:"Pregled rezervacija (vlasnik)",
-    cal_inst:"Kliknite datum dolaska, zatim datum odlaska.",
-    pick_dates:"Odaberite datume dolaska i odlaska.",
-    fill_all:"Ispunite sva obavezna polja.",
-    conflict:"Odabrani period nije dostupan.",
-    success_msg:"✓ Zahtjev primljen! Kontaktirat ćemo vas uskoro.",
-    pending:"Na čekanju",confirmed:"Potvrđeno",cancelled:"Otkazano",
-    confirm_action:"Potvrdi",cancel_action:"Otkaži",
-    apt:"Apartman",room:"Soba",to:"do",persons:"osoba",night:"noć",nights:"noći",details:"Detalji",
-    wiz_dates_title:"Kada planirate doći?",wiz_next:"Dalje: Odaberi goste →",wiz_back:"Natrag",
-    wiz_see_prices:"Prikaži cijene →",per_night_avg:"Prosječna cijena po noći:",
-    book_go_calc:"Prvo odaberite sobu u kalkulatoru iznad",book_note:"Nakon slanja zahtjeva, kontaktirat ćemo vas za potvrdu.",
-    select_room:"Odaberi sobu",per_night:"po noći",
-    season_price:"Sezona (VII-VIII)",offseason_price:"Van sezone",
-    extra_person:"Po dodatnoj osobi",child_free:"besplatno",
-    unavailable:"Nije dostupno",book_this:"Rezerviraj ovu sobu",
-    nights_season:"Noći (sezona)",nights_offseason:"Noći (van sezone)",
-    extra_adults:"Dodatne odrasle osobe",
-    months:["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"],
-    days:["Po","Ut","Sr","Če","Pe","Su","Ne"],
-  },
-  en:{
-    nav_am:"Amenities",nav_rooms:"Rooms",nav_prices:"Prices",nav_loc:"Location",nav_book:"Book",nav_contact:"Contact",
-    hero_sub:"Apartments and rooms in Vodice, Dalmatia",
-    b_pool:"Outdoor pool",b_quiet:"Quiet location",b_park:"Private parking",b_grill:"BBQ",
-    cta_prices:"Check prices",cta_book:"Book now",
-    am_label:"What we offer",am_title:"Everything for a perfect stay",
-    am1:"Outdoor pool & sun terrace",am2:"Private terrace",am3:"Air conditioning",am4:"Free Wi-Fi",
-    am5:"Private bathroom",am6:"Private parking",am7:"BBQ in the garden",am8:"Equipped kitchen*",
-    am_note:"* Equipped kitchen in apartments.",
-    rooms_label:"Available units",rooms_title:"Choose your accommodation",
-    prices_label:"Transparent pricing",prices_title:"Calculate your price",
-    prices_desc:"Enter number of guests and dates – see the exact price for each room.",
-    who_coming:"Who is coming?",
-    adults:"Adults",adults_sub:"18+ years",
-    children:"Children",children_sub:"Under 3 years free",
-    checkin_date:"Check-in date",checkout_date:"Check-out date",optional:"For exact calculation",
-    children_ages:"Children's ages (in years):",
-    age_note:"* Children under 3 do not count toward room capacity.",
-    price_note:"* Price is based on 2 adults. Children under 3 are free.",
-    book_label:"Online booking",book_title:"Book your stay",
-    book_desc:"Select a room, check availability and send your request.",
-    select_dates:"Select dates",leg_free:"Available",leg_booked:"Booked",leg_sel:"Selected",
-    your_details:"Your details",checkin:"Check-in",checkout:"Check-out",nights:"Nights",total:"Total",
-    first_name:"First name",last_name:"Last name",phone:"Phone",guests:"Adults",country:"Country",note:"Note",
-    send_request:"Send reservation request",
-    contact_label:"Contact",contact_title:"Get in touch",
-    contact_tel:"Phone & WhatsApp",contact_email:"Email enquiries",
-    admin_view:"Reservations (owner)",
-    cal_inst:"Click check-in date, then check-out date.",
-    pick_dates:"Please select check-in and check-out dates.",
-    fill_all:"Please fill in all required fields.",
-    conflict:"Selected period is not available.",
-    success_msg:"✓ Request received! We will contact you shortly.",
-    pending:"Pending",confirmed:"Confirmed",cancelled:"Cancelled",
-    confirm_action:"Confirm",cancel_action:"Cancel",
-    apt:"Apartment",room:"Room",to:"up to",persons:"persons",night:"night",nights:"nights",details:"Details",
-    wiz_dates_title:"When are you planning to come?",wiz_next:"Next: Select guests →",wiz_back:"Back",
-    wiz_see_prices:"Show prices →",per_night_avg:"Average price per night:",
-    book_go_calc:"Please select a room in the price calculator above",book_note:"After submitting, we will contact you to confirm shortly.",
-    select_room:"Select room",per_night:"per night",
-    season_price:"Season (Jul-Aug)",offseason_price:"Off season",
-    extra_person:"Per extra person",child_free:"free",
-    unavailable:"Not available",book_this:"Book this room",
-    nights_season:"Nights (season)",nights_offseason:"Nights (off season)",
-    extra_adults:"Extra adults",
-    months:["January","February","March","April","May","June","July","August","September","October","November","December"],
-    days:["Mo","Tu","We","Th","Fr","Sa","Su"],
-  },
-  de:{
-    nav_am:"Ausstattung",nav_rooms:"Zimmer",nav_prices:"Preise",nav_loc:"Lage",nav_book:"Buchen",nav_contact:"Kontakt",
-    hero_sub:"Apartments und Zimmer in Vodice, Dalmatien",
-    b_pool:"Außenpool",b_quiet:"Ruhige Lage",b_park:"Privatparkplatz",b_grill:"Grill",
-    cta_prices:"Preise prüfen",cta_book:"Jetzt buchen",
-    am_label:"Unser Angebot",am_title:"Alles für den perfekten Urlaub",
-    am1:"Außenpool & Sonnenterrasse",am2:"Private Terrasse",am3:"Klimaanlage",am4:"Kostenloses WLAN",
-    am5:"Eigenes Badezimmer",am6:"Privatparkplatz",am7:"Grill im Garten",am8:"Ausgestattete Küche*",
-    am_note:"* Ausgestattete Küche in Apartments.",
-    rooms_label:"Verfügbare Einheiten",rooms_title:"Unterkunft wählen",
-    prices_label:"Transparente Preise",prices_title:"Preis berechnen",
-    prices_desc:"Gästeanzahl und Daten eingeben – sofort den genauen Preis sehen.",
-    who_coming:"Wer kommt?",
-    adults:"Erwachsene",adults_sub:"18+ Jahre",
-    children:"Kinder",children_sub:"Bis 3 Jahre kostenlos",
-    checkin_date:"Anreisedatum",checkout_date:"Abreisedatum",optional:"Für genaue Berechnung",
-    children_ages:"Alter der Kinder (in Jahren):",
-    age_note:"* Kinder unter 3 Jahren werden nicht zur Kapazität gezählt.",
-    price_note:"* Preis basiert auf 2 Erwachsenen. Kinder unter 3 Jahren sind kostenlos.",
-    book_label:"Online-Buchung",book_title:"Unterkunft buchen",
-    book_desc:"Zimmer auswählen, Verfügbarkeit prüfen und Anfrage senden.",
-    select_dates:"Datum auswählen",leg_free:"Verfügbar",leg_booked:"Gebucht",leg_sel:"Ausgewählt",
-    your_details:"Ihre Daten",checkin:"Anreise",checkout:"Abreise",nights:"Nächte",total:"Gesamt",
-    first_name:"Vorname",last_name:"Nachname",phone:"Telefon",guests:"Erwachsene",country:"Land",note:"Anmerkung",
-    send_request:"Buchungsanfrage senden",
-    contact_label:"Kontakt",contact_title:"Kontaktieren Sie uns",
-    contact_tel:"Telefon & WhatsApp",contact_email:"E-Mail-Anfragen",
-    admin_view:"Reservierungen (Eigentümer)",
-    cal_inst:"Klicken Sie auf Anreisedatum, dann Abreisedatum.",
-    pick_dates:"Bitte wählen Sie An- und Abreisedatum.",
-    fill_all:"Bitte füllen Sie alle Pflichtfelder aus.",
-    conflict:"Der gewählte Zeitraum ist nicht verfügbar.",
-    success_msg:"✓ Anfrage erhalten! Wir melden uns in Kürze.",
-    pending:"Ausstehend",confirmed:"Bestätigt",cancelled:"Storniert",
-    confirm_action:"Bestätigen",cancel_action:"Stornieren",
-    apt:"Apartment",room:"Zimmer",to:"bis zu",persons:"Personen",night:"Nacht",nights:"Nächte",details:"Details",
-    wiz_dates_title:"Wann planen Sie zu kommen?",wiz_next:"Weiter: Gäste auswählen →",wiz_back:"Zurück",
-    wiz_see_prices:"Preise anzeigen →",per_night_avg:"Durchschnittspreis pro Nacht:",
-    book_go_calc:"Bitte wählen Sie zuerst ein Zimmer im Preisrechner",book_note:"Nach Ihrer Anfrage melden wir uns zur Bestätigung.",
-    select_room:"Zimmer wählen",per_night:"pro Nacht",
-    season_price:"Saison (Jul-Aug)",offseason_price:"Nebensaison",
-    extra_person:"Pro Zusatzperson",child_free:"kostenlos",
-    unavailable:"Nicht verfügbar",book_this:"Dieses Zimmer buchen",
-    nights_season:"Nächte (Saison)",nights_offseason:"Nächte (Nebensaison)",
-    extra_adults:"Zusätzliche Erwachsene",
-    months:["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],
-    days:["Mo","Di","Mi","Do","Fr","Sa","So"],
-  }
+  hr:{nav_about:'O vili',nav_amenities:'Pogodnosti',nav_units:'Smještaj',nav_location:'Lokacija',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmacija · Hrvatska',hero_title:'Vaš ljetni<br><em>predah uz more</em>',hero_tag:'Moderno uređeni apartmani i sobe s vanjskim bazenom, u mirnom dijelu Vodica — savršeni za parove, obitelji i manje grupe.',hero_rating:'Booking.com · 47 recenzija',hero_cta1:'Pogledaj smještaj',hero_cta2:'Kontaktiraj nas',about_eyebrow:'Dobrodošli',about_title:'Mir, more i <em>mediteranski ugođaj</em>',about_p1:'Smještena u mirnom dijelu Vodica, <strong>Villa Helena</strong> nudi smještaj s pogledom na more, besplatnim Wi-Fijem i besplatnim privatnim parkingom. Uz bazen s pogledom, vila pruža terasu i sunčalište svim gostima.',about_p2:'Sve jedinice opremljene su klima uređajem, televizorom s ravnim ekranom i satelitskim programima, hladnjakom, kuhalom za vodu i privatnom kupaonicom. Apartmani dodatno imaju potpuno opremljenu kuhinju s perilicom posuđa, mikrovalnom pećnicom i tosterom.',about_p3:'Gosti se mogu opustiti u vrtu, a roštilj u dvorištu slobodno je na raspolaganju. Plava plaža udaljena je samo 1,4 km, a centar Vodica desetak minuta hoda.',photo_villa:'Fotografija vile i bazena',am_eyebrow:'Što vas čeka',am_title:'Sve za <em>opušten odmor</em>',am_note:'* Potpuno opremljena kuhinja dostupna je u apartmanima C2 i B2.',units_eyebrow:'Naš smještaj',units_title:'Četiri jedinice, <em>jedan savršen odmor</em>',units_desc:'Kliknite na jedinicu za više detalja i fotografije.',loc_eyebrow:'Gdje se nalazimo',loc_title:'Vodice, <em>srce Dalmacije</em>',loc_desc:'Mirna zona, a sve nadohvat ruke — plaža, centar i ljepote šibenskog zaljeva.',contact_eyebrow:'Javite nam se',contact_title:'Rezervirajte svoj <em>termin</em>',contact_desc:'Za upite o dostupnosti i rezervacije slobodno nas kontaktirajte — odgovaramo brzo.',contact_phone:'Telefon i WhatsApp',contact_email:'Email',contact_addr:'Adresa',foot_sub:'Apartmani i sobe · Vodice, Dalmacija',foot_rights:'Sva prava pridržana',u_guests:'osoba',u_night:'noć',u_more:'Detalji',m_photos:'Fotografije se dodaju uskoro',m_feats:'Što jedinica nudi',m_book:'Upit za rezervaciju',m_call:'Nazovi',u_to:'do'},
+  en:{nav_about:'About',nav_amenities:'Amenities',nav_units:'Rooms',nav_location:'Location',nav_contact:'Contact',hero_eyebrow:'Vodice · Dalmatia · Croatia',hero_title:'Your summer<br><em>escape by the sea</em>',hero_tag:'Modern apartments and rooms with an outdoor pool, in a quiet part of Vodice — perfect for couples, families and small groups.',hero_rating:'Booking.com · 47 reviews',hero_cta1:'View accommodation',hero_cta2:'Contact us',about_eyebrow:'Welcome',about_title:'Calm, sea and a <em>Mediterranean mood</em>',about_p1:'Set in a quiet part of Vodice, <strong>Villa Helena</strong> offers accommodation with sea views, free Wi-Fi and free private parking. With a pool view, the villa provides a terrace and sun deck for all guests.',about_p2:'All units have air conditioning, a flat-screen TV with satellite channels, a fridge, a kettle and a private bathroom. The apartments also feature a fully equipped kitchen with dishwasher, microwave and toaster.',about_p3:'Guests can relax in the garden, and the BBQ in the yard is freely available. Plava Beach is just 1.4 km away, and the centre of Vodice is about a ten-minute walk.',photo_villa:'Photo of the villa and pool',am_eyebrow:'What awaits you',am_title:'Everything for a <em>relaxed holiday</em>',am_note:'* A fully equipped kitchen is available in apartments C2 and B2.',units_eyebrow:'Our accommodation',units_title:'Four units, <em>one perfect holiday</em>',units_desc:'Click a unit for more details and photos.',loc_eyebrow:'Where we are',loc_title:'Vodice, <em>the heart of Dalmatia</em>',loc_desc:'A quiet zone, yet everything within reach — the beach, the centre and the beauty of the Šibenik bay.',contact_eyebrow:'Get in touch',contact_title:'Book your <em>dates</em>',contact_desc:'For availability and reservations, feel free to contact us — we reply quickly.',contact_phone:'Phone & WhatsApp',contact_email:'Email',contact_addr:'Address',foot_sub:'Apartments and rooms · Vodice, Dalmatia',foot_rights:'All rights reserved',u_guests:'guests',u_night:'night',u_more:'Details',m_photos:'Photos coming soon',m_feats:'What this unit offers',m_book:'Booking enquiry',m_call:'Call',u_to:'up to'},
+  de:{nav_about:'Über uns',nav_amenities:'Ausstattung',nav_units:'Zimmer',nav_location:'Lage',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmatien · Kroatien',hero_title:'Ihr Sommer<br><em>am Meer</em>',hero_tag:'Moderne Apartments und Zimmer mit Außenpool, im ruhigen Teil von Vodice — perfekt für Paare, Familien und kleine Gruppen.',hero_rating:'Booking.com · 47 Bewertungen',hero_cta1:'Unterkunft ansehen',hero_cta2:'Kontaktieren Sie uns',about_eyebrow:'Willkommen',about_title:'Ruhe, Meer und <em>mediterranes Flair</em>',about_p1:'Im ruhigen Teil von Vodice gelegen, bietet <strong>Villa Helena</strong> Unterkünfte mit Meerblick, kostenlosem WLAN und kostenlosem Privatparkplatz. Mit Poolblick bietet die Villa allen Gästen eine Terrasse und ein Sonnendeck.',about_p2:'Alle Einheiten verfügen über Klimaanlage, Flachbild-TV mit Satellitenkanälen, Kühlschrank, Wasserkocher und eigenes Bad. Die Apartments haben zusätzlich eine voll ausgestattete Küche mit Geschirrspüler, Mikrowelle und Toaster.',about_p3:'Gäste können sich im Garten entspannen, und der Grill im Hof steht frei zur Verfügung. Der Plava-Strand ist nur 1,4 km entfernt, das Zentrum von Vodice etwa zehn Gehminuten.',photo_villa:'Foto der Villa und des Pools',am_eyebrow:'Was Sie erwartet',am_title:'Alles für einen <em>entspannten Urlaub</em>',am_note:'* Eine voll ausgestattete Küche gibt es in den Apartments C2 und B2.',units_eyebrow:'Unsere Unterkunft',units_title:'Vier Einheiten, <em>ein perfekter Urlaub</em>',units_desc:'Klicken Sie auf eine Einheit für Details und Fotos.',loc_eyebrow:'Wo wir sind',loc_title:'Vodice, <em>das Herz Dalmatiens</em>',loc_desc:'Eine ruhige Zone, doch alles in Reichweite — der Strand, das Zentrum und die Schönheit der Bucht von Šibenik.',contact_eyebrow:'Kontakt',contact_title:'Buchen Sie Ihre <em>Termine</em>',contact_desc:'Für Verfügbarkeit und Reservierungen kontaktieren Sie uns gerne — wir antworten schnell.',contact_phone:'Telefon & WhatsApp',contact_email:'E-Mail',contact_addr:'Adresse',foot_sub:'Apartments und Zimmer · Vodice, Dalmatien',foot_rights:'Alle Rechte vorbehalten',u_guests:'Gäste',u_night:'Nacht',u_more:'Details',m_photos:'Fotos folgen in Kürze',m_feats:'Was diese Einheit bietet',m_book:'Buchungsanfrage',m_call:'Anrufen',u_to:'bis zu'}
 };
 
 let lang='hr';
-function t(k){return T[lang][k]||k}
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+function t(k){return T[lang][k]||k;}
+
+function renderAmenities(){
+  $('#amGrid').innerHTML=AMENITIES[lang].map(a=>`<div class="am-card"><div class="am-icon">${ICONS[a.i]}</div><h3>${a.t}</h3><p>${a.d}</p></div>`).join('');
+}
+function renderUnits(){
+  $('#unitsGrid').innerHTML=UNITS.map(u=>{
+    const typeTag=u.type==='apartman'?(lang==='hr'?'Apartman':lang==='de'?'Apartment':'Apartment'):(lang==='hr'?'Soba':lang==='de'?'Zimmer':'Room');
+    const feats=u.feats[lang].slice(0,3).map(f=>`<span class="unit-feat">${f}</span>`).join('');
+    return `<article class="unit-card" onclick="openModal('${u.id}')">
+      <div class="unit-photo"><span class="unit-badge">${u.id}</span><span class="unit-type-tag">${typeTag}</span><div class="ph-note"><span class="ph-icon">📷</span>${u.view[lang]}</div></div>
+      <div class="unit-body"><h3>${u.name[lang]}</h3>
+        <div class="unit-cap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="3"/><path d="M2 21v-1a6 6 0 0 1 12 0v1M16 3.5a3 3 0 0 1 0 6M22 21v-1a6 6 0 0 0-4-5.6"/></svg>${t('u_to')} ${u.capacity} ${t('u_guests')} · ${u.view[lang]}</div>
+        <div class="unit-feats">${feats}</div>
+        <div class="unit-foot"><div class="unit-price"><span class="amt">${u.price} €</span> <span class="per">/ ${t('u_night')}</span></div><span class="unit-more">${t('u_more')} →</span></div>
+      </div></article>`;
+  }).join('');
+}
+function renderLocation(){
+  $('#locList').innerHTML=LOCATION[lang].map(l=>`<div class="loc-item"><div class="l-icon">${ICONS[l.i]}</div><div><h4>${l.t}</h4><p>${l.d}</p></div></div>`).join('');
+}
+
+let activeUnit=null;
+function openModal(id){
+  const u=UNITS.find(x=>x.id===id);if(!u)return;activeUnit=u;
+  const typeTag=u.type==='apartman'?(lang==='hr'?'Apartman':lang==='de'?'Apartment':'Apartment'):(lang==='hr'?'Soba':lang==='de'?'Zimmer':'Room');
+  $('#galleryMain').innerHTML=`<div class="ph-note"><span class="ph-icon">📷</span><div>${t('m_photos')}</div><div class="ph-name">slike/${u.id.toLowerCase()}-1.jpg</div></div>`;
+  let thumbs='';
+  for(let i=1;i<=u.photos;i++){thumbs+=`<div class="gallery-thumb${i===1?' active':''}" onclick="setMainPhoto('${u.id}',${i},this)" title="slike/${u.id.toLowerCase()}-${i}.jpg">${i}</div>`;}
+  $('#galleryThumbs').innerHTML=thumbs;
+  const feats=u.feats[lang].map(f=>`<div class="modal-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${f}</div>`).join('');
+  $('#modalInfo').innerHTML=`<div class="modal-info-head"><div><div class="m-type">${typeTag} · ${u.view[lang]}</div><h2>${u.name[lang]}</h2><div class="m-cap">${t('u_to')} ${u.capacity} ${t('u_guests')}</div></div><div class="modal-price"><div class="amt">${u.price} €</div><div class="per">/ ${t('u_night')}</div></div></div><p class="modal-desc">${u.desc[lang]}</p><div class="modal-feats-title">${t('m_feats')}</div><div class="modal-feats">${feats}</div><div class="modal-actions"><a href="mailto:villahelena.cro@gmail.com?subject=${encodeURIComponent('Upit - '+u.name[lang])}" class="btn btn-dark">${t('m_book')}</a><a href="tel:+385958600340" class="btn btn-line">${t('m_call')}</a></div>`;
+  $('#modalBg').classList.add('open');document.body.style.overflow='hidden';
+}
+function setMainPhoto(id,n,el){
+  const u=UNITS.find(x=>x.id===id);
+  $('#galleryMain').innerHTML=`<div class="ph-note"><span class="ph-icon">📷</span><div>${t('m_photos')}</div><div class="ph-name">slike/${u.id.toLowerCase()}-${n}.jpg</div></div>`;
+  $$('.gallery-thumb').forEach(x=>x.classList.remove('active'));el.classList.add('active');
+}
+function closeModal(){$('#modalBg').classList.remove('open');document.body.style.overflow='';}
+$('#modalClose').addEventListener('click',closeModal);
+$('#modalBg').addEventListener('click',e=>{if(e.target===$('#modalBg'))closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
 function setLang(l){
-  lang=l;
-  document.documentElement.lang=l;
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
-  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k];});
-  renderRooms(); if(selCheckin&&selCheckout) calcPrices();
-  if(adminVisible) renderAdmin();
+  lang=l;document.documentElement.lang=l;
+  $$('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  $$('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k]!==undefined)el.innerHTML=T[lang][k];});
+  renderAmenities();renderUnits();renderLocation();
+  if($('#modalBg').classList.contains('open')&&activeUnit)openModal(activeUnit.id);
 }
-function scrollTo(id){ document.querySelector(id)?.scrollIntoView({behavior:'smooth'}); }
+$$('.lang-btn').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
 
-// ══════════════════════════════════════════
-//  ROOMS DATA
-// ══════════════════════════════════════════
-const ROOMS=[
-  {id:'C2',type:'apt',capacity:4,page:'soba-c2.html',
-    feats:{hr:['1 spavaća soba + sofa na razvlačenje','Terasa s pogledom na more','Opremljena kuhinja','Privatna kupaonica'],
-           en:['1 bedroom + sofa bed','Terrace with sea view','Equipped kitchen','Private bathroom'],
-           de:['1 Schlafzimmer + Schlafsofa','Terrasse mit Meerblick','Ausgestattete Küche','Eigenes Bad']}},
-  {id:'B2',type:'apt',capacity:5,page:'soba-b2.html',
-    feats:{hr:['1 spavaća soba + krevet u dnevnom','Sofa na razvlačenje','Terasa s pogledom na bazen','Opremljena kuhinja'],
-           en:['1 bedroom + bed in living room','Sofa bed','Terrace with pool view','Equipped kitchen'],
-           de:['1 Schlafzimmer + Bett im Wohnzimmer','Schlafsofa','Terrasse mit Poolblick','Küche']}},
-  {id:'C1',type:'room',capacity:2,page:'soba-c1.html',
-    feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad'],
-           en:['Double bed','Private bathroom','Terrace with city view'],
-           de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick']}},
-  {id:'A1',type:'room',capacity:2,page:'soba-a1.html',
-    feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad'],
-           en:['Double bed','Private bathroom','Terrace with city view'],
-           de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick']}},
-];
+window.addEventListener('scroll',()=>{$('#nav').classList.toggle('scrolled',window.scrollY>40);});
+$('#navToggle').addEventListener('click',()=>{$('#navLinks').classList.toggle('open');});
+$$('.nav-links a').forEach(a=>a.addEventListener('click',()=>$('#navLinks').classList.remove('open')));
 
-function renderRooms(){
-  const p = getPrices();
-  document.getElementById('roomsGrid').innerHTML=ROOMS.map(r=>{
-    const tl=r.type==='apt'?t('apt'):t('room');
-    const feats=(r.feats[lang]||r.feats.hr).map(f=>`<li>${f}</li>`).join('');
-    const rp=p[r.id]||DEFAULT_PRICES[r.id];
-    return `<div class="room-card" onclick="window.location='${r.page}'">
-      <div class="room-card-top">
-        <div class="room-type-lbl">${tl}</div>
-        <div class="room-id">${r.id}</div>
-        <div class="room-cap">${t('to')} ${r.capacity} ${t('persons')}</div>
-      </div>
-      <div class="room-card-body">
-        <ul class="room-feats">${feats}</ul>
-        <div class="room-price-row">
-          <div>
-            <div class="room-price">${rp.season} EUR</div>
-            <div class="room-price-detail">${t('per_night')} · ${t('season_price')}</div>
-            <div class="room-price-detail" style="color:#888">${rp.offseason} EUR ${t('offseason_price')}</div>
-          </div>
-          <button class="room-btn">${t('details')} →</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-
-// ══════════════════════════════════════════
-//  SEARCH STATE
-// ══════════════════════════════════════════
-let gAdults = 2, gChildren = 0;
-let selCheckin = '', selCheckout = '', selNights = 0;
-let selRoomId = null, selTotal = 0, selPerNight = 0;
-
-function onSearchChange(){
-  const ci = document.getElementById('calcCheckin').value;
-  const co = document.getElementById('calcCheckout').value;
-  const badge = document.getElementById('nightsBadge');
-  if(!badge) return;
-
-  if(ci && co && ci < co){
-    const n = Math.round((new Date(co)-new Date(ci))/86400000);
-    selNights = n;
-    badge.textContent = n + ' ' + (n===1?'noć':n<5?'noći':'noći');
-    badge.style.display = 'inline-block';
-    selCheckin = ci; selCheckout = co;
-    calcPrices();
-  } else {
-    badge.style.display = 'none';
-    const pr = document.getElementById('priceResults');
-    if(pr) pr.innerHTML = '';
-  }
-}
-
-// Buttons wired up in initGuestButtons() called from init()
-function initGuestButtons(){
-  document.getElementById('btnAdultMinus').addEventListener('click', function(){
-    gAdults = Math.max(1, gAdults-1);
-    document.getElementById('adultsVal').textContent = gAdults;
-    onSearchChange();
-  });
-  document.getElementById('btnAdultPlus').addEventListener('click', function(){
-    gAdults = Math.min(8, gAdults+1);
-    document.getElementById('adultsVal').textContent = gAdults;
-    onSearchChange();
-  });
-  document.getElementById('btnChildMinus').addEventListener('click', function(){
-    gChildren = Math.max(0, gChildren-1);
-    document.getElementById('childrenVal').textContent = gChildren;
-    onSearchChange();
-  });
-  document.getElementById('btnChildPlus').addEventListener('click', function(){
-    gChildren = Math.min(6, gChildren+1);
-    document.getElementById('childrenVal').textContent = gChildren;
-    onSearchChange();
-  });
-}
-
-// ══════════════════════════════════════════
-//  CALC PRICES
-// ══════════════════════════════════════════
-function calcPrices(){
-  const checkin = selCheckin;
-  const checkout = selCheckout;
-  const totalGuests = gAdults + gChildren; // for capacity check
-  const prices = getPrices();
-  const bks = getBookings().filter(b=>b.status!=='cancelled');
-
-  function isAvailable(roomId){
-    return !bks.some(b=>b.roomId===roomId&&!(checkout<=b.checkin||checkin>=b.checkout));
-  }
-
-  const container = document.getElementById('priceResults');
-  if(!container) return;
-
-  container.innerHTML = ROOMS.map(r=>{
-    const rp = prices[r.id]||DEFAULT_PRICES[r.id];
-    const avail = isAvailable(r.id);
-    const tl = r.type==='apt'?t('apt'):t('room');
-
-    // Capacity check – children count too (conservative)
-    if(totalGuests > r.capacity){
-      return '<div style="background:#f5f5f5;border:2px solid #ccc;border-radius:6px;padding:1.5rem;opacity:0.6">'
-        +'<div style="font-size:0.8rem;font-weight:bold;text-transform:uppercase;color:#888;margin-bottom:0.3rem">'+tl+'</div>'
-        +'<div style="font-size:1.5rem;font-weight:bold;color:#aaa;margin-bottom:0.5rem">'+r.id+'</div>'
-        +'<div style="font-size:0.9rem;color:#cc0000;font-weight:bold">Kapacitet: max '+r.capacity+' osoba</div>'
-        +'</div>';
-    }
-
-    const calc = calcTotal(r.id, checkin, checkout, gAdults);
-    const perNight = Math.round(calc.total / calc.nights);
-
-    if(!avail){
-      return '<div style="background:#f5f5f5;border:2px solid #ccc;border-radius:6px;padding:1.5rem;opacity:0.65">'
-        +'<div style="font-size:0.8rem;font-weight:bold;text-transform:uppercase;color:#888;margin-bottom:0.3rem">'+tl+'</div>'
-        +'<div style="font-size:1.5rem;font-weight:bold;color:#aaa;margin-bottom:0.5rem">'+r.id+'</div>'
-        +'<div style="font-size:0.9rem;color:#cc0000;font-weight:bold">⚠️ '+t('unavailable')+'</div>'
-        +'</div>';
-    }
-
-    return '<div style="background:#fff;border:3px solid #111;border-radius:6px;padding:1.5rem;cursor:pointer;transition:all 0.2s" '
-      +'onmouseover="this.style.borderColor='#2a6b7c';this.style.transform='translateY(-3px)'" '
-      +'onmouseout="this.style.borderColor='#111';this.style.transform='none'" '
-      +'onclick="selectRoom(''+r.id+'','+perNight+','+calc.total+')">'
-      +'<div style="font-size:0.8rem;font-weight:bold;text-transform:uppercase;color:#555;margin-bottom:0.3rem">'+tl+' · max '+r.capacity+' osoba</div>'
-      +'<div style="font-size:1.5rem;font-weight:bold;color:#111;margin-bottom:1rem">'+r.id+'</div>'
-      +'<div style="border-top:2px solid #111;padding-top:0.8rem;margin-bottom:0.5rem">'
-      +'<div style="font-size:0.85rem;color:#555;margin-bottom:0.2rem">'+t('per_night_avg')+'</div>'
-      +'<span style="font-size:1.8rem;font-weight:bold;color:#111">'+perNight+'</span>'
-      +'<span style="font-size:0.95rem;color:#555"> EUR / '+t('night')+'</span></div>'
-      +'<div style="background:#f5f5f5;border-radius:4px;padding:0.7rem 1rem;display:flex;justify-content:space-between;align-items:center">'
-      +'<span style="font-size:0.9rem;color:#555;font-weight:bold">'+calc.nights+' '+t('nights')+' ukupno:</span>'
-      +'<span style="font-size:1.3rem;font-weight:bold;color:#2a6b7c">'+calc.total+' EUR</span></div>'
-      +'<button style="width:100%;background:#2a6b7c;color:#fff;border:none;cursor:pointer;font-family:Arial,sans-serif;font-size:1rem;font-weight:bold;padding:0.9rem;border-radius:4px;margin-top:1rem">'+t('book_this')+' →</button>'
-      +'</div>';
-  }).join('');
-}
-
-function selectRoom(id, perNight, total){
-  selRoomId = id;
-  selPerNight = perNight;
-  selTotal = total;
-
-  const room = ROOMS.find(r=>r.id===id);
-  const tl = room.type==='apt'?t('apt'):t('room');
-
-  // Fill summary bar
-  document.getElementById('bsbRoom').textContent = tl+' '+id;
-  document.getElementById('bsbDetail').textContent =
-    fmt(new Date(selCheckin))+' – '+fmt(new Date(selCheckout))
-    +' · '+selNights+' '+t('nights')
-    +' · '+gAdults+' odrasli'+(gChildren>0?' + '+gChildren+' djece':'');
-  document.getElementById('bsbPrice').textContent = total+' EUR';
-
-  // Show child age inputs if needed
-  const ageWrap = document.getElementById('childAgesWrap');
-  const ageInputs = document.getElementById('childAgesInputs');
-  if(gChildren > 0){
-    ageWrap.style.display = 'block';
-    ageInputs.innerHTML = Array.from({length:gChildren},(_,i)=>{
-      const lbl = i+1+'. dijete';
-      return '<div style="display:flex;flex-direction:column;gap:0.3rem;align-items:center">'
-        +'<label style="font-size:0.85rem;font-weight:bold;color:#555">'+lbl+'</label>'
-        +'<input type="number" min="0" max="17" value="5" id="cAge'+i+'" '
-        +'style="width:80px;border:2px solid #111;border-radius:4px;padding:0.5rem;font-family:Arial,sans-serif;font-size:1.1rem;text-align:center;outline:none"/>'
-        +'<div id="cFree'+i+'" style="font-size:0.75rem;color:#006600;font-weight:bold;min-height:1rem"></div>'
-        +'</div>';
-    }).join('');
-    // Add live free badge
-    for(let i=0;i<gChildren;i++){
-      const inp = document.getElementById('cAge'+i);
-      if(inp){
-        const upd = () => {
-          const badge = document.getElementById('cFree'+i);
-          if(badge) badge.textContent = parseInt(inp.value)<3?'✓ besplatno':'';
-        };
-        inp.addEventListener('input', upd); upd();
-      }
-    }
-  } else {
-    ageWrap.style.display = 'none';
-  }
-
-  // Switch to step 2
-  document.getElementById('step1').style.display = 'none';
-  document.getElementById('step2').style.display = 'block';
-  document.getElementById('cijene').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function goBackToSearch(){
-  document.getElementById('step2').style.display = 'none';
-  document.getElementById('step1').style.display = 'block';
-  document.getElementById('cijene').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-
-let selectedRoom=ROOMS[0].id;
-
-// ══════════════════════════════════════════
-//  CALENDAR
-// ══════════════════════════════════════════
-let calYear,calMonth,selStart=null,selEnd=null,pickEnd=false;
-function initCal(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth()}
-initCal();
-
-function getBookedRanges(rid){return getBookings().filter(b=>b.roomId===rid&&b.status!=='cancelled').map(b=>({start:new Date(b.checkin),end:new Date(b.checkout)}))}
-function isDateBooked(date,ranges){return ranges.some(r=>date>=r.start&&date<r.end)}
-function isRangeBooked(s,e,rid){const r=getBookedRanges(rid);let d=new Date(s);while(d<e){if(isDateBooked(d,r))return true;d.setDate(d.getDate()+1)}return false}
-function fmt(d){return d.toLocaleDateString('hr-HR',{day:'2-digit',month:'2-digit',year:'numeric'})}
-
-function renderCalendar(){
-  document.getElementById('calMonthLbl').textContent=`${t('months')[calMonth]} ${calYear}`;
-  const grid=document.getElementById('calGrid');
-  grid.innerHTML='';
-  t('days').forEach(d=>{const e=document.createElement('div');e.className='cal-dn';e.textContent=d;grid.appendChild(e)});
-  const offset=(new Date(calYear,calMonth,1).getDay()+6)%7;
-  for(let i=0;i<offset;i++){const e=document.createElement('div');e.className='cal-d empty';grid.appendChild(e)}
-  const dim=new Date(calYear,calMonth+1,0).getDate();
-  const today=new Date();today.setHours(0,0,0,0);
-  const ranges=getBookedRanges(selectedRoom);
-  for(let d=1;d<=dim;d++){
-    const date=new Date(calYear,calMonth,d);
-    const el=document.createElement('div');
-    el.textContent=d; el.className='cal-d';
-    if(date.getTime()===today.getTime()) el.classList.add('today');
-    if(date<today||isDateBooked(date,ranges)){el.classList.add('disabled');if(isDateBooked(date,ranges))el.classList.add('booked')}
-    else{
-      if(selStart&&date.getTime()===selStart.getTime()) el.classList.add('sel-start');
-      else if(selEnd&&date.getTime()===selEnd.getTime()) el.classList.add('sel-end');
-      else if(selStart&&selEnd&&date>selStart&&date<selEnd) el.classList.add('in-range');
-      el.onclick=()=>onDay(date);
-    }
-    grid.appendChild(el);
-  }
-}
-
-function onDay(date){
-  document.getElementById('errorNotice').classList.remove('visible');
-  if(!pickEnd||!selStart){selStart=date;selEnd=null;pickEnd=true}
-  else{
-    if(date<=selStart){selStart=date;selEnd=null}
-    else{
-      selEnd=date;pickEnd=false;
-      if(isRangeBooked(selStart,selEnd,selectedRoom)){
-        document.getElementById('calNotice').textContent=t('conflict');
-        document.getElementById('calNotice').className='notice error visible';
-        selStart=null;selEnd=null;
-      } else {
-        document.getElementById('calNotice').className='notice warning visible';
-        document.getElementById('calNotice').textContent='';
-        updateSummary();
-      }
-    }
-  }
-  renderCalendar();
-}
-
-function updateSummary(){
-  if(!selStart||!selEnd) return;
-  const ci=selStart.toISOString().split('T')[0];
-  const co=selEnd.toISOString().split('T')[0];
-  const adults=parseInt(document.getElementById('fGU').value)||2;
-  const calc=calcTotal(selectedRoom,ci,co,adults);
-  document.getElementById('sCheckin').textContent=fmt(selStart);
-  document.getElementById('sCheckout').textContent=fmt(selEnd);
-  document.getElementById('sNights').textContent=calc.nights;
-  document.getElementById('sTotal').textContent=`${calc.total} EUR`;
-  const breakdown=[];
-  if(calc.seasonNights>0) breakdown.push(`<div><span>${calc.seasonNights} ${t('nights')} (${t('season_price')})</span><span>${calc.rp.season+(calc.extra*(calc.rp.extraPerson||0))} EUR/${t('night')}</span></div>`);
-  if(calc.offNights>0) breakdown.push(`<div><span>${calc.offNights} ${t('nights')} (${t('offseason_price')})</span><span>${calc.rp.offseason+(calc.extra*(calc.rp.extraPerson||0))} EUR/${t('night')}</span></div>`);
-  if(calc.extra>0) breakdown.push(`<div><span>${calc.extra} ${t('extra_adults')} × ${calc.rp.extraPerson} EUR/noć</span><span></span></div>`);
-  document.getElementById('sBreakdown').innerHTML=breakdown.join('');
-  document.getElementById('dateSummary').classList.add('visible');
-}
-
-document.getElementById('calPrev').onclick=()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCalendar()};
-document.getElementById('calNext').onclick=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCalendar()};
-document.getElementById('fGU').addEventListener('change',()=>{if(selStart&&selEnd)updateSummary()});
-
-// ══════════════════════════════════════════
-//  SUBMIT
-// ══════════════════════════════════════════
-async function submitBooking(){
-  const fn=document.getElementById('fFN').value.trim();
-  const ln=document.getElementById('fLN').value.trim();
-  const em=document.getElementById('fEM').value.trim();
-  const ph=document.getElementById('fPH').value.trim();
-  const co=document.getElementById('fCO').value.trim();
-  const no=document.getElementById('fNO').value.trim();
-  const err=document.getElementById('errorNotice');
-  const suc=document.getElementById('successNotice');
-  err.classList.remove('visible'); suc.classList.remove('visible');
-
-  if(!selRoomId||!selCheckin||!selCheckout){
-    err.textContent='Molimo odaberite sobu.'; err.classList.add('visible'); return;
-  }
-  if(!fn||!ln||!em||!ph){ err.textContent=t('fill_all'); err.classList.add('visible'); return; }
-
-  // Collect child ages
-  const ages=Array.from({length:gChildren},(_,i)=>parseInt(document.getElementById('cAge'+i)?.value||5));
-  const payKids=ages.filter(a=>a>=3).length;
-  const freeKids=ages.filter(a=>a<3).length;
-  const paying=gAdults+payKids;
-  const room=ROOMS.find(r=>r.id===selRoomId);
-  const calc=calcTotal(selRoomId,selCheckin,selCheckout,paying);
-  const tl=room.type==='apt'?'Apartman':'Soba';
-
-  let ageStr='';
-  if(gChildren>0){
-    ageStr=ages.map((a,i)=>`Dijete ${i+1}: ${a} god.${a<3?' (besplatno)':''}`).join(' | ');
-  }
-
-  // 1. Pošalji email putem Formspree
-  const FORMSPREE_ID='xnjrdodd';
-  try{
-    document.getElementById('submitBtn').disabled=true;
-    document.getElementById('submitBtn').textContent='Šalje se...';
-
-    const res=await fetch(`https://formspree.io/f/${FORMSPREE_ID}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({
-        _subject:`Nova rezervacija – ${tl} ${selRoomId} | ${fn} ${ln}`,
-        Soba:`${tl} ${selRoomId}`,
-        Dolazak:selCheckin,
-        Odlazak:selCheckout,
-        'Broj noći':calc.nights,
-        'Ukupna cijena':`${calc.total} EUR`,
-        Ime:fn,
-        Prezime:ln,
-        Email:em,
-        Telefon:ph,
-        Država:co,
-        Odrasli:gAdults,
-        Djeca:gChildren,
-        'Dob djece':ageStr||'—',
-        Napomena:no||'—',
-        'Datum rezervacije':cetNow(),
-        'ID rezervacije':'VH-'+Date.now(),
-      })
-    });
-
-    if(!res.ok){
-      const data=await res.json();
-      throw new Error(data.error||'Greška');
-    }
-  }catch(e){
-    err.textContent='Greška pri slanju. Molimo kontaktirajte nas direktno na villahelena.cro@gmail.com';
-    err.classList.add('visible');
-    document.getElementById('submitBtn').disabled=false;
-    document.getElementById('submitBtn').textContent=t('send_request');
-    return;
-  }
-
-  // 2. Spremi lokalno u localStorage (za admin pregled)
-  const bk={
-    id:'VH-'+Date.now(),
-    roomId:selRoomId,
-    roomName:`${tl} ${room.id}`,
-    checkin:selCheckin, checkout:selCheckout,
-    nights:calc.nights, total:calc.total,
-    adults:gAdults, children:gChildren, childAges:ages,
-    firstName:fn, lastName:ln, email:em, phone:ph,
-    country:co, note:(no?no+'
-':'')+ageStr,
-    status:'pending',
-    createdAt:cetIso(), createdAtDisplay:cetNow()
-  };
-  const bks=getBookings(); bks.push(bk);
-  localStorage.setItem('vh_bookings',JSON.stringify(bks));
-
-  // 3. Pokušaj i GitHub (ako je token dostupan)
-  const tok=localStorage.getItem('vh_gh_token')||'';
-  if(tok) await ghWrite(bks);
-
-  // Uspjeh!
-  suc.textContent=t('success_msg'); suc.classList.add('visible');
-  document.getElementById('submitBtn').textContent=t('send_request');
-
-  setTimeout(()=>{
-    selRoomId=null; selCheckin=''; selCheckout=''; selNights=0;
-    gAdults=2; gChildren=0;
-    document.getElementById('adultsVal').textContent='2';
-    document.getElementById('childrenVal').textContent='0';
-    document.getElementById('calcCheckin').value='';
-    document.getElementById('calcCheckout').value='';
-    document.getElementById('nightsBadge').style.display='none';
-    document.getElementById('priceResults').innerHTML='';
-    ['fFN','fLN','fEM','fPH','fCO','fNO'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('submitBtn').disabled=false;
-    suc.classList.remove('visible');
-    goBackToSearch();
-  },5000);
-}
-
-
-// ══════════════════════════════════════════
-//  ADMIN
-// ══════════════════════════════════════════
-const ADMIN_PASS='Nena1975';
-let adminVisible=false,adminUnlocked=false;
-async function toggleAdmin(){
-  if(!adminUnlocked){
-    const pass=prompt('Unesite lozinku:');
-    if(pass===null)return;
-    if(pass!==ADMIN_PASS){alert('Pogrešna lozinka.');return}
-    adminUnlocked=true;
-    ALL_BOOKINGS = await ghRead();
-  }
-  adminVisible=!adminVisible;
-  document.getElementById('adminPanel').classList.toggle('visible',adminVisible);
-  if(adminVisible)renderAdmin();
-}
-
-function renderAdmin(){
-  const wrap=document.getElementById('adminTableWrap');
-  const bks=getBookings();
-  if(!bks.length){wrap.innerHTML='<p style="padding:1rem;color:#555">Nema rezervacija.</p>';return}
-  const sl={pending:t('pending'),confirmed:t('confirmed'),cancelled:t('cancelled')};
-  const sc={pending:'sp',confirmed:'sc',cancelled:'sx'};
-  wrap.innerHTML=`<table class="res-table">
-    <thead><tr><th>ID</th><th>Soba</th><th>Dolazak</th><th>Odlazak</th>
-    <th>Noći</th><th>EUR</th><th>Ime</th><th>Prezime</th>
-    <th>Email</th><th>Telefon</th><th>Odrasli</th><th>Napomena</th>
-    <th>Datum rezervacije</th><th>Status</th><th>Akcija</th></tr></thead>
-    <tbody>${bks.slice().reverse().map(b=>`<tr>
-      <td style="font-size:0.75rem;color:#888">${b.id}</td>
-      <td><strong>${b.roomName}</strong></td>
-      <td>${b.checkin}</td><td>${b.checkout}</td>
-      <td>${b.nights}</td><td><strong>${b.total}</strong></td>
-      <td>${b.firstName}</td><td>${b.lastName}</td>
-      <td>${b.email}</td><td>${b.phone}</td><td>${b.adults||b.guests||'—'}</td>
-      <td>${b.note||'—'}</td>
-      <td style="font-size:0.85rem">${b.createdAtDisplay||b.createdAt||'—'}</td>
-      <td><span class="sbadge ${sc[b.status]}">${sl[b.status]}</span></td>
-      <td>
-        ${b.status!=='confirmed'?`<button class="act-btn ab-confirm" onclick="chStatus('${b.id}','confirmed')">${t('confirm_action')}</button>`:''}
-        ${b.status!=='cancelled'?`<button class="act-btn ab-cancel" onclick="chStatus('${b.id}','cancelled')">${t('cancel_action')}</button>`:''}
-      </td>
-    </tr>`).join('')}</tbody>
-  </table>`;
-}
-
-async function chStatus(id,status){
-  const b=getBookings();const i=b.findIndex(x=>x.id===id);
-  if(i>-1){b[i].status=status;await saveBookings(b)}
-  renderAdmin();renderCalendar();
-}
-
-// ══════════════════════════════════════════
-//  EXPORT
-// ══════════════════════════════════════════
-function exportCSV(){
-  const bks=getBookings();
-  if(!bks.length){alert('Nema rezervacija.');return}
-  const h=['ID','Soba','Dolazak','Odlazak','Noci','EUR','Ime','Prezime','Email','Telefon','Odrasli','Napomena','Datum rezervacije','Status'];
-  const rows=bks.map(b=>[b.id,b.roomName,b.checkin,b.checkout,b.nights,b.total,b.firstName,b.lastName,b.email,b.phone,b.adults||b.guests||'',b.note||'',b.createdAtDisplay||b.createdAt||'',b.status].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
-  const csv=[h.join(','),...rows].join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`villa-helena-${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();URL.revokeObjectURL(url);
-}
-
-function exportExcel(){
-  if(typeof XLSX==='undefined'){alert('Excel library nije učitana.');return}
-  const bks=getBookings();
-  if(!bks.length){alert('Nema rezervacija.');return}
-  const sl={pending:'Na čekanju',confirmed:'Potvrđeno',cancelled:'Otkazano'};
-  const rows=bks.map(b=>({'ID':b.id,'Soba':b.roomName,'Dolazak':b.checkin,'Odlazak':b.checkout,'Noći':b.nights,'EUR':b.total,'Ime':b.firstName,'Prezime':b.lastName,'Email':b.email,'Telefon':b.phone,'Odrasli':b.adults||b.guests||'','Napomena':b.note||'','Datum rezervacije':b.createdAtDisplay||b.createdAt||'','Status':sl[b.status]||b.status}));
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.json_to_sheet(rows);
-  ws['!cols']=[{wch:16},{wch:14},{wch:12},{wch:12},{wch:8},{wch:10},{wch:14},{wch:14},{wch:28},{wch:16},{wch:10},{wch:24},{wch:20},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws,'Rezervacije');
-  const akt=bks.filter(b=>b.status!=='cancelled');
-  if(akt.length){
-    const rowsA=akt.map(b=>({'Soba':b.roomName,'Dolazak':b.checkin,'Odlazak':b.checkout,'Noći':b.nights,'EUR':b.total,'Gost':`${b.firstName} ${b.lastName}`,'Email':b.email,'Telefon':b.phone,'Status':sl[b.status]}));
-    const wsA=XLSX.utils.json_to_sheet(rowsA);
-    XLSX.utils.book_append_sheet(wb,wsA,'Aktivne rezervacije');
-  }
-  XLSX.writeFile(wb,`villa-helena-${new Date().toISOString().split('T')[0]}.xlsx`);
-}
-
-// ══════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════
-async function init(){
-  GH_TOKEN = localStorage.getItem('vh_gh_token')||'';
-  ALL_BOOKINGS = await ghRead();
-  renderRooms();
-  renderRoomTabs();
-  renderCalendar();
-  calcPrices();
-  document.getElementById('calNotice').textContent=t('cal_inst');
-  document.getElementById('calNotice').className='notice warning visible';
-  // Wire up guest counter buttons
-  initGuestButtons();
-  // Set default checkin to tomorrow
-  const td=new Date(); td.setDate(td.getDate()+1);
-  document.getElementById('calcCheckin').value=td.toISOString().split('T')[0];
-}
-init();
+renderAmenities();renderUnits();renderLocation();
 </script>
 </body>
 </html>
