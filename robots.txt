@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mlleetrangere-bot.github.io/VH/sitemap.xml

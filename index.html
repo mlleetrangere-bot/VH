@@ -3,61 +3,119 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Villa Helena · Vodice, Dalmacija</title>
+
+<!-- ═══════════ SEO: Naslov i opis za Google ═══════════ -->
+<title>Villa Helena Vodice – Apartmani i sobe s bazenom | Dalmacija</title>
+<meta name="description" content="Villa Helena u Vodicama nudi 2 apartmana i 2 sobe s vanjskim bazenom, besplatnim parkingom i Wi-Fi. 15 min hoda do plaže, 10 min do centra. Booking.com ocjena 9,4 - rezervirajte odmah."/>
+<meta name="keywords" content="apartmani Vodice, smještaj Vodice, sobe Vodice, Villa Helena, apartmani Dalmacija, bazen Vodice, smještaj Dalmacija, ljetovanje Hrvatska, apartmani s bazenom"/>
+<meta name="author" content="Villa Helena"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://mlleetrangere-bot.github.io/VH/"/>
+
+<!-- ═══════════ Open Graph (Facebook, WhatsApp, LinkedIn preview) ═══════════ -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Villa Helena Vodice – Apartmani i sobe s bazenom"/>
+<meta property="og:description" content="2 apartmana i 2 sobe s vanjskim bazenom u mirnom dijelu Vodica. 15 min hoda do plaže. Booking.com ocjena 9,4."/>
+<meta property="og:image" content="https://mlleetrangere-bot.github.io/VH/slike/vila-1.jpg"/>
+<meta property="og:url" content="https://mlleetrangere-bot.github.io/VH/"/>
+<meta property="og:site_name" content="Villa Helena"/>
+<meta property="og:locale" content="hr_HR"/>
+
+<!-- ═══════════ Twitter Card (preview na Twitteru/X) ═══════════ -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Villa Helena Vodice – Apartmani i sobe s bazenom"/>
+<meta name="twitter:description" content="2 apartmana i 2 sobe s vanjskim bazenom u mirnom dijelu Vodica. 15 min hoda do plaže."/>
+<meta name="twitter:image" content="https://mlleetrangere-bot.github.io/VH/slike/vila-1.jpg"/>
+
+<!-- ═══════════ Schema.org Structured Data (zvjezdice, cijena, adresa u Google rezultatima) ═══════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LodgingBusiness",
+  "name": "Villa Helena",
+  "description": "Villa Helena u Vodicama nudi apartmane i sobe s vanjskim bazenom, besplatnim parkingom i Wi-Fi.",
+  "image": "https://mlleetrangere-bot.github.io/VH/slike/vila-1.jpg",
+  "url": "https://mlleetrangere-bot.github.io/VH/",
+  "telephone": "+385958600340",
+  "email": "villahelena.cro@gmail.com",
+  "priceRange": "€€",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Vodice",
+    "addressRegion": "Šibensko-kninska županija",
+    "addressCountry": "HR"
+  },
+  "amenityFeature": [
+    {"@type": "LocationFeatureSpecification", "name": "Vanjski bazen", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Besplatan Wi-Fi", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Besplatan parking", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Klima uređaj", "value": true}
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "9.4",
+    "bestRating": "10",
+    "ratingCount": "47"
+  }
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --sea:#14606e; --sea-deep:#0c3a44; --sea-light:#4a9aab;
-  --foam:#e8f1f0; --sand:#f7f3ea; --sun:#d99a3f; --sun-soft:#e8be7e;
-  --ink:#1d2a2c; --stone:#69767a; --line:rgba(29,42,44,0.12); --white:#ffffff;
+  --sea:#0a5a6e; --sea-deep:#06303d; --sea-light:#0d7891;
+  --foam:#e3f2f5; --sand:#ffffff; --sun:#b9690a; --sun-soft:#e89b2e;
+  --ink:#0d1a1c; --stone:#2b3638; --line:rgba(13,26,28,0.22); --white:#ffffff;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Outfit',system-ui,sans-serif;background:var(--sand);color:var(--ink);font-weight:300;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--sand);color:var(--ink);font-weight:400;font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
-.eyebrow{font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;font-weight:500;color:var(--sea)}
+.eyebrow{font-size:0.8rem;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;color:var(--sea)}
 
 /* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 2.5rem;transition:background .4s,padding .4s,box-shadow .4s}
-.nav.scrolled{background:rgba(247,243,234,.92);backdrop-filter:blur(14px);padding:.9rem 2.5rem;box-shadow:0 1px 0 var(--line)}
-.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--white);letter-spacing:.02em;transition:color .4s}
-.nav.scrolled .nav-brand{color:var(--ink)}
+/* LANG BAR - prominent, always visible at the very top */
+.lang-bar{position:fixed;top:0;left:0;right:0;z-index:60;background:var(--sea-deep);padding:.55rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.lang-bar-inner{max-width:1140px;margin:0 auto;display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.lang-pill{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.02em;padding:.45rem 1.05rem;border-radius:100px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.lang-pill:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
+.lang-pill.active{background:var(--sun);border-color:var(--sun);color:#ffffff}
+
+/* NAV - sits just below the language bar */
+.nav{position:fixed;top:46px;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 2.5rem;transition:background .4s,padding .4s,box-shadow .4s,top .4s}
+.nav.scrolled{top:0;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);padding:.9rem 2.5rem;box-shadow:0 1px 0 var(--line)}
+.nav-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;font-weight:700;color:var(--white);letter-spacing:.01em;transition:color .4s}
+.nav.scrolled .nav-brand{color:var(--sea-deep)}
 .nav-brand span{font-style:italic;font-weight:400}
 .nav-links{display:flex;gap:2.2rem;align-items:center}
-.nav-links a{font-size:.82rem;letter-spacing:.08em;font-weight:400;color:rgba(255,255,255,.85);transition:color .3s}
-.nav.scrolled .nav-links a{color:var(--stone)}
+.nav-links a{font-size:.88rem;letter-spacing:.04em;font-weight:600;color:#ffffff;transition:color .3s}
+.nav.scrolled .nav-links a{color:var(--ink);font-weight:600}
 .nav-links a:hover{color:var(--white)}
 .nav.scrolled .nav-links a:hover{color:var(--sea)}
-.nav-lang{display:flex;gap:.5rem;border-left:1px solid rgba(255,255,255,.25);padding-left:1.4rem}
-.nav.scrolled .nav-lang{border-color:var(--line)}
-.lang-btn{background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.6);transition:color .2s;padding:.2rem}
-.nav.scrolled .lang-btn{color:var(--stone)}
-.lang-btn.active{color:var(--white)}
-.nav.scrolled .lang-btn.active{color:var(--sea)}
 .nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
 .nav-toggle span{width:26px;height:2px;background:var(--white);transition:background .4s}
 .nav.scrolled .nav-toggle span{background:var(--ink)}
 
 /* HERO */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 2rem 4rem;overflow:hidden;background:linear-gradient(165deg,var(--sea-deep) 0%,var(--sea) 55%,var(--sea-light) 100%)}
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:7.5rem 2rem 4rem;overflow:hidden;background:linear-gradient(165deg,var(--sea-deep) 0%,var(--sea) 55%,var(--sea-light) 100%)}
 .hero-waves{position:absolute;bottom:-1px;left:0;width:100%;line-height:0}
 .hero-waves svg{width:100%;height:90px;display:block}
 .hero-sun{position:absolute;top:18%;right:14%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,var(--sun-soft) 0%,var(--sun) 70%);opacity:.85;filter:blur(2px);box-shadow:0 0 80px 30px rgba(217,154,63,.35)}
 .hero-content{position:relative;z-index:2;max-width:780px;animation:rise 1.1s cubic-bezier(.2,.7,.3,1) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .hero .eyebrow{color:var(--sun-soft);margin-bottom:1.6rem}
-.hero h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(3.2rem,9vw,6.5rem);color:var(--white);line-height:.98;margin-bottom:1.4rem}
-.hero h1 em{font-style:italic;font-weight:400;color:var(--sun-soft)}
-.hero-tag{font-size:clamp(1rem,2.2vw,1.3rem);font-weight:300;color:rgba(255,255,255,.88);max-width:540px;margin:0 auto 2.6rem}
+.hero h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(3rem,8.5vw,6rem);color:var(--white);line-height:1.02;margin-bottom:1.4rem;text-shadow:0 2px 20px rgba(0,0,0,.25)}
+.hero h1 em{font-style:italic;font-weight:600;color:#ffd699}
+.hero-tag{font-size:clamp(1rem,2.2vw,1.3rem);font-weight:400;color:rgba(255,255,255,.92);max-width:540px;margin:0 auto 2.6rem}
 .hero-rating{display:inline-flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:.5rem 1.3rem;margin-bottom:2.6rem;backdrop-filter:blur(6px)}
 .hero-rating .stars{color:var(--sun-soft);letter-spacing:.1em;font-size:.9rem}
 .hero-rating .score{font-weight:600;color:var(--white);font-size:.95rem}
-.hero-rating .src{font-size:.78rem;color:rgba(255,255,255,.6)}
+.hero-rating .src{font-size:.82rem;color:#ffffff;font-weight:500}
 .hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:1.05rem 2.3rem;border-radius:100px;border:1px solid transparent;transition:all .3s cubic-bezier(.2,.7,.3,1)}
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:Arial,Helvetica,sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:1.05rem 2.3rem;border-radius:100px;border:1px solid transparent;transition:all .3s cubic-bezier(.2,.7,.3,1)}
 .btn-sun{background:var(--sun);color:var(--white)}
 .btn-sun:hover{background:var(--white);color:var(--sea-deep);transform:translateY(-2px)}
 .btn-ghost{background:transparent;color:var(--white);border-color:rgba(255,255,255,.4)}
@@ -69,19 +127,19 @@ section{padding:6.5rem 2.5rem}
 .sec-head{max-width:640px;margin-bottom:3.5rem}
 .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
 .sec-head .eyebrow{display:block;margin-bottom:1rem}
-.sec-head h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.05;color:var(--ink)}
-.sec-head h2 em{font-style:italic;color:var(--sea)}
-.sec-head p{margin-top:1.2rem;color:var(--stone);font-size:1.08rem}
+.sec-head h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.08;color:var(--ink)}
+.sec-head h2 em{font-style:italic;font-weight:600;color:var(--sea)}
+.sec-head p{margin-top:1.2rem;color:var(--ink);font-size:1.12rem;font-weight:400}
 
 /* INTRO */
 .intro{background:var(--sand)}
 .intro-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:4rem;align-items:center}
-.intro-text p{color:var(--stone);margin-bottom:1.3rem;font-size:1.06rem}
-.intro-text p strong{color:var(--ink);font-weight:500}
+.intro-text p{color:var(--ink);margin-bottom:1.3rem;font-size:1.1rem;font-weight:400}
+.intro-text p strong{color:var(--sea-deep);font-weight:700}
 .intro-figure{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:4/5;background:linear-gradient(160deg,var(--sea-light),var(--sea-deep));display:flex;align-items:center;justify-content:center}
-.ph-note{color:rgba(255,255,255,.7);text-align:center;padding:2rem;font-size:.9rem}
+.ph-note{color:#ffffff;text-align:center;padding:2rem;font-size:.95rem;font-weight:500}
 .ph-note .ph-icon{font-size:2.4rem;display:block;margin-bottom:.6rem;opacity:.6}
-.ph-note .ph-name{font-family:monospace;font-size:.78rem;margin-top:.5rem;opacity:.55}
+.ph-note .ph-name{font-family:monospace;font-size:.8rem;margin-top:.5rem;opacity:.85}
 
 /* AMENITIES */
 .amenities{background:var(--foam)}
@@ -90,9 +148,9 @@ section{padding:6.5rem 2.5rem}
 .am-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px -18px rgba(12,58,68,.3)}
 .am-icon{width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--foam);border-radius:50%;margin-bottom:1.1rem;color:var(--sea)}
 .am-icon svg{width:22px;height:22px}
-.am-card h3{font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:.35rem}
-.am-card p{font-size:.86rem;color:var(--stone)}
-.am-note{margin-top:2.2rem;font-size:.9rem;color:var(--stone);font-style:italic}
+.am-card h3{font-size:1.08rem;font-weight:700;color:var(--ink);margin-bottom:.4rem}
+.am-card p{font-size:.92rem;color:var(--ink);font-weight:400}
+.am-note{margin-top:2.2rem;font-size:.95rem;color:var(--ink);font-weight:500;font-style:italic}
 
 /* UNITS */
 .units{background:var(--sand)}
@@ -105,14 +163,14 @@ section{padding:6.5rem 2.5rem}
 .unit-badge{position:absolute;top:1.1rem;left:1.1rem;z-index:2;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.5rem;background:rgba(255,255,255,.95);color:var(--sea-deep);width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
 .unit-type-tag{position:absolute;top:1.3rem;right:1.1rem;z-index:2;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;background:var(--sun);color:var(--white);padding:.35rem .85rem;border-radius:100px}
 .unit-body{padding:1.7rem 1.8rem 1.9rem}
-.unit-body h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.7rem;color:var(--ink);margin-bottom:.2rem}
-.unit-cap{font-size:.84rem;color:var(--stone);letter-spacing:.04em;margin-bottom:1.1rem;display:flex;align-items:center;gap:.4rem}
+.unit-body h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:1.75rem;color:var(--ink);margin-bottom:.25rem}
+.unit-cap{font-size:.92rem;color:var(--ink);font-weight:500;letter-spacing:.02em;margin-bottom:1.1rem;display:flex;align-items:center;gap:.4rem}
 .unit-feats{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
-.unit-feat{font-size:.76rem;color:var(--sea);background:var(--foam);padding:.3rem .75rem;border-radius:100px}
-.unit-foot{display:flex;align-items:flex-end;justify-content:space-between;border-top:1px solid var(--line);padding-top:1.2rem}
+.unit-feat{font-size:.8rem;color:var(--sea-deep);font-weight:600;background:var(--foam);padding:.3rem .75rem;border-radius:100px;border:1px solid var(--sea-light)}
+.unit-foot{display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);padding-top:1.2rem}
 .unit-price .amt{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink)}
 .unit-price .per{font-size:.8rem;color:var(--stone)}
-.unit-more{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--sea);display:flex;align-items:center;gap:.4rem;transition:gap .3s}
+.unit-more{font-size:.84rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--sea-deep);display:flex;align-items:center;gap:.4rem;transition:gap .3s}
 .unit-card:hover .unit-more{gap:.7rem}
 
 /* MODAL */
@@ -127,20 +185,20 @@ section{padding:6.5rem 2.5rem}
 .gallery-main{aspect-ratio:16/9;background:linear-gradient(150deg,var(--sea-light),var(--sea-deep));display:flex;align-items:center;justify-content:center}
 .gallery-main .ph-note .ph-icon{font-size:2.6rem}
 .gallery-thumbs{display:flex;gap:6px;padding:6px;background:var(--sea-deep)}
-.gallery-thumb{flex:1;aspect-ratio:4/3;border-radius:3px;cursor:pointer;background:linear-gradient(150deg,var(--sea-light),var(--sea));display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:1.1rem;opacity:.65;transition:opacity .25s}
+.gallery-thumb{flex:1;aspect-ratio:4/3;border-radius:3px;overflow:hidden;cursor:pointer;background:var(--sea-deep);opacity:.6;transition:opacity .25s}
 .gallery-thumb:hover,.gallery-thumb.active{opacity:1;outline:2px solid var(--sun)}
 .modal-info{padding:2.4rem 2.6rem 2.8rem}
 .modal-info-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.6rem}
 .modal-info-head .m-type{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sun);font-weight:600;margin-bottom:.4rem}
-.modal-info-head h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2.6rem;color:var(--ink);line-height:1}
-.modal-info-head .m-cap{font-size:.9rem;color:var(--stone);margin-top:.5rem}
+.modal-info-head h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:2.6rem;color:var(--ink);line-height:1.05}
+.modal-info-head .m-cap{font-size:.96rem;color:var(--ink);font-weight:500;margin-top:.5rem}
 .modal-price{text-align:right;flex-shrink:0}
 .modal-price .amt{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:600;color:var(--sea)}
 .modal-price .per{font-size:.82rem;color:var(--stone)}
-.modal-desc{color:var(--stone);font-size:1.04rem;margin-bottom:2rem;line-height:1.8}
-.modal-feats-title{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);font-weight:600;margin-bottom:1rem}
+.modal-desc{color:var(--ink);font-size:1.08rem;font-weight:400;margin-bottom:2rem;line-height:1.75}
+.modal-feats-title{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sea-deep);font-weight:700;margin-bottom:1rem}
 .modal-feats{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem 1.6rem;margin-bottom:2.2rem}
-.modal-feat{display:flex;align-items:center;gap:.7rem;font-size:.94rem;color:var(--ink)}
+.modal-feat{display:flex;align-items:center;gap:.7rem;font-size:1rem;font-weight:500;color:var(--ink)}
 .modal-feat svg{width:18px;height:18px;color:var(--sea);flex-shrink:0}
 .modal-actions{display:flex;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.8rem}
 .btn-dark{background:var(--sea-deep);color:var(--white)}
@@ -153,41 +211,42 @@ section{padding:6.5rem 2.5rem}
 .location .eyebrow{color:var(--sun-soft)}
 .location .sec-head h2{color:var(--white)}
 .location .sec-head h2 em{color:var(--sun-soft)}
-.location .sec-head p{color:rgba(255,255,255,.7)}
+.location .sec-head p{color:#ffffff;font-weight:400}
 .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
 .loc-list{display:flex;flex-direction:column;gap:1.1rem}
 .loc-item{display:flex;gap:1.1rem;align-items:flex-start;padding-bottom:1.1rem;border-bottom:1px solid rgba(255,255,255,.12)}
 .loc-item:last-child{border-bottom:none}
 .loc-item .l-icon{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--sun-soft)}
 .loc-item .l-icon svg{width:20px;height:20px}
-.loc-item h4{font-size:1rem;font-weight:500;margin-bottom:.15rem}
-.loc-item p{font-size:.88rem;color:rgba(255,255,255,.65)}
+.loc-item h4{font-size:1.08rem;font-weight:700;margin-bottom:.2rem;color:#ffffff}
+.loc-item p{font-size:.95rem;color:#e8f2f4;font-weight:400}
 .loc-map{aspect-ratio:1/1;border-radius:6px;overflow:hidden;background:linear-gradient(150deg,var(--sea-light),var(--sea));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;border:1px solid rgba(255,255,255,.15)}
 .loc-map .pin{font-size:3rem}
-.loc-map .place{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:500}
-.loc-map .sub{font-size:.85rem;color:rgba(255,255,255,.65)}
+.loc-map .place{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.7rem;font-weight:700}
+.loc-map .sub{font-size:.92rem;color:#ffffff;font-weight:400}
 
 /* CONTACT */
 .contact{background:var(--sand)}
-.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-top:1rem}
-.contact-card{background:var(--white);border:1px solid var(--line);border-radius:6px;padding:2.2rem 1.8rem;text-align:center;transition:transform .35s,box-shadow .35s}
-.contact-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px -18px rgba(12,58,68,.3)}
-.contact-card .c-icon{width:54px;height:54px;border-radius:50%;background:var(--foam);color:var(--sea);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
-.contact-card .c-icon svg{width:24px;height:24px}
-.contact-card h4{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:.5rem;font-weight:500}
-.contact-card a,.contact-card span{font-size:1.05rem;color:var(--ink);font-weight:400}
-.contact-card a:hover{color:var(--sea)}
+.contact-list{display:flex;flex-direction:column;gap:1rem;margin-top:1rem;max-width:560px;margin-left:auto;margin-right:auto}
+.contact-row{display:flex;align-items:center;gap:1.3rem;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:1.2rem 1.6rem;text-align:left;transition:transform .3s,box-shadow .3s,border-color .3s}
+.contact-row:hover{transform:translateY(-3px);box-shadow:0 14px 32px -16px rgba(12,58,68,.28);border-color:var(--sea-light)}
+.contact-row .c-icon{width:48px;height:48px;border-radius:50%;background:var(--foam);color:var(--sea);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-row .c-icon svg{width:22px;height:22px}
+.cr-text{display:flex;flex-direction:column;gap:.15rem}
+.cr-text h4{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sea-deep);font-weight:700}
+.cr-text span{font-size:1.08rem;color:var(--ink);font-weight:600}
+.contact-row:hover .cr-text span{color:var(--sea)}
 
 /* FOOTER */
-footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.5rem;text-align:center}
-.foot-brand{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:500;color:var(--white);margin-bottom:.4rem}
-.foot-brand span{font-style:italic;font-weight:400;color:var(--sun-soft)}
-.foot-sub{font-size:.9rem;margin-bottom:1.6rem}
+footer{background:var(--sea-deep);color:#ffffff;padding:3.5rem 2.5rem 2.5rem;text-align:center}
+.foot-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.9rem;font-weight:700;color:var(--white);margin-bottom:.4rem}
+.foot-brand span{font-style:italic;font-weight:600;color:#ffd699}
+.foot-sub{font-size:1rem;font-weight:400;color:#ffffff;margin-bottom:1.6rem}
 .foot-social{display:flex;gap:1rem;justify-content:center;margin-bottom:2rem}
-.foot-social a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;color:rgba(255,255,255,.7)}
+.foot-social a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;transition:all .3s;color:#ffffff}
 .foot-social a:hover{background:var(--sun);color:var(--white);transform:translateY(-3px)}
 .foot-social svg{width:20px;height:20px}
-.foot-copy{font-size:.78rem;color:rgba(255,255,255,.4);padding-top:1.8rem;border-top:1px solid rgba(255,255,255,.1)}
+.foot-copy{font-size:.85rem;color:#cfe4e8;font-weight:400;padding-top:1.8rem;border-top:1px solid rgba(255,255,255,.2)}
 
 /* RESPONSIVE */
 @media(max-width:900px){
@@ -195,22 +254,96 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.
   .intro-grid{grid-template-columns:1fr;gap:2.5rem}
   .units-grid{grid-template-columns:1fr}
   .loc-grid{grid-template-columns:1fr;gap:2rem}
-  .contact-grid{grid-template-columns:1fr}
   .modal-feats{grid-template-columns:1fr}
 }
+
+/* ── SMARTPHONE (≤680px) ── */
 @media(max-width:680px){
-  .nav{padding:1.1rem 1.4rem}
-  .nav-links{position:fixed;top:0;right:-100%;width:75%;height:100vh;background:var(--sea-deep);flex-direction:column;justify-content:center;gap:1.8rem;transition:right .4s cubic-bezier(.2,.7,.3,1);padding:2rem}
+  body{font-size:16px}
+
+  /* Lang bar */
+  .lang-bar{padding:.5rem .6rem}
+  .lang-bar-inner{gap:.4rem}
+  .lang-pill{font-size:.82rem;padding:.4rem .8rem}
+
+  /* Nav */
+  .nav{padding:1rem 1.2rem;top:52px}
+  .nav.scrolled{top:0}
+  .nav-brand{font-size:1.3rem}
+  .nav-links{position:fixed;top:0;right:-100%;width:78%;max-width:320px;height:100vh;background:var(--sea-deep);flex-direction:column;justify-content:center;align-items:flex-start;gap:1.6rem;transition:right .4s cubic-bezier(.2,.7,.3,1);padding:2rem 2.2rem;box-shadow:-10px 0 40px rgba(0,0,0,.25)}
   .nav-links.open{right:0}
-  .nav-links a,.nav.scrolled .nav-links a{color:rgba(255,255,255,.85);font-size:1rem}
-  .nav-lang{border-color:rgba(255,255,255,.25)}
+  .nav-links a,.nav.scrolled .nav-links a{color:rgba(255,255,255,.92);font-size:1.05rem}
   .nav-toggle{display:flex}
-  section{padding:4.5rem 1.5rem}
-  .am-grid{grid-template-columns:1fr 1fr;gap:1rem}
-  .modal-info{padding:1.8rem 1.6rem 2.2rem}
-  .modal-info-head h2{font-size:2rem}
-  .modal-price .amt{font-size:2rem}
-  .hero-sun{width:80px;height:80px;top:14%;right:10%}
+
+  /* Sections */
+  section{padding:3.5rem 1.2rem}
+  .sec-head{margin-bottom:2.2rem}
+  .sec-head.center{text-align:left}
+  .sec-head p{font-size:1rem}
+
+  /* Hero */
+  .hero{padding:8rem 1.3rem 3.5rem;min-height:92vh}
+  .hero h1{font-size:clamp(2.4rem,11vw,3.2rem)}
+  .hero-tag{font-size:1rem;padding:0 .3rem}
+  .hero-cta{flex-direction:column;width:100%;gap:.8rem}
+  .hero-cta .btn{width:100%;justify-content:center}
+  .hero-sun{width:70px;height:70px;top:12%;right:8%}
+  .hero-rating{padding:.45rem 1rem;font-size:.9rem}
+
+  /* Intro */
+  .intro-figure{aspect-ratio:4/3}
+
+  /* Amenities */
+  .am-grid{grid-template-columns:1fr 1fr;gap:.9rem}
+  .am-card{padding:1.4rem 1.1rem}
+  .am-icon{width:40px;height:40px;margin-bottom:.8rem}
+  .am-card h3{font-size:.92rem}
+  .am-card p{font-size:.8rem}
+
+  /* Units */
+  .units-grid{gap:1.4rem}
+  .unit-photo{aspect-ratio:16/11}
+  .unit-badge{width:46px;height:46px;font-size:1.25rem;top:.9rem;left:.9rem}
+  .unit-type-tag{top:1.05rem;right:.9rem;font-size:.62rem}
+  .unit-body{padding:1.4rem 1.4rem 1.6rem}
+  .unit-body h3{font-size:1.45rem}
+  .unit-feats{gap:.4rem}
+  .unit-feat{font-size:.72rem;padding:.28rem .65rem}
+
+  /* Modal */
+  .modal-bg{padding:0;align-items:stretch}
+  .modal{max-width:100%;width:100%;min-height:100vh;border-radius:0}
+  .modal-close{top:.9rem;right:.9rem;width:38px;height:38px}
+  .gallery-main{aspect-ratio:4/3}
+  .gallery-thumbs{gap:4px;padding:4px}
+  .modal-info{padding:1.6rem 1.3rem 3rem}
+  .modal-info-head{flex-direction:column;gap:.6rem}
+  .modal-info-head h2{font-size:1.9rem}
+  .modal-info-head .m-type{font-size:.64rem}
+  .modal-desc{font-size:.96rem;margin-bottom:1.6rem}
+  .modal-feats{gap:.7rem 1rem;margin-bottom:1.8rem}
+  .modal-feat{font-size:.88rem}
+  .modal-actions{flex-direction:column;gap:.7rem}
+  .modal-actions .btn{width:100%;justify-content:center}
+
+  /* Location */
+  .loc-map{aspect-ratio:4/3}
+  .loc-item{gap:.85rem}
+
+  /* Contact */
+  .contact-row{padding:1rem 1.2rem;gap:1rem}
+  .contact-row .c-icon{width:42px;height:42px}
+  .cr-text span{font-size:1rem}
+
+  /* Footer */
+  footer{padding:2.8rem 1.3rem 2rem}
+  .foot-brand{font-size:1.5rem}
+}
+
+/* ── SMALL PHONES (≤380px) ── */
+@media(max-width:380px){
+  .am-grid{grid-template-columns:1fr}
+  .hero h1{font-size:2.1rem}
 }
 </style>
 </head>
@@ -224,17 +357,22 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.
     <a href="#jedinice" data-i18n="nav_units">Smještaj</a>
     <a href="#lokacija" data-i18n="nav_location">Lokacija</a>
     <a href="#kontakt" data-i18n="nav_contact">Kontakt</a>
-    <div class="nav-lang">
-      <button class="lang-btn active" data-lang="hr">HR</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="de">DE</button>
-    </div>
   </div>
   <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
 </nav>
 
+<div class="lang-bar">
+  <div class="lang-bar-inner">
+    <button class="lang-pill active" data-lang="hr">🇭🇷 HR</button>
+    <button class="lang-pill" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-pill" data-lang="de">🇩🇪 DE</button>
+    <button class="lang-pill" data-lang="pl">🇵🇱 PL</button>
+    <button class="lang-pill" data-lang="cs">🇨🇿 CZ</button>
+    <button class="lang-pill" data-lang="sk">🇸🇰 SK</button>
+  </div>
+</div>
+
 <header class="hero">
-  <div class="hero-sun"></div>
   <div class="hero-content">
     <span class="eyebrow" data-i18n="hero_eyebrow">Vodice · Dalmacija · Hrvatska</span>
     <h1 data-i18n="hero_title">Vaš ljetni<br><em>predah uz more</em></h1>
@@ -260,12 +398,12 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.
         <span class="eyebrow" data-i18n="about_eyebrow">Dobrodošli</span>
         <h2 data-i18n="about_title">Mir, more i <em>mediteranski ugođaj</em></h2>
       </div>
-      <p data-i18n="about_p1">Smještena u mirnom dijelu Vodica, <strong>Villa Helena</strong> nudi smještaj s pogledom na more, besplatnim Wi-Fijem i besplatnim privatnim parkingom. Uz bazen s pogledom, vila pruža terasu i sunčalište svim gostima.</p>
-      <p data-i18n="about_p2">Sve jedinice opremljene su klima uređajem, televizorom s ravnim ekranom i satelitskim programima, hladnjakom, kuhalom za vodu i privatnom kupaonicom. Apartmani dodatno imaju potpuno opremljenu kuhinju s perilicom posuđa, mikrovalnom pećnicom i tosterom.</p>
-      <p data-i18n="about_p3">Gosti se mogu opustiti u vrtu, a roštilj u dvorištu slobodno je na raspolaganju. Plava plaža udaljena je samo 1,4 km, a centar Vodica desetak minuta hoda.</p>
+      <p data-i18n="about_p1">Smještena u mirnom dijelu Vodica, <strong>Villa Helena</strong> nudi gostima vanjski bazen s prostranim sunčalištem, besplatan privatni parking i besplatan Wi-Fi. Bazen i sunčalište na raspolaganju su svim gostima tijekom cijelog dana.</p>
+      <p data-i18n="about_p2">Sve jedinice opremljene su klima uređajem, televizorom s ravnim ekranom i satelitskim programima, hladnjakom, kuhalom za vodu i privatnom kupaonicom. Apartmani dodatno imaju opremljenu kuhinju s grijaćom pločom, perilicom posuđa, mikrovalnom pećnicom i tosterom.</p>
+      <p data-i18n="about_p3">Gosti se mogu opustiti u vrtu, a roštilj u dvorištu slobodno je na raspolaganju. Plava plaža udaljena je petnaest minuta hoda, a centar Vodica desetak minuta hoda.</p>
     </div>
     <div class="intro-figure">
-      <div class="ph-note"><span class="ph-icon">📷</span><span data-i18n="photo_villa">Fotografija vile i bazena</span><div class="ph-name">slike/vila-1.jpg</div></div>
+      <img src="slike/vila-1.jpg" alt="Villa Helena - bazen i dvorište" loading="lazy" style="width:100%;height:100%;object-fit:cover"/>
     </div>
   </div>
 </section>
@@ -317,21 +455,18 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.
       <h2 data-i18n="contact_title">Rezervirajte svoj <em>termin</em></h2>
       <p data-i18n="contact_desc">Za upite o dostupnosti i rezervacije slobodno nas kontaktirajte — odgovaramo brzo.</p>
     </div>
-    <div class="contact-grid">
-      <a href="tel:+385958600340" class="contact-card">
+    <div class="contact-list">
+      <a href="tel:+385958600340" class="contact-row">
         <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-        <h4 data-i18n="contact_phone">Telefon i WhatsApp</h4>
-        <a href="tel:+385958600340">+385 95 8600 340</a>
+        <div class="cr-text"><h4 data-i18n="contact_phone">Telefon i WhatsApp</h4><span>+385 95 8600 340</span></div>
       </a>
-      <a href="mailto:villahelena.cro@gmail.com" class="contact-card">
+      <a href="mailto:villahelena.cro@gmail.com" class="contact-row">
         <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></div>
-        <h4 data-i18n="contact_email">Email</h4>
-        <a href="mailto:villahelena.cro@gmail.com">villahelena.cro@gmail.com</a>
+        <div class="cr-text"><h4 data-i18n="contact_email">Email</h4><span>villahelena.cro@gmail.com</span></div>
       </a>
-      <div class="contact-card">
+      <div class="contact-row">
         <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <h4 data-i18n="contact_addr">Adresa</h4>
-        <span>Vodice, Hrvatska</span>
+        <div class="cr-text"><h4 data-i18n="contact_addr">Adresa</h4><span>Vodice, Hrvatska</span></div>
       </div>
     </div>
   </div>
@@ -343,7 +478,6 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.
   <div class="foot-social">
     <a href="https://wa.me/385958600340" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2"/></svg></a>
     <a href="https://www.facebook.com/villahelena.vodice" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7v-3.5h3.1V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.2h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12"/></svg></a>
-    <a href="https://www.instagram.com/villahelena.vodice" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
   </div>
   <div class="foot-copy">© 2025 Villa Helena · Vodice, Hrvatska · <span data-i18n="foot_rights">Sva prava pridržana</span></div>
 </footer>
@@ -361,26 +495,26 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:3.5rem 2.5rem 2.
 
 <script>
 const UNITS=[
-  {id:'C2',type:'apartman',capacity:4,price:130,photos:5,
-   name:{hr:'Apartman C2',en:'Apartment C2',de:'Apartment C2'},
-   view:{hr:'Pogled na more',en:'Sea view',de:'Meerblick'},
-   desc:{hr:'Prostran apartman za do 4 osobe s jednom spavaćom sobom i sofom na razvlačenje u dnevnom boravku. Terasa s pogledom na more idealno je mjesto za jutarnju kavu uz zvuk mora.',en:'Spacious apartment for up to 4 guests with one bedroom and a sofa bed in the living room. The sea-view terrace is the perfect spot for morning coffee.',de:'Geräumiges Apartment für bis zu 4 Gäste mit einem Schlafzimmer und Schlafsofa im Wohnzimmer. Die Terrasse mit Meerblick ist ideal für den Morgenkaffee.'},
-   feats:{hr:['1 spavaća soba','Sofa na razvlačenje','Terasa s pogledom na more','Opremljena kuhinja','Privatna kupaonica','Klima uređaj'],en:['1 bedroom','Sofa bed','Sea-view terrace','Equipped kitchen','Private bathroom','Air conditioning'],de:['1 Schlafzimmer','Schlafsofa','Terrasse mit Meerblick','Ausgestattete Küche','Eigenes Bad','Klimaanlage']}},
+  {id:'C2',type:'apartman',capacity:4,price:130,photos:9,
+   name:{hr:'Apartman C2',en:'Apartment C2',de:'Apartment C2',pl:'Apartament C2',cs:'Apartmán C2',sk:'Apartmán C2'},
+   view:{hr:'Pogled na more',en:'Sea view',de:'Meerblick',pl:'Widok na morze',cs:'Výhled na moře',sk:'Výhľad na more'},
+   desc:{hr:'Prostran apartman za do 4 osobe s jednom spavaćom sobom i sofom na razvlačenje u dnevnom boravku. Terasa s pogledom na more idealno je mjesto za jutarnju kavu, a vanjski bazen i sunčalište udaljeni su tek nekoliko koraka.',en:'Spacious apartment for up to 4 guests with one bedroom and a sofa bed in the living room. The sea-view terrace is the perfect spot for morning coffee, with the pool and sun deck just steps away.',de:'Geräumiges Apartment für bis zu 4 Gäste mit einem Schlafzimmer und Schlafsofa im Wohnzimmer. Die Terrasse mit Meerblick ist ideal für den Morgenkaffee, Pool und Sonnendeck sind nur wenige Schritte entfernt.',pl:'Przestronny apartament dla maksymalnie 4 osób z jedną sypialnią i rozkładaną sofą w salonie. Taras z widokiem na morze to idealne miejsce na poranną kawę, a basen i leżaki są tylko kilka kroków dalej.',cs:'Prostorný apartmán pro až 4 osoby s jednou ložnicí a rozkládací pohovkou v obývacím pokoji. Terasa s výhledem na moře je ideálním místem na ranní kávu, bazén a lehátka jsou jen pár kroků daleko.',sk:'Priestranný apartmán pre až 4 osoby s jednou spálňou a rozkladacou pohovkou v obývacej izbe. Terasa s výhľadom na more je ideálnym miestom na rannú kávu, bazén a lehátka sú len pár krokov ďaleko.'},
+   feats:{hr:['1 spavaća soba','Sofa na razvlačenje','Terasa s pogledom na more','Kuhinja s grijaćom pločom','Privatna kupaonica','Klima uređaj'],en:['1 bedroom','Sofa bed','Sea-view terrace','Kitchen with hotplate','Private bathroom','Air conditioning'],de:['1 Schlafzimmer','Schlafsofa','Terrasse mit Meerblick','Küche mit Kochplatte','Eigenes Bad','Klimaanlage'],pl:['1 sypialnia','Rozkładana sofa','Taras z widokiem na morze','Kuchnia z płytą grzewczą','Własna łazienka','Klimatyzacja'],cs:['1 ložnice','Rozkládací pohovka','Terasa s výhledem na moře','Kuchyně s varnou deskou','Vlastní koupelna','Klimatizace'],sk:['1 spálňa','Rozkladacia pohovka','Terasa s výhľadom na more','Kuchyňa s varnou platňou','Vlastná kúpeľňa','Klimatizácia']}},
   {id:'B2',type:'apartman',capacity:5,price:150,photos:5,
-   name:{hr:'Apartman B2',en:'Apartment B2',de:'Apartment B2'},
-   view:{hr:'Pogled na bazen',en:'Pool view',de:'Poolblick'},
-   desc:{hr:'Najveći apartman, za do 5 osoba. Jedna spavaća soba te dnevni boravak s dodatnim krevetom i sofom na razvlačenje. Terasa gleda na bazen — savršeno za obitelji.',en:'Our largest apartment, for up to 5 guests. One bedroom plus a living room with an extra bed and sofa bed. The terrace overlooks the pool — perfect for families.',de:'Unser größtes Apartment für bis zu 5 Gäste. Ein Schlafzimmer plus Wohnzimmer mit Zusatzbett und Schlafsofa. Die Terrasse blickt auf den Pool — ideal für Familien.'},
-   feats:{hr:['1 spavaća soba','Krevet + sofa u dnevnom','Terasa s pogledom na bazen','Opremljena kuhinja','Privatna kupaonica','Klima uređaj'],en:['1 bedroom','Bed + sofa in living room','Pool-view terrace','Equipped kitchen','Private bathroom','Air conditioning'],de:['1 Schlafzimmer','Bett + Sofa im Wohnzimmer','Terrasse mit Poolblick','Ausgestattete Küche','Eigenes Bad','Klimaanlage']}},
-  {id:'C1',type:'soba',capacity:2,price:90,photos:4,
-   name:{hr:'Soba C1',en:'Room C1',de:'Zimmer C1'},
-   view:{hr:'Pogled na grad',en:'City view',de:'Stadtblick'},
-   desc:{hr:'Udobna dvokrevetna soba za 2 osobe s bračnim krevetom i privatnom kupaonicom. Vlastita terasa s pogledom na grad idealna je za parove.',en:'Comfortable double room for 2 guests with a double bed and private bathroom. Private city-view terrace, ideal for couples.',de:'Komfortables Doppelzimmer für 2 Gäste mit Doppelbett und eigenem Bad. Private Terrasse mit Stadtblick, ideal für Paare.'},
-   feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad','Klima uređaj','Hladnjak i kuhalo','Besplatan Wi-Fi'],en:['Double bed','Private bathroom','City-view terrace','Air conditioning','Fridge & kettle','Free Wi-Fi'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick','Klimaanlage','Kühlschrank & Wasserkocher','Kostenloses WLAN']}},
-  {id:'A1',type:'soba',capacity:2,price:90,photos:4,
-   name:{hr:'Soba A1',en:'Room A1',de:'Zimmer A1'},
-   view:{hr:'Pogled na grad',en:'City view',de:'Stadtblick'},
-   desc:{hr:'Svijetla dvokrevetna soba za 2 osobe s bračnim krevetom, privatnom kupaonicom i vlastitom terasom s pogledom na grad. Mirno utočište nakon dana na plaži.',en:'Bright double room for 2 guests with a double bed, private bathroom and private city-view terrace. A quiet retreat after a beach day.',de:'Helles Doppelzimmer für 2 Gäste mit Doppelbett, eigenem Bad und privater Terrasse mit Stadtblick. Ruhiger Rückzugsort nach einem Strandtag.'},
-   feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad','Klima uređaj','Hladnjak i kuhalo','Besplatan Wi-Fi'],en:['Double bed','Private bathroom','City-view terrace','Air conditioning','Fridge & kettle','Free Wi-Fi'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick','Klimaanlage','Kühlschrank & Wasserkocher','Kostenloses WLAN']}},
+   name:{hr:'Apartman B2',en:'Apartment B2',de:'Apartment B2',pl:'Apartament B2',cs:'Apartmán B2',sk:'Apartmán B2'},
+   view:{hr:'Pogled na bazen',en:'Pool view',de:'Poolblick',pl:'Widok na basen',cs:'Výhled na bazén',sk:'Výhľad na bazén'},
+   desc:{hr:'Najveći apartman, za do 5 osoba. Jedna spavaća soba te dnevni boravak s dodatnim krevetom i sofom na razvlačenje. Terasa gleda na bazen — savršeno za obitelji.',en:'Our largest apartment, for up to 5 guests. One bedroom plus a living room with an extra bed and sofa bed. The terrace overlooks the pool — perfect for families.',de:'Unser größtes Apartment für bis zu 5 Gäste. Ein Schlafzimmer plus Wohnzimmer mit Zusatzbett und Schlafsofa. Die Terrasse blickt auf den Pool — ideal für Familien.',pl:'Nasz największy apartament, dla maksymalnie 5 osób. Jedna sypialnia oraz salon z dodatkowym łóżkiem i rozkładaną sofą. Taras z widokiem na basen — idealny dla rodzin.',cs:'Náš největší apartmán, pro až 5 osob. Jedna ložnice a obývací pokoj s přistýlkou a rozkládací pohovkou. Terasa s výhledem na bazén — ideální pro rodiny.',sk:'Náš najväčší apartmán, pre až 5 osôb. Jedna spálňa a obývacia izba s prístelkou a rozkladacou pohovkou. Terasa s výhľadom na bazén — ideálna pre rodiny.'},
+   feats:{hr:['1 spavaća soba','Krevet + sofa u dnevnom','Terasa s pogledom na bazen','Kuhinja s grijaćom pločom','Privatna kupaonica','Klima uređaj'],en:['1 bedroom','Bed + sofa in living room','Pool-view terrace','Kitchen with hotplate','Private bathroom','Air conditioning'],de:['1 Schlafzimmer','Bett + Sofa im Wohnzimmer','Terrasse mit Poolblick','Küche mit Kochplatte','Eigenes Bad','Klimaanlage'],pl:['1 sypialnia','Łóżko + sofa w salonie','Taras z widokiem na basen','Kuchnia z płytą grzewczą','Własna łazienka','Klimatyzacja'],cs:['1 ložnice','Postel + pohovka v obýváku','Terasa s výhledem na bazén','Kuchyně s varnou deskou','Vlastní koupelna','Klimatizace'],sk:['1 spálňa','Posteľ + pohovka v obývačke','Terasa s výhľadom na bazén','Kuchyňa s varnou platňou','Vlastná kúpeľňa','Klimatizácia']}},
+  {id:'C1',type:'soba',capacity:2,price:90,photos:7,
+   name:{hr:'Soba C1',en:'Room C1',de:'Zimmer C1',pl:'Pokój C1',cs:'Pokoj C1',sk:'Izba C1'},
+   view:{hr:'Pogled na grad',en:'City view',de:'Stadtblick',pl:'Widok na miasto',cs:'Výhled na město',sk:'Výhľad na mesto'},
+   desc:{hr:'Udobna dvokrevetna soba za 2 osobe s bračnim krevetom i privatnom kupaonicom. Vlastita terasa s pogledom na grad idealna je za parove.',en:'Comfortable double room for 2 guests with a double bed and private bathroom. Private city-view terrace, ideal for couples.',de:'Komfortables Doppelzimmer für 2 Gäste mit Doppelbett und eigenem Bad. Private Terrasse mit Stadtblick, ideal für Paare.',pl:'Wygodny pokój dwuosobowy z łóżkiem małżeńskim i własną łazienką. Prywatny taras z widokiem na miasto, idealny dla par.',cs:'Pohodlný dvoulůžkový pokoj s manželskou postelí a vlastní koupelnou. Soukromá terasa s výhledem na město, ideální pro páry.',sk:'Pohodlná dvojlôžková izba s manželskou posteľou a vlastnou kúpeľňou. Súkromná terasa s výhľadom na mesto, ideálna pre páry.'},
+   feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad','Klima uređaj','Hladnjak i kuhalo','Besplatan Wi-Fi'],en:['Double bed','Private bathroom','City-view terrace','Air conditioning','Fridge & kettle','Free Wi-Fi'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick','Klimaanlage','Kühlschrank & Wasserkocher','Kostenloses WLAN'],pl:['Łóżko małżeńskie','Własna łazienka','Taras z widokiem na miasto','Klimatyzacja','Lodówka i czajnik','Bezpłatne Wi-Fi'],cs:['Manželská postel','Vlastní koupelna','Terasa s výhledem na město','Klimatizace','Lednice a varná konvice','Bezplatné Wi-Fi'],sk:['Manželská posteľ','Vlastná kúpeľňa','Terasa s výhľadom na mesto','Klimatizácia','Chladnička a varná kanvica','Bezplatné Wi-Fi']}},
+  {id:'A1',type:'soba',capacity:2,price:90,photos:6,
+   name:{hr:'Soba A1',en:'Room A1',de:'Zimmer A1',pl:'Pokój A1',cs:'Pokoj A1',sk:'Izba A1'},
+   view:{hr:'Pogled na grad',en:'City view',de:'Stadtblick',pl:'Widok na miasto',cs:'Výhled na město',sk:'Výhľad na mesto'},
+   desc:{hr:'Svijetla dvokrevetna soba za 2 osobe s bračnim krevetom, privatnom kupaonicom i vlastitom terasom s pogledom na grad. Mirno utočište nakon dana na plaži.',en:'Bright double room for 2 guests with a double bed, private bathroom and private city-view terrace. A quiet retreat after a beach day.',de:'Helles Doppelzimmer für 2 Gäste mit Doppelbett, eigenem Bad und privater Terrasse mit Stadtblick. Ruhiger Rückzugsort nach einem Strandtag.',pl:'Świetlany pokój dwuosobowy z łóżkiem małżeńskim, własną łazienką i prywatnym tarasem z widokiem na miasto. Spokojna oaza po dniu na plaży.',cs:'Světlý dvoulůžkový pokoj s manželskou postelí, vlastní koupelnou a soukromou terasou s výhledem na město. Klidné útočiště po dni na pláži.',sk:'Svetlá dvojlôžková izba s manželskou posteľou, vlastnou kúpeľňou a súkromnou terasou s výhľadom na mesto. Pokojné útočisko po dni na pláži.'},
+   feats:{hr:['Bračni krevet','Privatna kupaonica','Terasa s pogledom na grad','Klima uređaj','Hladnjak i kuhalo','Besplatan Wi-Fi'],en:['Double bed','Private bathroom','City-view terrace','Air conditioning','Fridge & kettle','Free Wi-Fi'],de:['Doppelbett','Eigenes Bad','Terrasse mit Stadtblick','Klimaanlage','Kühlschrank & Wasserkocher','Kostenloses WLAN'],pl:['Łóżko małżeńskie','Własna łazienka','Taras z widokiem na miasto','Klimatyzacja','Lodówka i czajnik','Bezpłatne Wi-Fi'],cs:['Manželská postel','Vlastní koupelna','Terasa s výhledem na město','Klimatizace','Lednice a varná konvice','Bezplatné Wi-Fi'],sk:['Manželská posteľ','Vlastná kúpeľňa','Terasa s výhľadom na mesto','Klimatizácia','Chladnička a varná kanvica','Bezplatné Wi-Fi']}},
 ];
 
 const ICONS={
@@ -399,21 +533,30 @@ const ICONS={
 };
 
 const AMENITIES={
-  hr:[{i:'pool',t:'Vanjski bazen',d:'Bazen i prostrano sunčalište za sve goste'},{i:'terrace',t:'Privatna terasa',d:'Vlastiti vanjski prostor uz svaku jedinicu'},{i:'ac',t:'Klima uređaj',d:'Ugodna temperatura tijekom cijelog boravka'},{i:'wifi',t:'Besplatan Wi-Fi',d:'Brz internet u svim prostorima'},{i:'bath',t:'Privatna kupaonica',d:'Vlastita kupaonica s tušem i sušilom'},{i:'parking',t:'Privatni parking',d:'Besplatno parkiralište bez rezervacije'},{i:'bbq',t:'Roštilj u dvorištu',d:'Slobodno na raspolaganju gostima'},{i:'kitchen',t:'Opremljena kuhinja*',d:'Perilica suđa, mikrovalna, hladnjak'}],
-  en:[{i:'pool',t:'Outdoor pool',d:'Swimming pool and sun deck for all guests'},{i:'terrace',t:'Private terrace',d:'Your own outdoor space with each unit'},{i:'ac',t:'Air conditioning',d:'Comfortable temperature throughout your stay'},{i:'wifi',t:'Free Wi-Fi',d:'Fast internet in all areas'},{i:'bath',t:'Private bathroom',d:'En-suite bathroom with shower and hairdryer'},{i:'parking',t:'Free parking',d:'Free private parking, no reservation needed'},{i:'bbq',t:'BBQ in the garden',d:'Freely available to all guests'},{i:'kitchen',t:'Equipped kitchen*',d:'Dishwasher, microwave, fridge'}],
-  de:[{i:'pool',t:'Außenpool',d:'Pool und Sonnendeck für alle Gäste'},{i:'terrace',t:'Private Terrasse',d:'Eigener Außenbereich bei jeder Einheit'},{i:'ac',t:'Klimaanlage',d:'Angenehme Temperatur während des Aufenthalts'},{i:'wifi',t:'Kostenloses WLAN',d:'Schnelles Internet in allen Bereichen'},{i:'bath',t:'Eigenes Bad',d:'Eigenes Bad mit Dusche und Föhn'},{i:'parking',t:'Kostenlos Parken',d:'Privatparkplatz, keine Reservierung nötig'},{i:'bbq',t:'Grill im Garten',d:'Frei verfügbar für alle Gäste'},{i:'kitchen',t:'Ausgestattete Küche*',d:'Geschirrspüler, Mikrowelle, Kühlschrank'}]
+  hr:[{i:'pool',t:'Vanjski bazen',d:'Bazen i prostrano sunčalište za sve goste'},{i:'ac',t:'Klima uređaj',d:'Ugodna temperatura tijekom cijelog boravka'},{i:'wifi',t:'Besplatan Wi-Fi',d:'Brz internet u svim prostorima'},{i:'bath',t:'Privatna kupaonica',d:'Vlastita kupaonica s tušem i sušilom'},{i:'parking',t:'Privatni parking',d:'Besplatno parkiralište bez rezervacije'},{i:'bbq',t:'Roštilj u dvorištu',d:'Slobodno na raspolaganju gostima'},{i:'kitchen',t:'Opremljena kuhinja*',d:'Grijaća ploča, perilica suđa, mikrovalna'}],
+  en:[{i:'pool',t:'Outdoor pool',d:'Swimming pool and sun deck for all guests'},{i:'ac',t:'Air conditioning',d:'Comfortable temperature throughout your stay'},{i:'wifi',t:'Free Wi-Fi',d:'Fast internet in all areas'},{i:'bath',t:'Private bathroom',d:'En-suite bathroom with shower and hairdryer'},{i:'parking',t:'Free parking',d:'Free private parking, no reservation needed'},{i:'bbq',t:'BBQ in the garden',d:'Freely available to all guests'},{i:'kitchen',t:'Equipped kitchen*',d:'Hotplate, dishwasher, microwave'}],
+  de:[{i:'pool',t:'Außenpool',d:'Pool und Sonnendeck für alle Gäste'},{i:'ac',t:'Klimaanlage',d:'Angenehme Temperatur während des Aufenthalts'},{i:'wifi',t:'Kostenloses WLAN',d:'Schnelles Internet in allen Bereichen'},{i:'bath',t:'Eigenes Bad',d:'Eigenes Bad mit Dusche und Föhn'},{i:'parking',t:'Kostenlos Parken',d:'Privatparkplatz, keine Reservierung nötig'},{i:'bbq',t:'Grill im Garten',d:'Frei verfügbar für alle Gäste'},{i:'kitchen',t:'Ausgestattete Küche*',d:'Kochplatte, Geschirrspüler, Mikrowelle'}],
+  pl:[{i:'pool',t:'Basen zewnętrzny',d:'Basen i duży taras dla wszystkich gości'},{i:'ac',t:'Klimatyzacja',d:'Komfortowa temperatura przez cały pobyt'},{i:'wifi',t:'Bezpłatne Wi-Fi',d:'Szybki internet we wszystkich pomieszczeniach'},{i:'bath',t:'Własna łazienka',d:'Łazienka z prysznicem i suszarką'},{i:'parking',t:'Prywatny parking',d:'Bezpłatny parking, bez rezerwacji'},{i:'bbq',t:'Grill na podwórzu',d:'Swobodnie dostępny dla gości'},{i:'kitchen',t:'Wyposażona kuchnia*',d:'Płyta grzewcza, zmywarka, mikrofalówka'}],
+  cs:[{i:'pool',t:'Venkovní bazén',d:'Bazén a prostorná terasa pro všechny hosty'},{i:'ac',t:'Klimatizace',d:'Příjemná teplota po celou dobu pobytu'},{i:'wifi',t:'Bezplatné Wi-Fi',d:'Rychlý internet ve všech prostorách'},{i:'bath',t:'Vlastní koupelna',d:'Vlastní koupelna se sprchou a sušičem vlasů'},{i:'parking',t:'Vlastní parkování',d:'Bezplatné parkování, rezervace není nutná'},{i:'bbq',t:'Gril na dvoře',d:'Volně k dispozici hostům'},{i:'kitchen',t:'Vybavená kuchyně*',d:'Varná deska, myčka nádobí, mikrovlnka'}],
+  sk:[{i:'pool',t:'Vonkajší bazén',d:'Bazén a priestranná terasa pre všetkých hostí'},{i:'ac',t:'Klimatizácia',d:'Príjemná teplota počas celého pobytu'},{i:'wifi',t:'Bezplatné Wi-Fi',d:'Rýchly internet vo všetkých priestoroch'},{i:'bath',t:'Vlastná kúpeľňa',d:'Vlastná kúpeľňa so sprchou a sušičom vlasov'},{i:'parking',t:'Vlastné parkovanie',d:'Bezplatné parkovanie, rezervácia nie je potrebná'},{i:'bbq',t:'Gril na dvore',d:'Voľne k dispozícii hosťom'},{i:'kitchen',t:'Vybavená kuchyňa*',d:'Varná platňa, umývačka riadu, mikrovlnka'}]
 };
 
 const LOCATION={
-  hr:[{i:'beach',t:'Plava plaža — 1,4 km',d:'Najbliža plaža, lako pješke ili autom'},{i:'town',t:'Centar Vodica — 10 min',d:'Restorani, kafići i trgovine nadohvat ruke'},{i:'sea',t:'More i zaljev',d:'Vožnja brodom, ronjenje i jedrenje u blizini'},{i:'car',t:'Zračna luka Zadar — 63 km',d:'Najbliža zračna luka, oko sat vremena vožnje'}],
-  en:[{i:'beach',t:'Plava Beach — 1.4 km',d:'Nearest beach, easy walk or short drive'},{i:'town',t:'Vodice centre — 10 min',d:'Restaurants, cafés and shops close by'},{i:'sea',t:'Sea & bay',d:'Boat trips, diving and sailing nearby'},{i:'car',t:'Zadar Airport — 63 km',d:'Nearest airport, about an hour by car'}],
-  de:[{i:'beach',t:'Plava-Strand — 1,4 km',d:'Nächster Strand, zu Fuß oder kurze Fahrt'},{i:'town',t:'Zentrum Vodice — 10 Min',d:'Restaurants, Cafés und Geschäfte in der Nähe'},{i:'sea',t:'Meer & Bucht',d:'Bootsausflüge, Tauchen und Segeln in der Nähe'},{i:'car',t:'Flughafen Zadar — 63 km',d:'Nächster Flughafen, ca. eine Stunde mit dem Auto'}]
+  hr:[{i:'beach',t:'Plava plaža — 15 minuta hoda',d:'Najbliža plaža, ugodna šetnja'},{i:'town',t:'Centar Vodica — 10 minuta hoda',d:'Restorani, kafići i trgovine nadohvat ruke'},{i:'sea',t:'More i zaljev',d:'Vožnja brodom, ronjenje i jedrenje u blizini'},{i:'car',t:'Zračna luka Zadar — 63 km',d:'Najbliža zračna luka, oko sat vremena vožnje'},{i:'car',t:'Zračna luka Split — 90 km',d:'Alternativna zračna luka, oko sat i 15 minuta vožnje'}],
+  en:[{i:'beach',t:'Plava Beach — 15 min walk',d:'Nearest beach, a pleasant stroll away'},{i:'town',t:'Vodice centre — 10 min walk',d:'Restaurants, cafés and shops close by'},{i:'sea',t:'Sea & bay',d:'Boat trips, diving and sailing nearby'},{i:'car',t:'Zadar Airport — 63 km',d:'Nearest airport, about an hour by car'},{i:'car',t:'Split Airport — 90 km',d:'Alternative airport, about 1h 15min by car'}],
+  de:[{i:'beach',t:'Plava-Strand — 15 Min. zu Fuß',d:'Nächster Strand, ein angenehmer Spaziergang'},{i:'town',t:'Zentrum Vodice — 10 Min. zu Fuß',d:'Restaurants, Cafés und Geschäfte in der Nähe'},{i:'sea',t:'Meer & Bucht',d:'Bootsausflüge, Tauchen und Segeln in der Nähe'},{i:'car',t:'Flughafen Zadar — 63 km',d:'Nächster Flughafen, ca. eine Stunde mit dem Auto'},{i:'car',t:'Flughafen Split — 90 km',d:'Alternativer Flughafen, ca. 1 Std. 15 Min. mit dem Auto'}],
+  pl:[{i:'beach',t:'Plaża Plava — 15 min pieszo',d:'Najbliższa plaża, przyjemny spacer'},{i:'town',t:'Centrum Vodic — 10 minut pieszo',d:'Restauracje, kawiarnie i sklepy w pobliżu'},{i:'sea',t:'Morze i zatoka',d:'Wycieczki łodzią, nurkowanie i żeglarstwo w okolicy'},{i:'car',t:'Lotnisko Zadar — 63 km',d:'Najbliższe lotnisko, ok. godziny jazdy'},{i:'car',t:'Lotnisko Split — 90 km',d:'Alternatywne lotnisko, ok. 1 godz. 15 min jazdy'}],
+  cs:[{i:'beach',t:'Pláž Plava — 15 min chůze',d:'Nejbližší pláž, příjemná procházka'},{i:'town',t:'Centrum Vodic — 10 minut chůze',d:'Restaurace, kavárny a obchody v okolí'},{i:'sea',t:'Moře a zátoka',d:'Výlety lodí, potápění a plachtění v okolí'},{i:'car',t:'Letiště Zadar — 63 km',d:'Nejbližší letiště, asi hodina jízdy autem'},{i:'car',t:'Letiště Split — 90 km',d:'Alternativní letiště, asi 1 h 15 min jízdy autem'}],
+  sk:[{i:'beach',t:'Pláž Plava — 15 min chôdze',d:'Najbližšia pláž, príjemná prechádzka'},{i:'town',t:'Centrum Vodíc — 10 minút chôdze',d:'Reštaurácie, kaviarne a obchody v blízkosti'},{i:'sea',t:'More a zátoka',d:'Výlety loďou, potápanie a plachtenie v okolí'},{i:'car',t:'Letisko Zadar — 63 km',d:'Najbližšie letisko, asi hodina cesty autom'},{i:'car',t:'Letisko Split — 90 km',d:'Alternatívne letisko, asi 1 h 15 min cesty autom'}]
 };
 
 const T={
-  hr:{nav_about:'O vili',nav_amenities:'Pogodnosti',nav_units:'Smještaj',nav_location:'Lokacija',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmacija · Hrvatska',hero_title:'Vaš ljetni<br><em>predah uz more</em>',hero_tag:'Moderno uređeni apartmani i sobe s vanjskim bazenom, u mirnom dijelu Vodica — savršeni za parove, obitelji i manje grupe.',hero_rating:'Booking.com · 47 recenzija',hero_cta1:'Pogledaj smještaj',hero_cta2:'Kontaktiraj nas',about_eyebrow:'Dobrodošli',about_title:'Mir, more i <em>mediteranski ugođaj</em>',about_p1:'Smještena u mirnom dijelu Vodica, <strong>Villa Helena</strong> nudi smještaj s pogledom na more, besplatnim Wi-Fijem i besplatnim privatnim parkingom. Uz bazen s pogledom, vila pruža terasu i sunčalište svim gostima.',about_p2:'Sve jedinice opremljene su klima uređajem, televizorom s ravnim ekranom i satelitskim programima, hladnjakom, kuhalom za vodu i privatnom kupaonicom. Apartmani dodatno imaju potpuno opremljenu kuhinju s perilicom posuđa, mikrovalnom pećnicom i tosterom.',about_p3:'Gosti se mogu opustiti u vrtu, a roštilj u dvorištu slobodno je na raspolaganju. Plava plaža udaljena je samo 1,4 km, a centar Vodica desetak minuta hoda.',photo_villa:'Fotografija vile i bazena',am_eyebrow:'Što vas čeka',am_title:'Sve za <em>opušten odmor</em>',am_note:'* Potpuno opremljena kuhinja dostupna je u apartmanima C2 i B2.',units_eyebrow:'Naš smještaj',units_title:'Četiri jedinice, <em>jedan savršen odmor</em>',units_desc:'Kliknite na jedinicu za više detalja i fotografije.',loc_eyebrow:'Gdje se nalazimo',loc_title:'Vodice, <em>srce Dalmacije</em>',loc_desc:'Mirna zona, a sve nadohvat ruke — plaža, centar i ljepote šibenskog zaljeva.',contact_eyebrow:'Javite nam se',contact_title:'Rezervirajte svoj <em>termin</em>',contact_desc:'Za upite o dostupnosti i rezervacije slobodno nas kontaktirajte — odgovaramo brzo.',contact_phone:'Telefon i WhatsApp',contact_email:'Email',contact_addr:'Adresa',foot_sub:'Apartmani i sobe · Vodice, Dalmacija',foot_rights:'Sva prava pridržana',u_guests:'osoba',u_night:'noć',u_more:'Detalji',m_photos:'Fotografije se dodaju uskoro',m_feats:'Što jedinica nudi',m_book:'Upit za rezervaciju',m_call:'Nazovi',u_to:'do'},
-  en:{nav_about:'About',nav_amenities:'Amenities',nav_units:'Rooms',nav_location:'Location',nav_contact:'Contact',hero_eyebrow:'Vodice · Dalmatia · Croatia',hero_title:'Your summer<br><em>escape by the sea</em>',hero_tag:'Modern apartments and rooms with an outdoor pool, in a quiet part of Vodice — perfect for couples, families and small groups.',hero_rating:'Booking.com · 47 reviews',hero_cta1:'View accommodation',hero_cta2:'Contact us',about_eyebrow:'Welcome',about_title:'Calm, sea and a <em>Mediterranean mood</em>',about_p1:'Set in a quiet part of Vodice, <strong>Villa Helena</strong> offers accommodation with sea views, free Wi-Fi and free private parking. With a pool view, the villa provides a terrace and sun deck for all guests.',about_p2:'All units have air conditioning, a flat-screen TV with satellite channels, a fridge, a kettle and a private bathroom. The apartments also feature a fully equipped kitchen with dishwasher, microwave and toaster.',about_p3:'Guests can relax in the garden, and the BBQ in the yard is freely available. Plava Beach is just 1.4 km away, and the centre of Vodice is about a ten-minute walk.',photo_villa:'Photo of the villa and pool',am_eyebrow:'What awaits you',am_title:'Everything for a <em>relaxed holiday</em>',am_note:'* A fully equipped kitchen is available in apartments C2 and B2.',units_eyebrow:'Our accommodation',units_title:'Four units, <em>one perfect holiday</em>',units_desc:'Click a unit for more details and photos.',loc_eyebrow:'Where we are',loc_title:'Vodice, <em>the heart of Dalmatia</em>',loc_desc:'A quiet zone, yet everything within reach — the beach, the centre and the beauty of the Šibenik bay.',contact_eyebrow:'Get in touch',contact_title:'Book your <em>dates</em>',contact_desc:'For availability and reservations, feel free to contact us — we reply quickly.',contact_phone:'Phone & WhatsApp',contact_email:'Email',contact_addr:'Address',foot_sub:'Apartments and rooms · Vodice, Dalmatia',foot_rights:'All rights reserved',u_guests:'guests',u_night:'night',u_more:'Details',m_photos:'Photos coming soon',m_feats:'What this unit offers',m_book:'Booking enquiry',m_call:'Call',u_to:'up to'},
-  de:{nav_about:'Über uns',nav_amenities:'Ausstattung',nav_units:'Zimmer',nav_location:'Lage',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmatien · Kroatien',hero_title:'Ihr Sommer<br><em>am Meer</em>',hero_tag:'Moderne Apartments und Zimmer mit Außenpool, im ruhigen Teil von Vodice — perfekt für Paare, Familien und kleine Gruppen.',hero_rating:'Booking.com · 47 Bewertungen',hero_cta1:'Unterkunft ansehen',hero_cta2:'Kontaktieren Sie uns',about_eyebrow:'Willkommen',about_title:'Ruhe, Meer und <em>mediterranes Flair</em>',about_p1:'Im ruhigen Teil von Vodice gelegen, bietet <strong>Villa Helena</strong> Unterkünfte mit Meerblick, kostenlosem WLAN und kostenlosem Privatparkplatz. Mit Poolblick bietet die Villa allen Gästen eine Terrasse und ein Sonnendeck.',about_p2:'Alle Einheiten verfügen über Klimaanlage, Flachbild-TV mit Satellitenkanälen, Kühlschrank, Wasserkocher und eigenes Bad. Die Apartments haben zusätzlich eine voll ausgestattete Küche mit Geschirrspüler, Mikrowelle und Toaster.',about_p3:'Gäste können sich im Garten entspannen, und der Grill im Hof steht frei zur Verfügung. Der Plava-Strand ist nur 1,4 km entfernt, das Zentrum von Vodice etwa zehn Gehminuten.',photo_villa:'Foto der Villa und des Pools',am_eyebrow:'Was Sie erwartet',am_title:'Alles für einen <em>entspannten Urlaub</em>',am_note:'* Eine voll ausgestattete Küche gibt es in den Apartments C2 und B2.',units_eyebrow:'Unsere Unterkunft',units_title:'Vier Einheiten, <em>ein perfekter Urlaub</em>',units_desc:'Klicken Sie auf eine Einheit für Details und Fotos.',loc_eyebrow:'Wo wir sind',loc_title:'Vodice, <em>das Herz Dalmatiens</em>',loc_desc:'Eine ruhige Zone, doch alles in Reichweite — der Strand, das Zentrum und die Schönheit der Bucht von Šibenik.',contact_eyebrow:'Kontakt',contact_title:'Buchen Sie Ihre <em>Termine</em>',contact_desc:'Für Verfügbarkeit und Reservierungen kontaktieren Sie uns gerne — wir antworten schnell.',contact_phone:'Telefon & WhatsApp',contact_email:'E-Mail',contact_addr:'Adresse',foot_sub:'Apartments und Zimmer · Vodice, Dalmatien',foot_rights:'Alle Rechte vorbehalten',u_guests:'Gäste',u_night:'Nacht',u_more:'Details',m_photos:'Fotos folgen in Kürze',m_feats:'Was diese Einheit bietet',m_book:'Buchungsanfrage',m_call:'Anrufen',u_to:'bis zu'}
+  hr:{nav_about:'O vili',nav_amenities:'Pogodnosti',nav_units:'Smještaj',nav_location:'Lokacija',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmacija · Hrvatska',hero_title:'Vaš ljetni<br><em>predah uz more</em>',hero_tag:'Moderno uređeni apartmani i sobe s vanjskim bazenom, u mirnom dijelu Vodica — savršeni za parove, obitelji i manje grupe.',hero_rating:'Booking.com · 47 recenzija',hero_cta1:'Pogledaj smještaj',hero_cta2:'Kontaktiraj nas',about_eyebrow:'Dobrodošli',about_title:'Mir, more i <em>mediteranski ugođaj</em>',about_p1:'Smještena u mirnom dijelu Vodica, <strong>Villa Helena</strong> nudi gostima vanjski bazen s prostranim sunčalištem, besplatan privatni parking i besplatan Wi-Fi. Bazen i sunčalište na raspolaganju su svim gostima tijekom cijelog dana.',about_p2:'Sve jedinice opremljene su klima uređajem, televizorom s ravnim ekranom i satelitskim programima, hladnjakom, kuhalom za vodu i privatnom kupaonicom. Apartmani dodatno imaju opremljenu kuhinju s grijaćom pločom, perilicom posuđa, mikrovalnom pećnicom i tosterom.',about_p3:'Gosti se mogu opustiti u vrtu, a roštilj u dvorištu slobodno je na raspolaganju. Plava plaža udaljena je petnaest minuta hoda, a centar Vodica desetak minuta hoda.',photo_villa:'Fotografija vile i bazena',am_eyebrow:'Što vas čeka',am_title:'Sve za <em>opušten odmor</em>',am_note:'* Potpuno opremljena kuhinja dostupna je u apartmanima C2 i B2.',units_eyebrow:'Naš smještaj',units_title:'Četiri jedinice, <em>jedan savršen odmor</em>',units_desc:'Kliknite na jedinicu za više detalja i fotografije.',loc_eyebrow:'Gdje se nalazimo',loc_title:'Vodice, <em>srce Dalmacije</em>',loc_desc:'Mirna zona, a sve nadohvat ruke — plaža, centar i ljepote šibenskog zaljeva.',contact_eyebrow:'Javite nam se',contact_title:'Rezervirajte svoj <em>termin</em>',contact_desc:'Za upite o dostupnosti i rezervacije slobodno nas kontaktirajte — odgovaramo brzo.',contact_phone:'Telefon i WhatsApp',contact_email:'Email',contact_addr:'Adresa',foot_sub:'Apartmani i sobe · Vodice, Dalmacija',foot_rights:'Sva prava pridržana',u_guests:'osoba',u_night:'noć',u_more:'Detalji',m_photos:'Fotografije se dodaju uskoro',m_feats:'Što jedinica nudi',m_book:'Upit za rezervaciju',m_call:'Nazovi',u_to:'do'},
+  en:{nav_about:'About',nav_amenities:'Amenities',nav_units:'Rooms',nav_location:'Location',nav_contact:'Contact',hero_eyebrow:'Vodice · Dalmatia · Croatia',hero_title:'Your summer<br><em>escape by the sea</em>',hero_tag:'Modern apartments and rooms with an outdoor pool, in a quiet part of Vodice — perfect for couples, families and small groups.',hero_rating:'Booking.com · 47 reviews',hero_cta1:'View accommodation',hero_cta2:'Contact us',about_eyebrow:'Welcome',about_title:'Calm, sea and a <em>Mediterranean mood</em>',about_p1:'Set in a quiet part of Vodice, <strong>Villa Helena</strong> offers guests an outdoor pool with a spacious sun deck, free private parking and free Wi-Fi. The pool and sun deck are available to all guests throughout the day.',about_p2:'All units have air conditioning, a flat-screen TV with satellite channels, a fridge, a kettle and a private bathroom. The apartments also feature an equipped kitchen with a hotplate, dishwasher, microwave and toaster.',about_p3:'Guests can relax in the garden, and the BBQ in the yard is freely available. Plava Beach is a fifteen-minute walk away, and the centre of Vodice is about a ten-minute walk.',photo_villa:'Photo of the villa and pool',am_eyebrow:'What awaits you',am_title:'Everything for a <em>relaxed holiday</em>',am_note:'* A fully equipped kitchen is available in apartments C2 and B2.',units_eyebrow:'Our accommodation',units_title:'Four units, <em>one perfect holiday</em>',units_desc:'Click a unit for more details and photos.',loc_eyebrow:'Where we are',loc_title:'Vodice, <em>the heart of Dalmatia</em>',loc_desc:'A quiet zone, yet everything within reach — the beach, the centre and the beauty of the Šibenik bay.',contact_eyebrow:'Get in touch',contact_title:'Book your <em>dates</em>',contact_desc:'For availability and reservations, feel free to contact us — we reply quickly.',contact_phone:'Phone & WhatsApp',contact_email:'Email',contact_addr:'Address',foot_sub:'Apartments and rooms · Vodice, Dalmatia',foot_rights:'All rights reserved',u_guests:'guests',u_night:'night',u_more:'Details',m_photos:'Photos coming soon',m_feats:'What this unit offers',m_book:'Booking enquiry',m_call:'Call',u_to:'up to'},
+  de:{nav_about:'Über uns',nav_amenities:'Ausstattung',nav_units:'Zimmer',nav_location:'Lage',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmatien · Kroatien',hero_title:'Ihr Sommer<br><em>am Meer</em>',hero_tag:'Moderne Apartments und Zimmer mit Außenpool, im ruhigen Teil von Vodice — perfekt für Paare, Familien und kleine Gruppen.',hero_rating:'Booking.com · 47 Bewertungen',hero_cta1:'Unterkunft ansehen',hero_cta2:'Kontaktieren Sie uns',about_eyebrow:'Willkommen',about_title:'Ruhe, Meer und <em>mediterranes Flair</em>',about_p1:'Im ruhigen Teil von Vodice gelegen, bietet <strong>Villa Helena</strong> ihren Gästen einen Außenpool mit großzügigem Sonnendeck, kostenlosen Privatparkplatz und kostenloses WLAN. Pool und Sonnendeck stehen allen Gästen den ganzen Tag zur Verfügung.',about_p2:'Alle Einheiten verfügen über Klimaanlage, Flachbild-TV mit Satellitenkanälen, Kühlschrank, Wasserkocher und eigenes Bad. Die Apartments haben zusätzlich eine ausgestattete Küche mit Kochplatte, Geschirrspüler, Mikrowelle und Toaster.',about_p3:'Gäste können sich im Garten entspannen, und der Grill im Hof steht frei zur Verfügung. Der Plava-Strand ist fünfzehn Gehminuten entfernt, das Zentrum von Vodice etwa zehn Gehminuten.',photo_villa:'Foto der Villa und des Pools',am_eyebrow:'Was Sie erwartet',am_title:'Alles für einen <em>entspannten Urlaub</em>',am_note:'* Eine voll ausgestattete Küche gibt es in den Apartments C2 und B2.',units_eyebrow:'Unsere Unterkunft',units_title:'Vier Einheiten, <em>ein perfekter Urlaub</em>',units_desc:'Klicken Sie auf eine Einheit für Details und Fotos.',loc_eyebrow:'Wo wir sind',loc_title:'Vodice, <em>das Herz Dalmatiens</em>',loc_desc:'Eine ruhige Zone, doch alles in Reichweite — der Strand, das Zentrum und die Schönheit der Bucht von Šibenik.',contact_eyebrow:'Kontakt',contact_title:'Buchen Sie Ihre <em>Termine</em>',contact_desc:'Für Verfügbarkeit und Reservierungen kontaktieren Sie uns gerne — wir antworten schnell.',contact_phone:'Telefon & WhatsApp',contact_email:'E-Mail',contact_addr:'Adresse',foot_sub:'Apartments und Zimmer · Vodice, Dalmatien',foot_rights:'Alle Rechte vorbehalten',u_guests:'Gäste',u_night:'Nacht',u_more:'Details',m_photos:'Fotos folgen in Kürze',m_feats:'Was diese Einheit bietet',m_book:'Buchungsanfrage',m_call:'Anrufen',u_to:'bis zu'},
+  pl:{nav_about:'O nas',nav_amenities:'Udogodnienia',nav_units:'Noclegi',nav_location:'Lokalizacja',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmacja · Chorwacja',hero_title:'Twój letni<br><em>azyl nad morzem</em>',hero_tag:'Nowocześnie urządzone apartamenty i pokoje z basenem zewnętrznym, w spokojnej części Vodic — idealne dla par, rodzin i małych grup.',hero_rating:'Booking.com · 47 opinii',hero_cta1:'Zobacz noclegi',hero_cta2:'Skontaktuj się z nami',about_eyebrow:'Witamy',about_title:'Spokój, morze i <em>śródziemnomorski nastrój</em>',about_p1:'Położona w spokojnej części Vodic, <strong>Villa Helena</strong> oferuje gościom basen zewnętrzny z dużym tarasem do wypoczynku, bezpłatny prywatny parking i bezpłatne Wi-Fi. Basen i taras są dostępne dla wszystkich gości przez cały dzień.',about_p2:'Wszystkie jednostki wyposażone są w klimatyzację, telewizor z płaskim ekranem z kanałami satelitarnymi, lodówkę, czajnik i własną łazienkę. Apartamenty dodatkowo mają wyposażoną kuchnię z płytą grzewczą, zmywarką, mikrofalówką i tosterem.',about_p3:'Goście mogą odpoczywać w ogrodzie, a grill na podwórzu jest swobodnie dostępny. Plaża Plava jest piętnaście minut pieszo, a centrum Vodic dziesięć minut pieszo.',photo_villa:'Zdjęcie willi i basenu',am_eyebrow:'Co Cię czeka',am_title:'Wszystko na <em>relaksujący wypoczynek</em>',am_note:'* W pełni wyposażona kuchnia jest dostępna w apartamentach C2 i B2.',units_eyebrow:'Nasze noclegi',units_title:'Cztery jednostki, <em>jeden wymarzony wypoczynek</em>',units_desc:'Kliknij na jednostkę, aby zobaczyć więcej szczegółów i zdjęcia.',loc_eyebrow:'Gdzie się znajdujemy',loc_title:'Vodice, <em>serce Dalmacji</em>',loc_desc:'Spokojna strefa, a wszystko w zasięgu ręki — plaża, centrum i uroki zatoki szybenickiej.',contact_eyebrow:'Skontaktuj się z nami',contact_title:'Zarezerwuj swój <em>termin</em>',contact_desc:'W sprawie dostępności i rezerwacji prosimy o kontakt — odpowiadamy szybko.',contact_phone:'Telefon i WhatsApp',contact_email:'Email',contact_addr:'Adres',foot_sub:'Apartamenty i pokoje · Vodice, Dalmacja',foot_rights:'Wszelkie prawa zastrzeżone',u_guests:'osób',u_night:'noc',u_more:'Szczegóły',m_photos:'Zdjęcia wkrótce',m_feats:'Co oferuje ta jednostka',m_book:'Zapytanie o rezerwację',m_call:'Zadzwoń',u_to:'do'},
+  cs:{nav_about:'O vile',nav_amenities:'Vybavení',nav_units:'Ubytování',nav_location:'Lokalita',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmácie · Chorvatsko',hero_title:'Váš letní<br><em>odpočinek u moře</em>',hero_tag:'Moderně zařízené apartmány a pokoje s venkovním bazénem, v klidné části Vodic — perfektní pro páry, rodiny i menší skupiny.',hero_rating:'Booking.com · 47 recenzí',hero_cta1:'Zobrazit ubytování',hero_cta2:'Kontaktujte nás',about_eyebrow:'Vítejte',about_title:'Klid, moře a <em>středomořská atmosféra</em>',about_p1:'Vila Helena se nachází v klidné části Vodic a nabízí hostům venkovní bazén s prostornou terasou na slunění, bezplatné soukromé parkování a bezplatné Wi-Fi. Bazén a terasa jsou k dispozici všem hostům po celý den.',about_p2:'Všechny jednotky jsou vybaveny klimatizací, plochou televizí se satelitními programy, ledničkou, varnou konvicí a vlastní koupelnou. Apartmány navíc mají vybavenou kuchyň s varnou deskou, myčkou nádobí, mikrovlnkou a toustovačem.',about_p3:'Hosté mohou relaxovat na zahradě, gril na dvoře je volně k dispozici. Pláž Plava je vzdálena patnáct minut chůze, centrum Vodic asi deset minut chůze.',photo_villa:'Fotografie vily a bazénu',am_eyebrow:'Co vás čeká',am_title:'Vše pro <em>odpočinkovou dovolenou</em>',am_note:'* Plně vybavená kuchyně je k dispozici v apartmánech C2 a B2.',units_eyebrow:'Naše ubytování',units_title:'Čtyři jednotky, <em>jedna perfektní dovolená</em>',units_desc:'Klikněte na jednotku pro více informací a fotografie.',loc_eyebrow:'Kde se nacházíme',loc_title:'Vodice, <em>srdce Dalmácie</em>',loc_desc:'Klidná zóna, a přitom vše na dosah — pláž, centrum a krásy šibenického zálivu.',contact_eyebrow:'Ozvěte se nám',contact_title:'Zarezervujte si svůj <em>termín</em>',contact_desc:'V případě dotazů na dostupnost a rezervace nás neváhejte kontaktovat — odpovídáme rychle.',contact_phone:'Telefon a WhatsApp',contact_email:'Email',contact_addr:'Adresa',foot_sub:'Apartmány a pokoje · Vodice, Dalmácie',foot_rights:'Všechna práva vyhrazena',u_guests:'osob',u_night:'noc',u_more:'Detaily',m_photos:'Fotografie budou brzy doplněny',m_feats:'Co tato jednotka nabízí',m_book:'Poptávka rezervace',m_call:'Zavolat',u_to:'až'},
+  sk:{nav_about:'O vile',nav_amenities:'Vybavenie',nav_units:'Ubytovanie',nav_location:'Lokalita',nav_contact:'Kontakt',hero_eyebrow:'Vodice · Dalmácia · Chorvátsko',hero_title:'Váš letný<br><em>oddych pri mori</em>',hero_tag:'Moderne zariadené apartmány a izby s vonkajším bazénom, v tichej časti Vodíc — ideálne pre páry, rodiny aj menšie skupiny.',hero_rating:'Booking.com · 47 recenzií',hero_cta1:'Zobraziť ubytovanie',hero_cta2:'Kontaktujte nás',about_eyebrow:'Vitajte',about_title:'Pokoj, more a <em>stredomorská atmosféra</em>',about_p1:'Vila Helena sa nachádza v tichej časti Vodíc a ponúka hosťom vonkajší bazén s priestrannou terasou na slnenie, bezplatné súkromné parkovanie a bezplatné Wi-Fi. Bazén a terasa sú k dispozícii všetkým hosťom počas celého dňa.',about_p2:'Všetky jednotky sú vybavené klimatizáciou, plochou televíziou so satelitnými programami, chladničkou, varnou kanvicou a vlastnou kúpeľňou. Apartmány majú navyše vybavenú kuchyňu s varnou platňou, umývačkou riadu, mikrovlnkou a hriankovačom.',about_p3:'Hostia môžu relaxovať v záhrade, gril na dvore je voľne k dispozícii. Pláž Plava je vzdialená pätnásť minút chôdze, centrum Vodíc asi desať minút chôdze.',photo_villa:'Fotografia vily a bazéna',am_eyebrow:'Čo vás čaká',am_title:'Všetko pre <em>oddychovú dovolenku</em>',am_note:'* Plne vybavená kuchyňa je k dispozícii v apartmánoch C2 a B2.',units_eyebrow:'Naše ubytovanie',units_title:'Štyri jednotky, <em>jedna perfektná dovolenka</em>',units_desc:'Kliknite na jednotku pre viac informácií a fotografie.',loc_eyebrow:'Kde sa nachádzame',loc_title:'Vodice, <em>srdce Dalmácie</em>',loc_desc:'Tichá zóna, a pritom všetko na dosah — pláž, centrum a krásy šibenického zálivu.',contact_eyebrow:'Ozvite sa nám',contact_title:'Zarezervujte si svoj <em>termín</em>',contact_desc:'V prípade otázok o dostupnosti a rezervácie nás neváhajte kontaktovať — odpovedáme rýchlo.',contact_phone:'Telefón a WhatsApp',contact_email:'Email',contact_addr:'Adresa',foot_sub:'Apartmány a izby · Vodice, Dalmácia',foot_rights:'Všetky práva vyhradené',u_guests:'osôb',u_night:'noc',u_more:'Detaily',m_photos:'Fotografie budú doplnené',m_feats:'Čo táto jednotka ponúka',m_book:'Dopyt na rezerváciu',m_call:'Zavolať',u_to:'do'}
 };
 
 let lang='hr';
@@ -426,14 +569,14 @@ function renderAmenities(){
 }
 function renderUnits(){
   $('#unitsGrid').innerHTML=UNITS.map(u=>{
-    const typeTag=u.type==='apartman'?(lang==='hr'?'Apartman':lang==='de'?'Apartment':'Apartment'):(lang==='hr'?'Soba':lang==='de'?'Zimmer':'Room');
+    const typeTag=u.type==='apartman'?({hr:'Apartman',en:'Apartment',de:'Apartment',pl:'Apartament',cs:'Apartmán',sk:'Apartmán'}[lang]):({hr:'Soba',en:'Room',de:'Zimmer',pl:'Pokój',cs:'Pokoj',sk:'Izba'}[lang]);
     const feats=u.feats[lang].slice(0,3).map(f=>`<span class="unit-feat">${f}</span>`).join('');
     return `<article class="unit-card" onclick="openModal('${u.id}')">
-      <div class="unit-photo"><span class="unit-badge">${u.id}</span><span class="unit-type-tag">${typeTag}</span><div class="ph-note"><span class="ph-icon">📷</span>${u.view[lang]}</div></div>
+      <div class="unit-photo"><span class="unit-badge">${u.id}</span><span class="unit-type-tag">${typeTag}</span><img src="slike/${u.id.toLowerCase()}-1.jpg" alt="${u.name[lang]}" loading="lazy" style="width:100%;height:100%;object-fit:cover"/></div>
       <div class="unit-body"><h3>${u.name[lang]}</h3>
         <div class="unit-cap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="3"/><path d="M2 21v-1a6 6 0 0 1 12 0v1M16 3.5a3 3 0 0 1 0 6M22 21v-1a6 6 0 0 0-4-5.6"/></svg>${t('u_to')} ${u.capacity} ${t('u_guests')} · ${u.view[lang]}</div>
         <div class="unit-feats">${feats}</div>
-        <div class="unit-foot"><div class="unit-price"><span class="amt">${u.price} €</span> <span class="per">/ ${t('u_night')}</span></div><span class="unit-more">${t('u_more')} →</span></div>
+        <div class="unit-foot"><span class="unit-more">${t('u_more')} →</span></div>
       </div></article>`;
   }).join('');
 }
@@ -444,18 +587,18 @@ function renderLocation(){
 let activeUnit=null;
 function openModal(id){
   const u=UNITS.find(x=>x.id===id);if(!u)return;activeUnit=u;
-  const typeTag=u.type==='apartman'?(lang==='hr'?'Apartman':lang==='de'?'Apartment':'Apartment'):(lang==='hr'?'Soba':lang==='de'?'Zimmer':'Room');
-  $('#galleryMain').innerHTML=`<div class="ph-note"><span class="ph-icon">📷</span><div>${t('m_photos')}</div><div class="ph-name">slike/${u.id.toLowerCase()}-1.jpg</div></div>`;
+  const typeTag=u.type==='apartman'?({hr:'Apartman',en:'Apartment',de:'Apartment',pl:'Apartament',cs:'Apartmán',sk:'Apartmán'}[lang]):({hr:'Soba',en:'Room',de:'Zimmer',pl:'Pokój',cs:'Pokoj',sk:'Izba'}[lang]);
+  $('#galleryMain').innerHTML=`<img src="slike/${u.id.toLowerCase()}-1.jpg" alt="${u.name[lang]}" loading="lazy" style="width:100%;height:100%;object-fit:cover"/>`;
   let thumbs='';
-  for(let i=1;i<=u.photos;i++){thumbs+=`<div class="gallery-thumb${i===1?' active':''}" onclick="setMainPhoto('${u.id}',${i},this)" title="slike/${u.id.toLowerCase()}-${i}.jpg">${i}</div>`;}
+  for(let i=1;i<=u.photos;i++){thumbs+=`<div class="gallery-thumb${i===1?' active':''}" onclick="setMainPhoto('${u.id}',${i},this)"><img src="slike/${u.id.toLowerCase()}-${i}.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:2px"/></div>`;}
   $('#galleryThumbs').innerHTML=thumbs;
   const feats=u.feats[lang].map(f=>`<div class="modal-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${f}</div>`).join('');
-  $('#modalInfo').innerHTML=`<div class="modal-info-head"><div><div class="m-type">${typeTag} · ${u.view[lang]}</div><h2>${u.name[lang]}</h2><div class="m-cap">${t('u_to')} ${u.capacity} ${t('u_guests')}</div></div><div class="modal-price"><div class="amt">${u.price} €</div><div class="per">/ ${t('u_night')}</div></div></div><p class="modal-desc">${u.desc[lang]}</p><div class="modal-feats-title">${t('m_feats')}</div><div class="modal-feats">${feats}</div><div class="modal-actions"><a href="mailto:villahelena.cro@gmail.com?subject=${encodeURIComponent('Upit - '+u.name[lang])}" class="btn btn-dark">${t('m_book')}</a><a href="tel:+385958600340" class="btn btn-line">${t('m_call')}</a></div>`;
+  $('#modalInfo').innerHTML=`<div class="modal-info-head"><div><div class="m-type">${typeTag} · ${u.view[lang]}</div><h2>${u.name[lang]}</h2><div class="m-cap">${t('u_to')} ${u.capacity} ${t('u_guests')}</div></div></div><p class="modal-desc">${u.desc[lang]}</p><div class="modal-feats-title">${t('m_feats')}</div><div class="modal-feats">${feats}</div><div class="modal-actions"><a href="mailto:villahelena.cro@gmail.com?subject=${encodeURIComponent('Upit - '+u.name[lang])}" class="btn btn-dark">${t('m_book')}</a><a href="tel:+385958600340" class="btn btn-line">${t('m_call')}</a></div>`;
   $('#modalBg').classList.add('open');document.body.style.overflow='hidden';
 }
 function setMainPhoto(id,n,el){
   const u=UNITS.find(x=>x.id===id);
-  $('#galleryMain').innerHTML=`<div class="ph-note"><span class="ph-icon">📷</span><div>${t('m_photos')}</div><div class="ph-name">slike/${u.id.toLowerCase()}-${n}.jpg</div></div>`;
+  $('#galleryMain').innerHTML=`<img src="slike/${u.id.toLowerCase()}-${n}.jpg" alt="${u.name[lang]}" loading="lazy" style="width:100%;height:100%;object-fit:cover"/>`;
   $$('.gallery-thumb').forEach(x=>x.classList.remove('active'));el.classList.add('active');
 }
 function closeModal(){$('#modalBg').classList.remove('open');document.body.style.overflow='';}
@@ -465,12 +608,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 function setLang(l){
   lang=l;document.documentElement.lang=l;
-  $$('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  $$('.lang-pill').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
   $$('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k]!==undefined)el.innerHTML=T[lang][k];});
   renderAmenities();renderUnits();renderLocation();
   if($('#modalBg').classList.contains('open')&&activeUnit)openModal(activeUnit.id);
 }
-$$('.lang-btn').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+$$('.lang-pill').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
 
 window.addEventListener('scroll',()=>{$('#nav').classList.toggle('scrolled',window.scrollY>40);});
 $('#navToggle').addEventListener('click',()=>{$('#navLinks').classList.toggle('open');});
